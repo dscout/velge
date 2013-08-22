@@ -25,14 +25,15 @@ describe 'Velge', ->
       expect($container).to.have('.velge-dropdown')
 
   describe '#setup', ->
-    it 'renders all provided tags', ->
-      velge = new Velge($container, chosen: [
-        { name: 'Apple' },
-        { name: 'Melon' }
-      ]).setup()
+    it 'renders all provided choices', ->
+      velge = new Velge($container,
+        chosen:  [{ name: 'Apple' }, { name: 'Melon' }]
+        choices: [{ name: 'Banana' }]
+      ).setup()
 
       expect($('.velge-list', $container)).to.contain('Apple')
       expect($('.velge-list', $container)).to.contain('Melon')
+      expect($('.velge-dropdown', $container)).to.contain('Banana')
 
   describe '#addChoice', ->
     beforeEach ->
@@ -77,3 +78,22 @@ describe 'Velge', ->
       velge.addChosen(name: 'Apple')
 
       expect($('.velge-list', $container)).to.contain('Apple')
+
+  describe '#remChoice', ->
+    beforeEach ->
+      velge = new Velge($container, choices: [{ name: 'Apple' }]).setup()
+
+    it 'removes the choice', ->
+      velge.remChoice(name: 'Apple')
+
+      expect($('.velge-dropdown', $container)).to.not.contain('Apple')
+
+  describe '#remChosen', ->
+    beforeEach ->
+      velge = new Velge($container, chosen: [{ name: 'Apple' }]).setup()
+
+    it 'removes the chosen status, returning it to the list of choices', ->
+      velge.remChosen(name: 'Apple')
+
+      expect($('.velge-list', $container)).to.not.contain('Apple')
+      expect($('.velge-dropdown', $container)).to.contain('Apple')

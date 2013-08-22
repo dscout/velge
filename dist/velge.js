@@ -1,5 +1,72 @@
 (function() {
   window.Velge = (function() {
+    var Store;
+
+    Store = (function() {
+      function Store() {
+        this.arr = [];
+        this.map = {};
+      }
+
+      Store.prototype.objects = function() {
+        return this.arr;
+      };
+
+      Store.prototype.push = function(choice, isChosen) {
+        if (isChosen == null) {
+          isChosen = false;
+        }
+        choice.chosen = isChosen;
+        if (this.find(choice) == null) {
+          this.arr.push(choice);
+          this.map[choice.name] = choice;
+        }
+        return this.sort();
+      };
+
+      Store.prototype["delete"] = function(toRemove) {
+        var choice, index, _i, _len, _ref;
+        _ref = this.arr;
+        for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
+          choice = _ref[index];
+          if (choice.name === toRemove.name) {
+            this.arr.splice(index, 1);
+            break;
+          }
+        }
+        return delete this.map[toRemove.name];
+      };
+
+      Store.prototype.update = function(toUpdate, values) {
+        var choice, key, value, _results;
+        choice = this.find(toUpdate);
+        _results = [];
+        for (key in values) {
+          value = values[key];
+          _results.push(choice[key] = value);
+        }
+        return _results;
+      };
+
+      Store.prototype.find = function(toFind) {
+        return this.map[toFind.name];
+      };
+
+      Store.prototype.sort = function() {
+        this.arr = this.arr.sort(function(a, b) {
+          if (a.name > b.name) {
+            return 1;
+          } else {
+            return -1;
+          }
+        });
+        return this.arr;
+      };
+
+      return Store;
+
+    })();
+
     Velge.prototype.wrapTemplate = "<div class='velge'>\n  <ul class='velge-list'></ul>\n  <input type='text' autocomplete='off' placeholder='Add Tags' class='velge-input placeholder' />\n  <span class='velge-trigger'></span>\n  <ol class='velge-dropdown'></ol>\n</div>";
 
     Velge.prototype.chosenTemplate = "<li>\n  <b>{{name}}</b>\n  <i>&times;</i>\n</li>";
@@ -11,21 +78,16 @@
         options = {};
       }
       this.$container = $container;
-      this.chosen = options.chosen || [];
-      this._choices = [];
-      this._choiceMap = {};
+      this.store = new Store();
+      this._preloadChoices(options.chosen || [], true);
+      this._preloadChoices(options.choices || [], false);
     }
 
     Velge.prototype.setup = function() {
-      var chosen, _i, _len, _ref, _results;
       this.inject();
-      _ref = this.chosen;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        chosen = _ref[_i];
-        _results.push(this.addChosen(chosen));
-      }
-      return _results;
+      this._renderChoices();
+      this._renderChosen();
+      return this;
     };
 
     Velge.prototype.inject = function() {
@@ -37,13 +99,28 @@
     };
 
     Velge.prototype.addChosen = function(choice) {
-      this._push(choice, true);
+      this.store.push(choice, true);
       this._renderChosen();
       return this;
     };
 
     Velge.prototype.addChoice = function(choice) {
-      this._push(choice);
+      this.store.push(choice);
+      this._renderChoices();
+      return this;
+    };
+
+    Velge.prototype.remChoice = function(choice) {
+      this.store["delete"](choice);
+      this._renderChoices();
+      return this;
+    };
+
+    Velge.prototype.remChosen = function(choice) {
+      this.store.update(choice, {
+        chosen: false
+      });
+      this._renderChosen();
       this._renderChoices();
       return this;
     };
@@ -52,7 +129,7 @@
       var choice, choices;
       choices = (function() {
         var _i, _len, _ref, _results;
-        _ref = this._choices;
+        _ref = this.store.objects();
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           choice = _ref[_i];
@@ -69,7 +146,7 @@
       var choice, choices;
       choices = (function() {
         var _i, _len, _ref, _results;
-        _ref = this._choices;
+        _ref = this.store.objects();
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           choice = _ref[_i];
@@ -82,22 +159,14 @@
       return this.$dropdown.empty().html(choices);
     };
 
-    Velge.prototype._push = function(choice, isChosen) {
-      if (isChosen == null) {
-        isChosen = false;
+    Velge.prototype._preloadChoices = function(choices, isChosen) {
+      var choice, _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = choices.length; _i < _len; _i++) {
+        choice = choices[_i];
+        _results.push(this.store.push(choice, isChosen));
       }
-      choice.chosen = isChosen;
-      if (this._choiceMap[choice.name] == null) {
-        this._choices.push(choice);
-        this._choiceMap[choice.name] = choice;
-        return this._choices = this._choices.sort(function(a, b) {
-          if (a.name > b.name) {
-            return 1;
-          } else {
-            return -1;
-          }
-        });
-      }
+      return _results;
     };
 
     return Velge;

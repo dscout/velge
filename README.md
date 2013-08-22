@@ -1,7 +1,7 @@
 # Velge |CHooz|
 
 1. verb - Pick out or select as being the most appropriate of two or more alternatives.
-2. noun - Robust tag or label management widget
+2. noun - Nimble autocompleting tag management widget
 
 ## Installation
 

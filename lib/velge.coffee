@@ -1,4 +1,43 @@
 class window.Velge
+  class Store
+    constructor: ->
+      @arr = []
+      @map = {}
+
+    objects: ->
+      @arr
+
+    push: (choice, isChosen = false) ->
+      choice.chosen = isChosen
+
+      unless @find(choice)?
+        @arr.push(choice)
+        @map[choice.name] = choice
+
+      @sort()
+
+    delete: (toRemove) ->
+      for choice, index in @arr
+        if choice.name is toRemove.name
+          @arr.splice(index, 1)
+          break
+
+      delete @map[toRemove.name]
+
+    update: (toUpdate, values) ->
+      choice = @find(toUpdate)
+
+      choice[key] = value for key, value of values
+
+    find: (toFind) ->
+      @map[toFind.name]
+
+    sort: ->
+      @arr = @arr.sort (a, b) ->
+        if a.name > b.name then 1 else -1
+
+      @arr
+
   wrapTemplate: """
     <div class='velge'>
       <ul class='velge-list'></ul>
@@ -19,18 +58,19 @@ class window.Velge
     <li>{{name}}</li>
   """
 
-  # Construct Velge with a jQuery `container` and `options`.
   constructor: ($container, options = {}) ->
     @$container = $container
-    @chosen    = options.chosen || []
+    @store      = new Store()
 
-    @_choices   = []
-    @_choiceMap = {}
+    @_preloadChoices(options.chosen  || [], true)
+    @_preloadChoices(options.choices || [], false)
 
   setup: ->
     @inject()
+    @_renderChoices()
+    @_renderChosen()
 
-    @addChosen(chosen) for chosen in @chosen
+    @
 
   inject: ->
     @$wrapper  = $(@wrapTemplate)
@@ -42,33 +82,37 @@ class window.Velge
     @
 
   addChosen: (choice) ->
-    @_push(choice, true)
+    @store.push(choice, true)
     @_renderChosen()
     @
 
   addChoice: (choice) ->
-    @_push(choice)
+    @store.push(choice)
+    @_renderChoices()
+    @
+
+  remChoice: (choice) ->
+    @store.delete(choice)
+    @_renderChoices()
+    @
+
+  remChosen: (choice) ->
+    @store.update(choice, chosen: false)
+    @_renderChosen()
     @_renderChoices()
     @
 
   _renderChosen: ->
-    choices = for choice in @_choices when choice.chosen
+    choices = for choice in @store.objects() when choice.chosen
       @chosenTemplate.replace('{{name}}', choice.name)
 
     @$list.empty().html(choices)
 
   _renderChoices: ->
-    choices = for choice in @_choices when !choice.chosen
+    choices = for choice in @store.objects() when !choice.chosen
       @choiceTemplate.replace('{{name}}', choice.name)
 
     @$dropdown.empty().html(choices)
 
-  _push: (choice, isChosen = false) ->
-    choice.chosen = isChosen
-
-    unless @_choiceMap[choice.name]?
-      @_choices.push(choice)
-      @_choiceMap[choice.name] = choice
-
-      @_choices = @_choices.sort (a, b) ->
-        if a.name > b.name then 1 else -1
+  _preloadChoices: (choices, isChosen) ->
+    @store.push(choice, isChosen) for choice in choices
