@@ -1,3 +1,5 @@
+[![Build Status](https://magnum.travis-ci.com/dscout/velge.png?token=qVRrqXZfaiPzkgrHbzVZ&branch=master)](https://magnum.travis-ci.com/dscout/velge)
+
 # Velge |CHooz|
 
 1. verb - Pick out or select as being the most appropriate of two or more alternatives.
