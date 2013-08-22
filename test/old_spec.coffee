@@ -64,50 +64,6 @@ describe 'Dscout.Velge', ->
       velge($element, placeholder: 'Label me')
       input().attr('placeholder').should.equal('Label me')
 
-    it 'clears the placeholder on focus', ->
-      input().focus().val().should.equal('')
-
-    it 'removes the placeholder class from the input on focus', ->
-      input().focus().should.not.have.class('placeholder')
-
-    it 'adds the placeholder class on blur', (done) ->
-      input().focus()
-      input().should.not.have.class('placeholder')
-      input().trigger($.Event('blur'))
-
-      expecation = -> input().should.have.class('placeholder')
-
-      setTimeout expecation, 101
-
-      done()
-
-  describe 'tag population', ->
-    beforeEach ->
-      velge($element, {
-        tags: [{ id: 1, name: 'cat' }, { id: 2, name: 'dog' }]
-      })
-
-    it 'populates the tag list with each of the tag values', ->
-      confirmTagged(value) for value in ['cat', 'dog']
-
-  describe 'choice population', ->
-    beforeEach ->
-      @velge = window.velge($element, {
-        choices: [{ id: 1, name: 'zebra' }, { id: 2, name: 'dog' } ]
-      })
-
-    it 'preopulates the dropdown menu with choices', ->
-      confirmChoice(value) for value in ['zebra', 'dog']
-
-    it 'maintains choices in alphabetical order', ->
-      zebra = $('.velge-dropdown li:contains("zebra")')
-      expect($('.velge-dropdown li').last().text()).to.equal(zebra.text())
-
-    it 'does not display used choices', ->
-      @velge.add_tag({ id: 2, name: 'dog' })
-
-      expect($('.velge-dropdown li:contains("dog")').length).to.equal(0)
-
   describe 'dropdown activation', ->
     describe 'with choices', ->
       beforeEach ->
