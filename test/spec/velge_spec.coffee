@@ -1,3 +1,5 @@
-describe 'Working', ->
-  it 'should not explode', ->
-    expect(true).to.be.true
+describe 'Velge', ->
+  template = '<div class="container"></div>'
+
+  describe '#init', ->
+    it '
