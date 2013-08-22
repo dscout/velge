@@ -35,11 +35,17 @@ module.exports = function(grunt) {
           ignoreLeaks: false
         }
       }
+    },
+
+    watch: {
+      files: ['lib/*.coffee', 'test/spec/*.coffee'],
+      tasks: ['coffee:compile']
     }
   });
 
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-mocha');
 
   grunt.registerTask('test',    ['coffee:compile', 'mocha']);
