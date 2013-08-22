@@ -32,7 +32,7 @@ module.exports = function(grunt) {
         log: true,
         run: true,
         mocha: {
-          ignoreLeaks: false
+          ignoreLeaks: true
         }
       }
     },

@@ -77,11 +77,3 @@ describe 'Velge', ->
       velge.addChosen(name: 'Apple')
 
       expect($('.velge-list', $container)).to.contain('Apple')
-
-    it 'moves any existing choices to the chosen list', ->
-      velge
-        .addChoice(name: 'Apple')
-        .addChosen(name: 'Apple')
-
-      expect($('.velge-list',     $container)).to.contain('Apple')
-      expect($('.velge-dropdown', $container)).to.not.contain('Apple')
