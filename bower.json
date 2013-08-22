@@ -1,10 +1,9 @@
 {
-  "name":    "velge",
-  "version": "0.8.0",
-  "main":    "velge.js",
-  "dependencies": {},
-  "devDependencies": {
+  "name": "velge",
+  "version": "0.5.0",
+  "main": "velge.js",
+  "dependencies": {
     "jquery": "2.0"
-    "mocha-phantomjs": "3.1.0"
-  }
+  },
+  "devDependencies": { }
 }

@@ -1,23 +1,6 @@
 {
   "name": "velge",
   "version": "0.5.0",
-  "description": "Intelligent tagging",
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "test": "test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/dscout/velge"
-  },
-  "author": "Parker Selbert",
-  "license": "MIT",
-  "readmeFilename": "README.md",
-  "bugs": {
-    "url": "https://github.com/dscout/velge/issues"
-  },
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-concat":   "~0.1.2",
