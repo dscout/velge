@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Velge Test</title>
+    <link rel="stylesheet" href="support/mocha.css" type="text/css" charset="utf-8" />
+  </head>
+
+  <body>
+    <div id="mocha"></div>
+
+    <script src="support/mocha.js" type="text/javascript" charset="utf-8"></script>
+    <script src="support/chai.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+      mocha.setup('bdd');
+      var expect = chai.expect;
+    </script>
+
+    <script src="spec/velge_spec.js" type="text/javascript" charset="utf-8"></script>
+
+    <script type="text/javascript" charset="utf-8">
+      if (navigator.userAgent.indexOf('PhantomJS') < 0) {
+        mocha.run();
+      }
+    </script>
+  </body>
+</html>
