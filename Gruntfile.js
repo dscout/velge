@@ -1,4 +1,3 @@
-/*global module:false*/
 module.exports = function(grunt) {
 
   grunt.initConfig({
@@ -39,11 +38,11 @@ module.exports = function(grunt) {
     }
   });
 
-  // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-mocha');
 
-  // Default task.
-  grunt.registerTask('default', ['coffee:compile', 'mocha', 'uglify']);
+  grunt.registerTask('test',    ['coffee:compile', 'mocha']);
+  grunt.registerTask('default', ['test']);
+  grunt.registerTask('release', ['coffee:compile', 'mocha', 'uglify']);
 };
