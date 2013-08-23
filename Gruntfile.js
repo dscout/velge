@@ -10,7 +10,7 @@ module.exports = function(grunt) {
           join: true
         },
         files: {
-          'dist/velge.js': ['lib/velge.coffee', 'lib/store.coffee'],
+          'velge.js': ['lib/velge.coffee', 'lib/store.coffee'],
           'test/velge_test.js': ['test/store_test.coffee', 'test/velge_test.coffee']
         }
       }
@@ -21,8 +21,8 @@ module.exports = function(grunt) {
         report: 'min'
       },
       dist: {
-        src: 'dist/velge.js',
-        dest: 'dist/velge.min.js'
+        src: 'velge.js',
+        dest: 'velge.min.js'
       }
     },
 
