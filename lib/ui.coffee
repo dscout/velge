@@ -57,28 +57,26 @@ class Velge.UI
           self.blurInput()
           self.closeDropdown()
         when keycodes.DOWN
+          event.preventDefault()
           self.openDropdown()
           self.cycle('down')
           self.renderHighlighted()
+          self.autoComplete()
         when keycodes.UP
+          event.preventDefault()
           self.openDropdown()
           self.cycle('up')
           self.renderHighlighted()
+          self.autoComplete()
+        when keycodes.LEFT, keycodes.RIGHT
+          # Stop this from bubbling up while editing
+          event.stopPropagation()
         else
           callback = ->
             self.index = -1
             self.filterChoices(self.$input.val())
           setTimeout(callback, 10)
           self.openDropdown()
-
-    @$wrapper.on 'click.velge', ->
-      self.$input.focus() unless self.$input.is(':focus')
-
-    @$wrapper.on 'click.velge', '.velge-list .remove', (event) ->
-      $target = $(event.currentTarget).parent().find('.name')
-      self.unchoose($target.text())
-      self.renderChoices()
-      self.renderChosen()
 
     @$wrapper.on 'blur.velge', '.velge-input', (event) ->
       clearTimeout(self.closeTimeout)
@@ -89,9 +87,21 @@ class Velge.UI
 
       self.closeTimeout = setTimeout(callback, 75)
 
+    @$wrapper.on 'click.velge', ->
+      self.$input.focus() unless self.$input.is(':focus')
+      false
+
+    @$wrapper.on 'click.velge', '.velge-list .remove', (event) ->
+      $target = $(event.currentTarget).parent().find('.name')
+      self.unchoose($target.text())
+      self.renderChoices()
+      self.renderChosen()
+      false
+
     @$wrapper.on 'click.velge', '.velge-trigger', (event) ->
       clearTimeout(self.closeTimeout)
       self.toggleDropdown()
+      false
 
     @$wrapper.on 'click.velge', '.velge-dropdown li', (event) ->
       $target = $(event.currentTarget)
@@ -99,6 +109,7 @@ class Velge.UI
       self.renderChoices()
       self.renderChosen()
       self.closeDropdown()
+      false
 
   choose: (name) ->
     @store.update({ name: name }, { chosen: true })
@@ -146,6 +157,7 @@ class Velge.UI
 
   closeDropdown: ->
     @$dropdown.removeClass('open')
+    @index = -1
 
   toggleDropdown: ->
     if @$dropdown.hasClass('open')
@@ -173,3 +185,8 @@ class Velge.UI
         (@index + (length - 1)) % length
     else
       @index = -1
+
+  autoComplete: ->
+    $highlighted = @$dropdown.find('.highlighted')
+
+    @$input.val($highlighted.text())

@@ -15,11 +15,12 @@ class window.Velge
     @
 
   addChosen: (choice) ->
-    choice.chosen = true
-    @store.push(choice)
+    chosen = @store.find(choice) || choice
+    chosen.chosen = true
+    @store.push(chosen)
     @ui.renderChosen()
     @ui.renderChoices()
-    @_applyCallbacks(choice, @addCallbacks)
+    @_applyCallbacks(chosen, @addCallbacks)
     @
 
   addChoice: (choice) ->
