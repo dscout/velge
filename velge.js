@@ -114,8 +114,16 @@
               self.index = -1;
               return self.filterChoices(self.$input.val());
             };
-            return setTimeout(callback, 10);
+            setTimeout(callback, 10);
+            return self.openDropdown();
         }
+      });
+      this.$wrapper.on('click.velge', '.velge-list .remove', function(event) {
+        var $target;
+        $target = $(event.currentTarget).parent().find('.name');
+        self.unchoose($target.text());
+        self.renderChoices();
+        return self.renderChosen();
       });
       this.$wrapper.on('blur.velge', '.velge-input', function(event) {
         var callback;
@@ -127,7 +135,8 @@
         return self.closeTimeout = setTimeout(callback, 75);
       });
       this.$wrapper.on('click.velge', '.velge-trigger', function(event) {
-        return self.openDropdown();
+        clearTimeout(self.closeTimeout);
+        return self.toggleDropdown();
       });
       return this.$wrapper.on('click.velge', '.velge-dropdown li', function(event) {
         var $target;
@@ -144,6 +153,14 @@
         name: name
       }, {
         chosen: true
+      });
+    };
+
+    UI.prototype.unchoose = function(name) {
+      return this.store.update({
+        name: name
+      }, {
+        chosen: false
       });
     };
 
@@ -211,8 +228,16 @@
       return this.$dropdown.removeClass('open');
     };
 
+    UI.prototype.toggleDropdown = function() {
+      if (this.$dropdown.hasClass('open')) {
+        return this.closeDropdown();
+      } else {
+        return this.openDropdown();
+      }
+    };
+
     UI.prototype.blurInput = function() {
-      return this.$input.blur();
+      return this.$input.val('');
     };
 
     UI.prototype.filterChoices = function(value) {

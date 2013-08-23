@@ -249,7 +249,7 @@
         return expect($dropdown).to.not.have["class"]('open');
       });
     });
-    return describe('choice matching', function() {
+    describe('choice matching', function() {
       beforeEach(function() {
         velge = new Velge($container, {
           choices: [
@@ -271,6 +271,29 @@
           expect($('.velge-dropdown li:visible').length).to.eq(2);
           return done();
         }), 11);
+      });
+    });
+    return describe('removing chosen', function() {
+      beforeEach(function() {
+        return velge = new Velge($container, {
+          chosen: [
+            {
+              name: 'apple'
+            }, {
+              name: 'apricot'
+            }, {
+              name: 'orange'
+            }
+          ]
+        }).setup();
+      });
+      return it('removes the choice from the chosen list', function() {
+        var $list;
+        $list = $('.velge-list', $container);
+        $dropdown = $('.velge-dropdown', $container);
+        $('li:contains(apple) .remove', $list).click();
+        expect($list).to.not.contain('apple');
+        return expect($dropdown).to.contain('apple');
       });
     });
   });

@@ -164,3 +164,20 @@ describe 'Velge.UI', ->
         expect($('.velge-dropdown li:visible').length).to.eq(2)
         done()
       ), 11)
+
+  describe 'removing chosen', ->
+    beforeEach ->
+      velge = new Velge($container, chosen: [
+        { name: 'apple'   }
+        { name: 'apricot' }
+        { name: 'orange'  }
+      ]).setup()
+
+    it 'removes the choice from the chosen list', ->
+      $list = $('.velge-list', $container)
+      $dropdown = $('.velge-dropdown', $container)
+
+      $('li:contains(apple) .remove', $list).click()
+
+      expect($list).to.not.contain('apple')
+      expect($dropdown).to.contain('apple')

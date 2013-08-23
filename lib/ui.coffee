@@ -65,6 +65,13 @@ class Velge.UI
             self.index = -1
             self.filterChoices(self.$input.val())
           setTimeout(callback, 10)
+          self.openDropdown()
+
+    @$wrapper.on 'click.velge', '.velge-list .remove', (event) ->
+      $target = $(event.currentTarget).parent().find('.name')
+      self.unchoose($target.text())
+      self.renderChoices()
+      self.renderChosen()
 
     @$wrapper.on 'blur.velge', '.velge-input', (event) ->
       clearTimeout(self.closeTimeout)
@@ -76,7 +83,8 @@ class Velge.UI
       self.closeTimeout = setTimeout(callback, 75)
 
     @$wrapper.on 'click.velge', '.velge-trigger', (event) ->
-      self.openDropdown()
+      clearTimeout(self.closeTimeout)
+      self.toggleDropdown()
 
     @$wrapper.on 'click.velge', '.velge-dropdown li', (event) ->
       $target = $(event.currentTarget)
@@ -87,6 +95,9 @@ class Velge.UI
 
   choose: (name) ->
     @store.update({ name: name }, { chosen: true })
+
+  unchoose: (name) ->
+    @store.update({ name: name }, { chosen: false })
 
   render: ->
     @$wrapper  = $(@wrapTemplate)
@@ -122,8 +133,14 @@ class Velge.UI
   closeDropdown: ->
     @$dropdown.removeClass('open')
 
+  toggleDropdown: ->
+    if @$dropdown.hasClass('open')
+      @closeDropdown()
+    else
+      @openDropdown()
+
   blurInput: ->
-    @$input.blur()
+    @$input.val('')
 
   filterChoices: (value) ->
     matching = @store.fuzzy(value)
