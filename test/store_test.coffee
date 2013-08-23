@@ -16,6 +16,16 @@ describe 'Velge.Store', ->
       expect(store.normalize(undefined)).to.eq('undefined')
       expect(store.normalize(1)).to.eq('1')
 
+  describe '#validate', ->
+    beforeEach ->
+      store = new Velge.Store()
+
+    it 'is true for valid values', ->
+      expect(store.validate('apple')).to.be.true
+
+    it 'is false for invalid values', ->
+      expect(store.validate(' ')).to.be.false
+
   describe '#push', ->
     beforeEach ->
       store = new Velge.Store()

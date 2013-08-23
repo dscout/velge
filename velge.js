@@ -19,6 +19,7 @@
       choice.chosen = true;
       this.store.push(choice);
       this.ui.renderChosen();
+      this.ui.renderChoices();
       return this;
     };
 
@@ -125,6 +126,12 @@
           case keycodes.ESCAPE:
             self.closeDropdown();
             return self.$input.val('');
+          case keycodes.COMMA:
+          case keycodes.ENTER:
+          case keycodes.TAB:
+            self.submit(self.$input.val());
+            self.blurInput();
+            return self.closeDropdown();
           case keycodes.DOWN:
             self.openDropdown();
             self.cycle('down');
@@ -185,6 +192,15 @@
         name: name
       }, {
         chosen: false
+      });
+    };
+
+    UI.prototype.submit = function(name) {
+      if (!this.store.validate(name)) {
+        return false;
+      }
+      return this.velge.addChosen({
+        name: name
       });
     };
 
@@ -314,6 +330,10 @@
 
     Store.prototype.sanitize = function(value) {
       return value.replace(/[-[\]{}()*+?.,\\^$|#]/g, "\\$&");
+    };
+
+    Store.prototype.validate = function(value) {
+      return !/^\s*$/.test(value);
     };
 
     Store.prototype.push = function(choice) {

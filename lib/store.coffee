@@ -15,6 +15,9 @@ class Velge.Store
   sanitize: (value) ->
     value.replace(/[-[\]{}()*+?.,\\^$|#]/g, "\\$&")
 
+  validate: (value) ->
+    !/^\s*$/.test(value)
+
   push: (choice) ->
     choice.name = @normalize(choice.name)
     choice.chosen ||= false

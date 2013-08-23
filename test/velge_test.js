@@ -18,6 +18,17 @@
         return expect(store.normalize(1)).to.eq('1');
       });
     });
+    describe('#validate', function() {
+      beforeEach(function() {
+        return store = new Velge.Store();
+      });
+      it('is true for valid values', function() {
+        return expect(store.validate('apple')).to.be["true"];
+      });
+      return it('is false for invalid values', function() {
+        return expect(store.validate(' ')).to.be["false"];
+      });
+    });
     describe('#push', function() {
       beforeEach(function() {
         return store = new Velge.Store();
@@ -79,7 +90,7 @@
   });
 
   describe('Velge.UI', function() {
-    var $container, $dropdown, $input, $trigger, press, template, velge;
+    var $container, $dropdown, $input, $list, $trigger, press, template, velge;
     press = function($input, name) {
       var key;
       key = (function() {
@@ -108,8 +119,9 @@
     };
     velge = null;
     $container = null;
-    $input = null;
     $dropdown = null;
+    $input = null;
+    $list = null;
     $trigger = null;
     template = '<div class="container"></div>';
     beforeEach(function() {
@@ -240,7 +252,6 @@
         return $('.velge-trigger', $container).trigger('click');
       });
       return it('clicking marks a choice as chosen', function() {
-        var $list;
         $dropdown = $('.velge-dropdown', $container);
         $list = $('.velge-list', $container);
         $('li:contains(kiwi)', $container).click();
@@ -273,7 +284,7 @@
         }), 11);
       });
     });
-    return describe('removing chosen', function() {
+    describe('removing chosen', function() {
       beforeEach(function() {
         return velge = new Velge($container, {
           chosen: [
@@ -288,12 +299,53 @@
         }).setup();
       });
       return it('removes the choice from the chosen list', function() {
-        var $list;
         $list = $('.velge-list', $container);
         $dropdown = $('.velge-dropdown', $container);
         $('li:contains(apple) .remove', $list).click();
         expect($list).to.not.contain('apple');
         return expect($dropdown).to.contain('apple');
+      });
+    });
+    return describe('choice selection', function() {
+      beforeEach(function() {
+        velge = new Velge($container, {
+          choices: [
+            {
+              name: 'apple'
+            }, {
+              name: 'apricot'
+            }, {
+              name: 'orange'
+            }
+          ]
+        }).setup();
+        $input = $('.velge-input', $container);
+        return $list = $('.velge-list', $container);
+      });
+      it('does not add blank input', function() {
+        $input.val('');
+        press($input, 'enter');
+        return expect($('li', $list).length).to.eq(0);
+      });
+      it('adds choices on "enter"', function() {
+        $input.val('plum');
+        press($input, 'enter');
+        return expect($list).to.contain('plum');
+      });
+      it('adds choices on "comma"', function() {
+        $input.val('plum');
+        press($input, ',');
+        return expect($list).to.contain('plum');
+      });
+      it('adds choices on "tab"', function() {
+        $input.val('plum');
+        press($input, 'tab');
+        return expect($list).to.contain('plum');
+      });
+      return it('clears the input', function() {
+        $input.val('plum');
+        press($input, 'enter');
+        return expect($input).to.have.value('');
       });
     });
   });

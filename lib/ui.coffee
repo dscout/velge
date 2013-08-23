@@ -52,6 +52,10 @@ class Velge.UI
         when keycodes.ESCAPE
           self.closeDropdown()
           self.$input.val('')
+        when keycodes.COMMA, keycodes.ENTER, keycodes.TAB
+          self.submit(self.$input.val())
+          self.blurInput()
+          self.closeDropdown()
         when keycodes.DOWN
           self.openDropdown()
           self.cycle('down')
@@ -98,6 +102,11 @@ class Velge.UI
 
   unchoose: (name) ->
     @store.update({ name: name }, { chosen: false })
+
+  submit: (name) ->
+    return false unless @store.validate(name)
+
+    @velge.addChosen(name: name)
 
   render: ->
     @$wrapper  = $(@wrapTemplate)

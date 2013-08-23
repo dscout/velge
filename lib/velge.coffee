@@ -15,6 +15,7 @@ class window.Velge
     choice.chosen = true
     @store.push(choice)
     @ui.renderChosen()
+    @ui.renderChoices()
     @
 
   addChoice: (choice) ->
