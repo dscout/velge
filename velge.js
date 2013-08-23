@@ -18,11 +18,13 @@
     };
 
     Velge.prototype.addChosen = function(choice) {
-      choice.chosen = true;
-      this.store.push(choice);
+      var chosen;
+      chosen = this.store.find(choice) || choice;
+      chosen.chosen = true;
+      this.store.push(chosen);
       this.ui.renderChosen();
       this.ui.renderChoices();
-      this._applyCallbacks(choice, this.addCallbacks);
+      this._applyCallbacks(chosen, this.addCallbacks);
       return this;
     };
 
@@ -157,13 +159,20 @@
             self.blurInput();
             return self.closeDropdown();
           case keycodes.DOWN:
+            event.preventDefault();
             self.openDropdown();
             self.cycle('down');
-            return self.renderHighlighted();
+            self.renderHighlighted();
+            return self.autoComplete();
           case keycodes.UP:
+            event.preventDefault();
             self.openDropdown();
             self.cycle('up');
-            return self.renderHighlighted();
+            self.renderHighlighted();
+            return self.autoComplete();
+          case keycodes.LEFT:
+          case keycodes.RIGHT:
+            return event.stopPropagation();
           default:
             callback = function() {
               self.index = -1;
@@ -172,18 +181,6 @@
             setTimeout(callback, 10);
             return self.openDropdown();
         }
-      });
-      this.$wrapper.on('click.velge', function() {
-        if (!self.$input.is(':focus')) {
-          return self.$input.focus();
-        }
-      });
-      this.$wrapper.on('click.velge', '.velge-list .remove', function(event) {
-        var $target;
-        $target = $(event.currentTarget).parent().find('.name');
-        self.unchoose($target.text());
-        self.renderChoices();
-        return self.renderChosen();
       });
       this.$wrapper.on('blur.velge', '.velge-input', function(event) {
         var callback;
@@ -194,9 +191,24 @@
         };
         return self.closeTimeout = setTimeout(callback, 75);
       });
+      this.$wrapper.on('click.velge', function() {
+        if (!self.$input.is(':focus')) {
+          self.$input.focus();
+        }
+        return false;
+      });
+      this.$wrapper.on('click.velge', '.velge-list .remove', function(event) {
+        var $target;
+        $target = $(event.currentTarget).parent().find('.name');
+        self.unchoose($target.text());
+        self.renderChoices();
+        self.renderChosen();
+        return false;
+      });
       this.$wrapper.on('click.velge', '.velge-trigger', function(event) {
         clearTimeout(self.closeTimeout);
-        return self.toggleDropdown();
+        self.toggleDropdown();
+        return false;
       });
       return this.$wrapper.on('click.velge', '.velge-dropdown li', function(event) {
         var $target;
@@ -204,7 +216,8 @@
         self.choose($target.text());
         self.renderChoices();
         self.renderChosen();
-        return self.closeDropdown();
+        self.closeDropdown();
+        return false;
       });
     };
 
@@ -300,7 +313,8 @@
     };
 
     UI.prototype.closeDropdown = function() {
-      return this.$dropdown.removeClass('open');
+      this.$dropdown.removeClass('open');
+      return this.index = -1;
     };
 
     UI.prototype.toggleDropdown = function() {
@@ -333,6 +347,12 @@
       } else {
         return this.index = -1;
       }
+    };
+
+    UI.prototype.autoComplete = function() {
+      var $highlighted;
+      $highlighted = this.$dropdown.find('.highlighted');
+      return this.$input.val($highlighted.text());
     };
 
     return UI;
@@ -402,7 +422,7 @@
     };
 
     Store.prototype.find = function(toFind) {
-      return this.map[toFind.name];
+      return this.map[this.normalize(toFind.name)];
     };
 
     Store.prototype.fuzzy = function(value) {
