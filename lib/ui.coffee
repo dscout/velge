@@ -20,8 +20,8 @@ class Velge.UI
 
   chosenTemplate: """
     <li>
-      <b>{{name}}</b>
-      <i>&times;</i>
+      <span class='name'>{{name}}</span>
+      <span class='remove'>&times;</span>
     </li>
   """
 
