@@ -6,11 +6,12 @@ module.exports = function(grunt) {
     coffee: {
       compile: {
         options: {
-          bare: false
+          bare: false,
+          join: true
         },
         files: {
-          'dist/<%= pkg.name %>.js': 'lib/<%= pkg.name %>.coffee',
-          'test/velge_test.js': 'test/velge_test.coffee'
+          'dist/velge.js': ['lib/velge.coffee', 'lib/store.coffee'],
+          'test/velge_test.js': ['test/store_test.coffee', 'test/velge_test.coffee']
         }
       }
     },
