@@ -10,7 +10,7 @@ module.exports = function(grunt) {
         },
         files: {
           'dist/<%= pkg.name %>.js': 'lib/<%= pkg.name %>.coffee',
-          'test/spec/velge_spec.js': 'test/spec/velge_spec.coffee'
+          'test/velge_test.js': 'test/velge_test.coffee'
         }
       }
     },
@@ -38,7 +38,7 @@ module.exports = function(grunt) {
     },
 
     watch: {
-      files: ['lib/*.coffee', 'test/spec/*.coffee'],
+      files: ['lib/*.coffee', 'test/*.coffee'],
       tasks: ['coffee:compile']
     }
   });
