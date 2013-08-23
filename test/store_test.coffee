@@ -51,3 +51,7 @@ describe 'Velge.Store', ->
 
     it 'sanitizes to prevent matching errors', ->
       expect(store.fuzzy('{}[]()*+').length).to.eq(0)
+
+    it 'matches all choices without any value', ->
+      expect(store.fuzzy('').length).to.eq(3)
+      expect(store.fuzzy('  ').length).to.eq(3)

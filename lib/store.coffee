@@ -13,7 +13,7 @@ class Velge.Store
     String(value).toLowerCase().replace(/(^\s*|\s*$)/g, '')
 
   sanitize: (value) ->
-    value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
+    value.replace(/[-[\]{}()*+?.,\\^$|#]/g, "\\$&")
 
   push: (choice) ->
     choice.name = @normalize(choice.name)

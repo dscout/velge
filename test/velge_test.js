@@ -68,8 +68,12 @@
         expect(store.fuzzy('pp').length).to.eq(2);
         return expect(store.fuzzy('PP').length).to.eq(2);
       });
-      return it('sanitizes to prevent matching errors', function() {
+      it('sanitizes to prevent matching errors', function() {
         return expect(store.fuzzy('{}[]()*+').length).to.eq(0);
+      });
+      return it('matches all choices without any value', function() {
+        expect(store.fuzzy('').length).to.eq(3);
+        return expect(store.fuzzy('  ').length).to.eq(3);
       });
     });
   });
