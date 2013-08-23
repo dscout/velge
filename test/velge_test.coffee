@@ -15,15 +15,6 @@ describe 'Velge', ->
 
       expect(velge.setup()).to.be(velge)
 
-    it 'injects the velge structure into the container', ->
-      velge = new Velge($container).setup()
-
-      expect($container).to.have('.velge')
-      expect($container).to.have('.velge-list')
-      expect($container).to.have('.velge-input')
-      expect($container).to.have('.velge-trigger')
-      expect($container).to.have('.velge-dropdown')
-
     it 'renders all provided choices', ->
       velge = new Velge($container,
         chosen:  [{ name: 'apple' }, { name: 'melon' }]
@@ -96,3 +87,45 @@ describe 'Velge', ->
 
       expect($('.velge-list', $container)).to.not.contain('apple')
       expect($('.velge-dropdown', $container)).to.contain('apple')
+
+  describe '#onAdd', ->
+    beforeEach ->
+      velge = new Velge($container).setup()
+
+    it 'returns itself for chaining', ->
+      expect(velge.onAdd()).to.be(velge)
+
+    it 'performs all callbacks when choices are added', ->
+      spyA = sinon.spy()
+      spyB = sinon.spy()
+
+      velge
+        .onAdd(spyA)
+        .onAdd(spyB)
+
+      velge.addChosen(name: 'persimon')
+
+      expect(spyA.called).to.be.true
+      expect(spyB.called).to.be.true
+
+  describe '#onRem', ->
+    beforeEach ->
+      velge = new Velge($container, chosen: [
+        { name: 'persimon' }
+      ]).setup()
+
+    it 'returns itself for chaining', ->
+      expect(velge.onRem()).to.be(velge)
+
+    it 'performs all callbacks when choices are added', ->
+      spyA = sinon.spy()
+      spyB = sinon.spy()
+
+      velge
+        .onRem(spyA)
+        .onRem(spyB)
+
+      velge.remChosen(name: 'persimon')
+
+      expect(spyA.called).to.be.true
+      expect(spyB.called).to.be.true

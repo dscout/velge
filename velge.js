@@ -6,6 +6,8 @@
       }
       this.store = new Velge.Store();
       this.ui = new Velge.UI($container, this, this.store);
+      this.addCallbacks = [];
+      this.remCallbacks = [];
       this._preloadChoices(options.chosen || [], true);
       this._preloadChoices(options.choices || [], false);
     }
@@ -20,17 +22,12 @@
       this.store.push(choice);
       this.ui.renderChosen();
       this.ui.renderChoices();
+      this._applyCallbacks(choice, this.addCallbacks);
       return this;
     };
 
     Velge.prototype.addChoice = function(choice) {
       this.store.push(choice);
-      this.ui.renderChoices();
-      return this;
-    };
-
-    Velge.prototype.remChoice = function(choice) {
-      this.store["delete"](choice);
       this.ui.renderChoices();
       return this;
     };
@@ -41,6 +38,23 @@
       });
       this.ui.renderChosen();
       this.ui.renderChoices();
+      this._applyCallbacks(choice, this.remCallbacks);
+      return this;
+    };
+
+    Velge.prototype.remChoice = function(choice) {
+      this.store["delete"](choice);
+      this.ui.renderChoices();
+      return this;
+    };
+
+    Velge.prototype.onAdd = function(callback) {
+      this.addCallbacks.push(callback);
+      return this;
+    };
+
+    Velge.prototype.onRem = function(callback) {
+      this.remCallbacks.push(callback);
       return this;
     };
 
@@ -51,6 +65,16 @@
         choice = choices[_i];
         choice.chosen = isChosen;
         _results.push(this.store.push(choice));
+      }
+      return _results;
+    };
+
+    Velge.prototype._applyCallbacks = function(choice, callbacks) {
+      var callback, _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = callbacks.length; _i < _len; _i++) {
+        callback = callbacks[_i];
+        _results.push(callback.call(choice, this));
       }
       return _results;
     };

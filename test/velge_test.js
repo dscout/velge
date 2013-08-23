@@ -130,6 +130,16 @@
     afterEach(function() {
       return $('#sandbox').empty();
     });
+    describe('#render', function() {
+      return it('injects the velge structure into the container', function() {
+        velge = new Velge($container).setup();
+        expect($container).to.have('.velge');
+        expect($container).to.have('.velge-list');
+        expect($container).to.have('.velge-input');
+        expect($container).to.have('.velge-trigger');
+        return expect($container).to.have('.velge-dropdown');
+      });
+    });
     describe('choice dropdown', function() {
       beforeEach(function() {
         return velge = new Velge($container, {
@@ -366,14 +376,6 @@
         velge = new Velge($container);
         return expect(velge.setup()).to.be(velge);
       });
-      it('injects the velge structure into the container', function() {
-        velge = new Velge($container).setup();
-        expect($container).to.have('.velge');
-        expect($container).to.have('.velge-list');
-        expect($container).to.have('.velge-input');
-        expect($container).to.have('.velge-trigger');
-        return expect($container).to.have('.velge-dropdown');
-      });
       return it('renders all provided choices', function() {
         velge = new Velge($container, {
           chosen: [
@@ -465,7 +467,7 @@
         return expect($('.velge-dropdown', $container)).to.not.contain('apple');
       });
     });
-    return describe('#remChosen', function() {
+    describe('#remChosen', function() {
       beforeEach(function() {
         return velge = new Velge($container, {
           chosen: [
@@ -481,6 +483,50 @@
         });
         expect($('.velge-list', $container)).to.not.contain('apple');
         return expect($('.velge-dropdown', $container)).to.contain('apple');
+      });
+    });
+    describe('#onAdd', function() {
+      beforeEach(function() {
+        return velge = new Velge($container).setup();
+      });
+      it('returns itself for chaining', function() {
+        return expect(velge.onAdd()).to.be(velge);
+      });
+      return it('performs all callbacks when choices are added', function() {
+        var spyA, spyB;
+        spyA = sinon.spy();
+        spyB = sinon.spy();
+        velge.onAdd(spyA).onAdd(spyB);
+        velge.addChosen({
+          name: 'persimon'
+        });
+        expect(spyA.called).to.be["true"];
+        return expect(spyB.called).to.be["true"];
+      });
+    });
+    return describe('#onRem', function() {
+      beforeEach(function() {
+        return velge = new Velge($container, {
+          chosen: [
+            {
+              name: 'persimon'
+            }
+          ]
+        }).setup();
+      });
+      it('returns itself for chaining', function() {
+        return expect(velge.onRem()).to.be(velge);
+      });
+      return it('performs all callbacks when choices are added', function() {
+        var spyA, spyB;
+        spyA = sinon.spy();
+        spyB = sinon.spy();
+        velge.onRem(spyA).onRem(spyB);
+        velge.remChosen({
+          name: 'persimon'
+        });
+        expect(spyA.called).to.be["true"];
+        return expect(spyB.called).to.be["true"];
       });
     });
   });

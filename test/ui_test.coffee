@@ -26,6 +26,16 @@ describe 'Velge.UI', ->
   afterEach ->
     $('#sandbox').empty()
 
+  describe '#render', ->
+    it 'injects the velge structure into the container', ->
+      velge = new Velge($container).setup()
+
+      expect($container).to.have('.velge')
+      expect($container).to.have('.velge-list')
+      expect($container).to.have('.velge-input')
+      expect($container).to.have('.velge-trigger')
+      expect($container).to.have('.velge-dropdown')
+
   describe 'choice dropdown', ->
     beforeEach ->
       velge = new Velge($container, choices: [{ name: 'apple' }]).setup()

@@ -8,6 +8,7 @@
   "devDependencies": {
     "chai":        "~1.7.2",
     "chai-jquery": "~1.1.1",
-    "mocha":       "~1.12.0"
+    "mocha":       "~1.12.0",
+    "sinon":       "http://sinonjs.org/releases/sinon-1.7.1.js"
   }
 }
