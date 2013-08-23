@@ -1,17 +1,4 @@
 describe 'Velge', ->
-  press = ($input, name) ->
-    key = switch name
-      when 'backspace' then 8
-      when 'tab'       then 9
-      when 'enter'     then 13
-      when 'escape'    then 27
-      when 'space'     then 32
-      when 'up'        then 38
-      when 'down'      then 40
-      when ','         then 188
-
-    $input.trigger($.Event('keydown', { which: key }))
-
   velge      = null
   $container = null
   template   = '<div class="container"></div>'
@@ -37,35 +24,34 @@ describe 'Velge', ->
       expect($container).to.have('.velge-trigger')
       expect($container).to.have('.velge-dropdown')
 
-  describe '#setup', ->
     it 'renders all provided choices', ->
       velge = new Velge($container,
-        chosen:  [{ name: 'Apple' }, { name: 'Melon' }]
-        choices: [{ name: 'Banana' }]
+        chosen:  [{ name: 'apple' }, { name: 'melon' }]
+        choices: [{ name: 'banana' }]
       ).setup()
 
-      expect($('.velge-list', $container)).to.contain('Apple')
-      expect($('.velge-list', $container)).to.contain('Melon')
-      expect($('.velge-dropdown', $container)).to.contain('Banana')
+      expect($('.velge-list', $container)).to.contain('apple')
+      expect($('.velge-list', $container)).to.contain('melon')
+      expect($('.velge-dropdown', $container)).to.contain('banana')
 
   describe '#addChoice', ->
     beforeEach ->
       velge = new Velge($container).setup()
 
     it 'preopulates the dropdown menu with supplied choices', ->
-      velge.addChoice(name: 'Banana')
+      velge.addChoice(name: 'banana')
 
-      expect($('.velge-dropdown', $container)).to.contain('Banana')
+      expect($('.velge-dropdown', $container)).to.contain('banana')
 
     it 'maintains choices in alphabetical order', ->
       velge
-        .addChoice(name: 'Watermelon')
-        .addChoice(name: 'Banana')
-        .addChoice(name: 'Kiwi')
+        .addChoice(name: 'watermelon')
+        .addChoice(name: 'banana')
+        .addChoice(name: 'kiwi')
 
-      expect($('.velge-dropdown li', $container).eq(0).text()).to.contain('Banana')
-      expect($('.velge-dropdown li', $container).eq(1).text()).to.contain('Kiwi')
-      expect($('.velge-dropdown li', $container).eq(2).text()).to.contain('Watermelon')
+      expect($('.velge-dropdown li', $container).eq(0).text()).to.contain('banana')
+      expect($('.velge-dropdown li', $container).eq(1).text()).to.contain('kiwi')
+      expect($('.velge-dropdown li', $container).eq(2).text()).to.contain('watermelon')
 
     it 'does not display duplicate choices', ->
       velge
@@ -88,125 +74,25 @@ describe 'Velge', ->
       velge = new Velge($container).setup()
 
     it 'populates the chosen list with supplied tags', ->
-      velge.addChosen(name: 'Apple')
+      velge.addChosen(name: 'apple')
 
-      expect($('.velge-list', $container)).to.contain('Apple')
+      expect($('.velge-list', $container)).to.contain('apple')
 
   describe '#remChoice', ->
     beforeEach ->
-      velge = new Velge($container, choices: [{ name: 'Apple' }]).setup()
+      velge = new Velge($container, choices: [{ name: 'apple' }]).setup()
 
     it 'removes the choice', ->
-      velge.remChoice(name: 'Apple')
+      velge.remChoice(name: 'apple')
 
-      expect($('.velge-dropdown', $container)).to.not.contain('Apple')
+      expect($('.velge-dropdown', $container)).to.not.contain('apple')
 
   describe '#remChosen', ->
     beforeEach ->
-      velge = new Velge($container, chosen: [{ name: 'Apple' }]).setup()
+      velge = new Velge($container, chosen: [{ name: 'apple' }]).setup()
 
     it 'removes the chosen status, returning it to the list of choices', ->
-      velge.remChosen(name: 'Apple')
+      velge.remChosen(name: 'apple')
 
-      expect($('.velge-list', $container)).to.not.contain('Apple')
-      expect($('.velge-dropdown', $container)).to.contain('Apple')
-
-  describe '$dropdown', ->
-    beforeEach ->
-      velge = new Velge($container, choices: [{ name: 'Apple' }]).setup()
-
-    it 'opens the dropdown when down is pressed', ->
-      $input    = $('.velge-input', $container)
-      $dropdown = $('.velge-dropdown', $container)
-
-      press($input, 'down')
-
-      expect($dropdown).to.have.class('open')
-
-    it 'opens the dropdown on trigger click', ->
-      $trigger  = $('.velge-trigger', $container)
-      $dropdown = $('.velge-dropdown', $container)
-
-      $trigger.trigger('click')
-
-      expect($dropdown).to.have.class('open')
-
-    it 'does not open the dropdown when down is pressed', ->
-      velge.remChoice(name: 'Apple')
-
-      $input    = $('.velge-input', $container)
-      $trigger  = $('.velge-trigger', $container)
-      $dropdown = $('.velge-dropdown', $container)
-
-      press($input, 'down')
-      expect($dropdown).to.not.have.class('open')
-
-      $trigger.trigger('click')
-      expect($dropdown).to.not.have.class('open')
-
-    it 'closes the dropdown on input blur', ->
-      $dropdown = $('.velge-dropdown', $container)
-      $input    = $('.velge-input', $container)
-      $trigger  = $('.velge-trigger', $container)
-
-      $trigger.trigger('click')
-      $input.trigger($.Event('blur'))
-
-      expect($dropdown).to.not.have.class('open')
-
-    it 'closes on escape', ->
-      $dropdown = $('.velge-dropdown', $container)
-      $input    = $('.velge-input', $container)
-      $trigger  = $('.velge-trigger', $container)
-
-      $trigger.trigger('click')
-      press($input, 'escape')
-
-      expect($dropdown).to.not.have.class('open')
-
-  describe '$input', ->
-    beforeEach ->
-      velge = new Velge($container, chosen: [{ name: 'Apple' }]).setup()
-
-    it 'clears the input on escape', ->
-      $input = $('.velge-input', $container)
-
-      $input.val('apple')
-      press($input, 'escape')
-
-      expect($input).to.have.value('')
-
-  describe 'highlighting', ->
-    $dropdown = null
-    $trigger  = null
-    $input    = null
-
-    beforeEach ->
-      velge = new Velge($container, choices: [
-        { name: 'Apple'  },
-        { name: 'Kiwi'   },
-        { name: 'Orange' }
-      ]).setup()
-
-      $dropdown = $('.velge-dropdown', $container)
-      $input    = $('.velge-input', $container)
-      $trigger  = $('.velge-trigger', $container)
-
-      $trigger.trigger('click')
-
-    it 'does not highlight anything when the dropdown is opened', ->
-      expect($dropdown).to.not.have('.highlighted')
-
-    it 'cycles the highlight down through choices', ->
-      press($input, 'down')
-      expect($('.highlighted', $dropdown)).to.have.text('Apple')
-
-      press($input, 'down')
-      expect($('.highlighted', $dropdown)).to.have.text('Kiwi')
-
-    it 'cycles the highlight up through choices', ->
-      press($input, 'up')
-      expect($('.highlighted', $dropdown)).to.have.text('Kiwi')
-
-      press($input, 'up')
-      expect($('.highlighted', $dropdown)).to.have.text('Apple')
+      expect($('.velge-list', $container)).to.not.contain('apple')
+      expect($('.velge-dropdown', $container)).to.contain('apple')

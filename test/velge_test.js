@@ -1,14 +1,42 @@
 (function() {
   describe('Velge.Store', function() {
+    var store;
+    store = null;
+    describe('#normalize', function() {
+      beforeEach(function() {
+        return store = new Velge.Store();
+      });
+      it('defaults to downcasing input', function() {
+        return expect(store.normalize('Apple')).to.eq('apple');
+      });
+      it('strips leading and trailing whitespace', function() {
+        return expect(store.normalize(' apple ')).to.eq('apple');
+      });
+      return it('is tollerant of non-string input', function() {
+        expect(store.normalize(null)).to.eq('null');
+        expect(store.normalize(void 0)).to.eq('undefined');
+        return expect(store.normalize(1)).to.eq('1');
+      });
+    });
+    describe('#push', function() {
+      beforeEach(function() {
+        return store = new Velge.Store();
+      });
+      return it('normalizes names before storing', function() {
+        store.push({
+          name: 'Apple'
+        });
+        return expect(store.objects()[0].name).to.eq('apple');
+      });
+    });
     describe('#length', function() {
       return it('counts choices with a filter', function() {
-        var store;
         store = new Velge.Store().push({
-          name: 'Apple'
+          name: 'apple'
         }).push({
-          name: 'Kiwi'
+          name: 'kiwi'
         }, true).push({
-          name: 'Orange'
+          name: 'orange'
         });
         expect(store.length()).to.eq(2);
         return expect(store.length(true)).to.eq(3);
@@ -16,40 +44,38 @@
     });
     return describe('#cycle', function() {
       it('iterates the selected index', function() {
-        var store;
         store = new Velge.Store().push({
-          name: 'Apple'
+          name: 'apple'
         }).push({
-          name: 'Kiwi'
+          name: 'kiwi'
         }).push({
-          name: 'Orange'
+          name: 'orange'
         });
         store.cycle();
-        expect(store.selected().name).to.eq('Apple');
+        expect(store.selected().name).to.eq('apple');
         store.cycle();
-        expect(store.selected().name).to.eq('Kiwi');
+        expect(store.selected().name).to.eq('kiwi');
         store.cycle();
         store.cycle();
-        return expect(store.selected().name).to.eq('Apple');
+        return expect(store.selected().name).to.eq('apple');
       });
       return it('skips over chosen objects', function() {
-        var store;
         store = new Velge.Store().push({
-          name: 'Apple'
+          name: 'apple'
         }).push({
-          name: 'Kiwi'
+          name: 'kiwi'
         }, true).push({
-          name: 'Orange'
+          name: 'orange'
         });
         store.cycle();
         store.cycle();
-        return expect(store.selected().name).to.eq('Orange');
+        return expect(store.selected().name).to.eq('orange');
       });
     });
   });
 
-  describe('Velge', function() {
-    var $container, press, template, velge;
+  describe('Velge.UI', function() {
+    var $container, $dropdown, $input, $trigger, press, template, velge;
     press = function($input, name) {
       var key;
       key = (function() {
@@ -78,6 +104,153 @@
     };
     velge = null;
     $container = null;
+    $input = null;
+    $dropdown = null;
+    $trigger = null;
+    template = '<div class="container"></div>';
+    beforeEach(function() {
+      return $container = $(template).appendTo($('#sandbox'));
+    });
+    afterEach(function() {
+      return $('#sandbox').empty();
+    });
+    describe('choice dropdown', function() {
+      beforeEach(function() {
+        return velge = new Velge($container, {
+          choices: [
+            {
+              name: 'apple'
+            }
+          ]
+        }).setup();
+      });
+      it('opens the dropdown when down is pressed', function() {
+        $input = $('.velge-input', $container);
+        $dropdown = $('.velge-dropdown', $container);
+        press($input, 'down');
+        return expect($dropdown).to.have["class"]('open');
+      });
+      it('opens the dropdown on trigger click', function() {
+        $trigger = $('.velge-trigger', $container);
+        $dropdown = $('.velge-dropdown', $container);
+        $trigger.trigger('click');
+        return expect($dropdown).to.have["class"]('open');
+      });
+      it('does not open the dropdown when down is pressed', function() {
+        velge.remChoice({
+          name: 'apple'
+        });
+        $input = $('.velge-input', $container);
+        $trigger = $('.velge-trigger', $container);
+        $dropdown = $('.velge-dropdown', $container);
+        press($input, 'down');
+        expect($dropdown).to.not.have["class"]('open');
+        $trigger.trigger('click');
+        return expect($dropdown).to.not.have["class"]('open');
+      });
+      it('closes the dropdown on input blur', function(done) {
+        this.slow(200);
+        $dropdown = $('.velge-dropdown', $container);
+        $input = $('.velge-input', $container);
+        $trigger = $('.velge-trigger', $container);
+        $trigger.trigger('click');
+        $input.trigger($.Event('blur'));
+        return setTimeout((function() {
+          expect($dropdown).to.not.have["class"]('open');
+          return done();
+        }), 76);
+      });
+      return it('closes on escape', function() {
+        $dropdown = $('.velge-dropdown', $container);
+        $input = $('.velge-input', $container);
+        $trigger = $('.velge-trigger', $container);
+        $trigger.trigger('click');
+        press($input, 'escape');
+        return expect($dropdown).to.not.have["class"]('open');
+      });
+    });
+    describe('clearing input', function() {
+      beforeEach(function() {
+        return velge = new Velge($container, {
+          chosen: [
+            {
+              name: 'apple'
+            }
+          ]
+        }).setup();
+      });
+      return it('clears the input on escape', function() {
+        $input = $('.velge-input', $container);
+        $input.val('apple');
+        press($input, 'escape');
+        return expect($input).to.have.value('');
+      });
+    });
+    describe('highlighting', function() {
+      beforeEach(function() {
+        velge = new Velge($container, {
+          choices: [
+            {
+              name: 'apple'
+            }, {
+              name: 'kiwi'
+            }, {
+              name: 'orange'
+            }
+          ]
+        }).setup();
+        $dropdown = $('.velge-dropdown', $container);
+        $input = $('.velge-input', $container);
+        $trigger = $('.velge-trigger', $container);
+        return $trigger.trigger('click');
+      });
+      it('does not highlight anything when the dropdown is opened', function() {
+        return expect($dropdown).to.not.have('.highlighted');
+      });
+      it('cycles the highlight down through choices', function() {
+        press($input, 'down');
+        expect($('.highlighted', $dropdown)).to.have.text('apple');
+        press($input, 'down');
+        return expect($('.highlighted', $dropdown)).to.have.text('kiwi');
+      });
+      return it('cycles the highlight up through choices', function() {
+        press($input, 'up');
+        expect($('.highlighted', $dropdown)).to.have.text('kiwi');
+        press($input, 'up');
+        return expect($('.highlighted', $dropdown)).to.have.text('apple');
+      });
+    });
+    return describe('choice selection', function() {
+      beforeEach(function() {
+        velge = new Velge($container, {
+          choices: [
+            {
+              name: 'apple'
+            }, {
+              name: 'kiwi'
+            }, {
+              name: 'orange'
+            }
+          ]
+        }).setup();
+        return $('.velge-trigger', $container).trigger('click');
+      });
+      return it('clicking marks a choice as chosen', function() {
+        var $list;
+        $dropdown = $('.velge-dropdown', $container);
+        $list = $('.velge-list', $container);
+        $('li:contains(kiwi)', $container).click();
+        expect($dropdown).to.not.contain('kiwi');
+        expect($list).to.contain('kiwi');
+        return expect($dropdown).to.not.have["class"]('open');
+      });
+    });
+  });
+
+  describe('Velge', function() {
+    var $container, template, velge;
+    velge = null;
+    $container = null;
     template = '<div class="container"></div>';
     beforeEach(function() {
       return $container = $(template).appendTo($('#sandbox'));
@@ -90,7 +263,7 @@
         velge = new Velge($container);
         return expect(velge.setup()).to.be(velge);
       });
-      return it('injects the velge structure into the container', function() {
+      it('injects the velge structure into the container', function() {
         velge = new Velge($container).setup();
         expect($container).to.have('.velge');
         expect($container).to.have('.velge-list');
@@ -98,26 +271,24 @@
         expect($container).to.have('.velge-trigger');
         return expect($container).to.have('.velge-dropdown');
       });
-    });
-    describe('#setup', function() {
       return it('renders all provided choices', function() {
         velge = new Velge($container, {
           chosen: [
             {
-              name: 'Apple'
+              name: 'apple'
             }, {
-              name: 'Melon'
+              name: 'melon'
             }
           ],
           choices: [
             {
-              name: 'Banana'
+              name: 'banana'
             }
           ]
         }).setup();
-        expect($('.velge-list', $container)).to.contain('Apple');
-        expect($('.velge-list', $container)).to.contain('Melon');
-        return expect($('.velge-dropdown', $container)).to.contain('Banana');
+        expect($('.velge-list', $container)).to.contain('apple');
+        expect($('.velge-list', $container)).to.contain('melon');
+        return expect($('.velge-dropdown', $container)).to.contain('banana');
       });
     });
     describe('#addChoice', function() {
@@ -126,21 +297,21 @@
       });
       it('preopulates the dropdown menu with supplied choices', function() {
         velge.addChoice({
-          name: 'Banana'
+          name: 'banana'
         });
-        return expect($('.velge-dropdown', $container)).to.contain('Banana');
+        return expect($('.velge-dropdown', $container)).to.contain('banana');
       });
       it('maintains choices in alphabetical order', function() {
         velge.addChoice({
-          name: 'Watermelon'
+          name: 'watermelon'
         }).addChoice({
-          name: 'Banana'
+          name: 'banana'
         }).addChoice({
-          name: 'Kiwi'
+          name: 'kiwi'
         });
-        expect($('.velge-dropdown li', $container).eq(0).text()).to.contain('Banana');
-        expect($('.velge-dropdown li', $container).eq(1).text()).to.contain('Kiwi');
-        return expect($('.velge-dropdown li', $container).eq(2).text()).to.contain('Watermelon');
+        expect($('.velge-dropdown li', $container).eq(0).text()).to.contain('banana');
+        expect($('.velge-dropdown li', $container).eq(1).text()).to.contain('kiwi');
+        return expect($('.velge-dropdown li', $container).eq(2).text()).to.contain('watermelon');
       });
       it('does not display duplicate choices', function() {
         velge.addChoice({
@@ -169,9 +340,9 @@
       });
       return it('populates the chosen list with supplied tags', function() {
         velge.addChosen({
-          name: 'Apple'
+          name: 'apple'
         });
-        return expect($('.velge-list', $container)).to.contain('Apple');
+        return expect($('.velge-list', $container)).to.contain('apple');
       });
     });
     describe('#remChoice', function() {
@@ -179,146 +350,34 @@
         return velge = new Velge($container, {
           choices: [
             {
-              name: 'Apple'
+              name: 'apple'
             }
           ]
         }).setup();
       });
       return it('removes the choice', function() {
         velge.remChoice({
-          name: 'Apple'
+          name: 'apple'
         });
-        return expect($('.velge-dropdown', $container)).to.not.contain('Apple');
+        return expect($('.velge-dropdown', $container)).to.not.contain('apple');
       });
     });
-    describe('#remChosen', function() {
+    return describe('#remChosen', function() {
       beforeEach(function() {
         return velge = new Velge($container, {
           chosen: [
             {
-              name: 'Apple'
+              name: 'apple'
             }
           ]
         }).setup();
       });
       return it('removes the chosen status, returning it to the list of choices', function() {
         velge.remChosen({
-          name: 'Apple'
+          name: 'apple'
         });
-        expect($('.velge-list', $container)).to.not.contain('Apple');
-        return expect($('.velge-dropdown', $container)).to.contain('Apple');
-      });
-    });
-    describe('$dropdown', function() {
-      beforeEach(function() {
-        return velge = new Velge($container, {
-          choices: [
-            {
-              name: 'Apple'
-            }
-          ]
-        }).setup();
-      });
-      it('opens the dropdown when down is pressed', function() {
-        var $dropdown, $input;
-        $input = $('.velge-input', $container);
-        $dropdown = $('.velge-dropdown', $container);
-        press($input, 'down');
-        return expect($dropdown).to.have["class"]('open');
-      });
-      it('opens the dropdown on trigger click', function() {
-        var $dropdown, $trigger;
-        $trigger = $('.velge-trigger', $container);
-        $dropdown = $('.velge-dropdown', $container);
-        $trigger.trigger('click');
-        return expect($dropdown).to.have["class"]('open');
-      });
-      it('does not open the dropdown when down is pressed', function() {
-        var $dropdown, $input, $trigger;
-        velge.remChoice({
-          name: 'Apple'
-        });
-        $input = $('.velge-input', $container);
-        $trigger = $('.velge-trigger', $container);
-        $dropdown = $('.velge-dropdown', $container);
-        press($input, 'down');
-        expect($dropdown).to.not.have["class"]('open');
-        $trigger.trigger('click');
-        return expect($dropdown).to.not.have["class"]('open');
-      });
-      it('closes the dropdown on input blur', function() {
-        var $dropdown, $input, $trigger;
-        $dropdown = $('.velge-dropdown', $container);
-        $input = $('.velge-input', $container);
-        $trigger = $('.velge-trigger', $container);
-        $trigger.trigger('click');
-        $input.trigger($.Event('blur'));
-        return expect($dropdown).to.not.have["class"]('open');
-      });
-      return it('closes on escape', function() {
-        var $dropdown, $input, $trigger;
-        $dropdown = $('.velge-dropdown', $container);
-        $input = $('.velge-input', $container);
-        $trigger = $('.velge-trigger', $container);
-        $trigger.trigger('click');
-        press($input, 'escape');
-        return expect($dropdown).to.not.have["class"]('open');
-      });
-    });
-    describe('$input', function() {
-      beforeEach(function() {
-        return velge = new Velge($container, {
-          chosen: [
-            {
-              name: 'Apple'
-            }
-          ]
-        }).setup();
-      });
-      return it('clears the input on escape', function() {
-        var $input;
-        $input = $('.velge-input', $container);
-        $input.val('apple');
-        press($input, 'escape');
-        return expect($input).to.have.value('');
-      });
-    });
-    return describe('highlighting', function() {
-      var $dropdown, $input, $trigger;
-      $dropdown = null;
-      $trigger = null;
-      $input = null;
-      beforeEach(function() {
-        velge = new Velge($container, {
-          choices: [
-            {
-              name: 'Apple'
-            }, {
-              name: 'Kiwi'
-            }, {
-              name: 'Orange'
-            }
-          ]
-        }).setup();
-        $dropdown = $('.velge-dropdown', $container);
-        $input = $('.velge-input', $container);
-        $trigger = $('.velge-trigger', $container);
-        return $trigger.trigger('click');
-      });
-      it('does not highlight anything when the dropdown is opened', function() {
-        return expect($dropdown).to.not.have('.highlighted');
-      });
-      it('cycles the highlight down through choices', function() {
-        press($input, 'down');
-        expect($('.highlighted', $dropdown)).to.have.text('Apple');
-        press($input, 'down');
-        return expect($('.highlighted', $dropdown)).to.have.text('Kiwi');
-      });
-      return it('cycles the highlight up through choices', function() {
-        press($input, 'up');
-        expect($('.highlighted', $dropdown)).to.have.text('Kiwi');
-        press($input, 'up');
-        return expect($('.highlighted', $dropdown)).to.have.text('Apple');
+        expect($('.velge-list', $container)).to.not.contain('apple');
+        return expect($('.velge-dropdown', $container)).to.contain('apple');
       });
     });
   });

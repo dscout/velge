@@ -1,6 +1,63 @@
 (function() {
   window.Velge = (function() {
-    Velge.prototype.KEYCODES = {
+    function Velge($container, options) {
+      if (options == null) {
+        options = {};
+      }
+      this.store = new Velge.Store();
+      this.ui = new Velge.UI($container, this, this.store);
+      this._preloadChoices(options.chosen || [], true);
+      this._preloadChoices(options.choices || [], false);
+    }
+
+    Velge.prototype.setup = function() {
+      this.ui.setup();
+      return this;
+    };
+
+    Velge.prototype.addChosen = function(choice) {
+      this.store.push(choice, true);
+      this.ui.renderChosen();
+      return this;
+    };
+
+    Velge.prototype.addChoice = function(choice) {
+      this.store.push(choice);
+      this.ui.renderChoices();
+      return this;
+    };
+
+    Velge.prototype.remChoice = function(choice) {
+      this.store["delete"](choice);
+      this.ui.renderChoices();
+      return this;
+    };
+
+    Velge.prototype.remChosen = function(choice) {
+      this.store.update(choice, {
+        chosen: false
+      });
+      this.ui.renderChosen();
+      this.ui.renderChoices();
+      return this;
+    };
+
+    Velge.prototype._preloadChoices = function(choices, isChosen) {
+      var choice, _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = choices.length; _i < _len; _i++) {
+        choice = choices[_i];
+        _results.push(this.store.push(choice, isChosen));
+      }
+      return _results;
+    };
+
+    return Velge;
+
+  })();
+
+  Velge.UI = (function() {
+    UI.prototype.KEYCODES = {
       TAB: 9,
       ENTER: 13,
       ESCAPE: 27,
@@ -11,94 +68,84 @@
       COMMA: 188
     };
 
-    Velge.prototype.wrapTemplate = "<div class='velge'>\n  <ul class='velge-list'></ul>\n  <input type='text' autocomplete='off' placeholder='Add Tags' class='velge-input placeholder' />\n  <span class='velge-trigger'></span>\n  <ol class='velge-dropdown'></ol>\n</div>";
+    UI.prototype.wrapTemplate = "<div class='velge'>\n  <ul class='velge-list'></ul>\n  <input type='text' autocomplete='off' placeholder='Add Tags' class='velge-input placeholder' />\n  <span class='velge-trigger'></span>\n  <ol class='velge-dropdown'></ol>\n</div>";
 
-    Velge.prototype.chosenTemplate = "<li>\n  <b>{{name}}</b>\n  <i>&times;</i>\n</li>";
+    UI.prototype.chosenTemplate = "<li>\n  <b>{{name}}</b>\n  <i>&times;</i>\n</li>";
 
-    Velge.prototype.choiceTemplate = "<li>{{name}}</li>";
+    UI.prototype.choiceTemplate = "<li>{{name}}</li>";
 
-    function Velge($container, options) {
-      if (options == null) {
-        options = {};
-      }
+    function UI($container, velge, store) {
       this.$container = $container;
-      this.store = new Velge.Store();
-      this._preloadChoices(options.chosen || [], true);
-      this._preloadChoices(options.choices || [], false);
+      this.velge = velge;
+      this.store = store;
     }
 
-    Velge.prototype.setup = function() {
-      this._inject();
-      this._renderChoices();
-      this._renderChosen();
-      this._bindDomEvents();
+    UI.prototype.setup = function() {
+      this.render();
+      this.bindDomEvents();
+      this.renderChoices();
+      this.renderChosen();
       return this;
     };
 
-    Velge.prototype.addChosen = function(choice) {
-      this.store.push(choice, true);
-      this._renderChosen();
-      return this;
-    };
-
-    Velge.prototype.addChoice = function(choice) {
-      this.store.push(choice);
-      this._renderChoices();
-      return this;
-    };
-
-    Velge.prototype.remChoice = function(choice) {
-      this.store["delete"](choice);
-      this._renderChoices();
-      return this;
-    };
-
-    Velge.prototype.remChosen = function(choice) {
-      this.store.update(choice, {
-        chosen: false
-      });
-      this._renderChosen();
-      this._renderChoices();
-      return this;
-    };
-
-    Velge.prototype._inject = function() {
-      this.$wrapper = $(this.wrapTemplate);
-      this.$list = $('.velge-list', this.$wrapper);
-      this.$input = $('.velge-input', this.$wrapper);
-      this.$dropdown = $('.velge-dropdown', this.$wrapper);
-      this.$container.append(this.$wrapper);
-      return this;
-    };
-
-    Velge.prototype._bindDomEvents = function() {
+    UI.prototype.bindDomEvents = function() {
       var keycodes, self;
       keycodes = this.KEYCODES;
       self = this;
       this.$wrapper.on('keydown.velge', '.velge-input', function(event) {
         switch (event.which) {
           case keycodes.ESCAPE:
-            self._closeDropdown();
+            self.closeDropdown();
             return self.$input.val('');
           case keycodes.DOWN:
-            self._openDropdown();
+            self.openDropdown();
             self.store.cycle('down');
-            return self._renderHighlighted();
+            return self.renderHighlighted();
           case keycodes.UP:
-            self._openDropdown();
+            self.openDropdown();
             self.store.cycle('up');
-            return self._renderHighlighted();
+            return self.renderHighlighted();
         }
       });
       this.$wrapper.on('blur.velge', '.velge-input', function(event) {
-        return self._closeDropdown();
+        var callback;
+        clearTimeout(self.closeTimeout);
+        callback = function() {
+          self.closeDropdown();
+          return self.blurInput();
+        };
+        return self.closeTimeout = setTimeout(callback, 75);
       });
-      return this.$wrapper.on('click.velge', '.velge-trigger', function(event) {
-        return self._openDropdown();
+      this.$wrapper.on('click.velge', '.velge-trigger', function(event) {
+        return self.openDropdown();
+      });
+      return this.$wrapper.on('click.velge', '.velge-dropdown li', function(event) {
+        var $target;
+        $target = $(event.currentTarget);
+        self.choose($target.text());
+        self.renderChoices();
+        self.renderChosen();
+        return self.closeDropdown();
       });
     };
 
-    Velge.prototype._renderChosen = function() {
+    UI.prototype.choose = function(name) {
+      return this.store.update({
+        name: name
+      }, {
+        chosen: true
+      });
+    };
+
+    UI.prototype.render = function() {
+      this.$wrapper = $(this.wrapTemplate);
+      this.$list = $('.velge-list', this.$wrapper);
+      this.$input = $('.velge-input', this.$wrapper);
+      this.$dropdown = $('.velge-dropdown', this.$wrapper);
+      return this.$container.append(this.$wrapper);
+    };
+
+    UI.prototype.renderChosen = function() {
       var choice, choices;
       choices = (function() {
         var _i, _len, _ref, _results;
@@ -113,7 +160,7 @@
       return this.$list.empty().html(choices);
     };
 
-    Velge.prototype._renderChoices = function() {
+    UI.prototype.renderChoices = function() {
       var choice, choices;
       choices = (function() {
         var _i, _len, _ref, _results;
@@ -128,7 +175,7 @@
       return this.$dropdown.empty().html(choices);
     };
 
-    Velge.prototype._renderHighlighted = function() {
+    UI.prototype.renderHighlighted = function() {
       var index, li, selected, _i, _len, _ref, _results;
       selected = this.store.index;
       _ref = this.$dropdown.find('li');
@@ -140,27 +187,21 @@
       return _results;
     };
 
-    Velge.prototype._preloadChoices = function(choices, isChosen) {
-      var choice, _i, _len, _results;
-      _results = [];
-      for (_i = 0, _len = choices.length; _i < _len; _i++) {
-        choice = choices[_i];
-        _results.push(this.store.push(choice, isChosen));
-      }
-      return _results;
-    };
-
-    Velge.prototype._openDropdown = function() {
+    UI.prototype.openDropdown = function() {
       if (!this.store.isEmpty()) {
         return this.$dropdown.addClass('open');
       }
     };
 
-    Velge.prototype._closeDropdown = function() {
+    UI.prototype.closeDropdown = function() {
       return this.$dropdown.removeClass('open');
     };
 
-    return Velge;
+    UI.prototype.blurInput = function() {
+      return this.$input.blur();
+    };
+
+    return UI;
 
   })();
 
@@ -175,11 +216,16 @@
       return this.arr;
     };
 
+    Store.prototype.normalize = function(value) {
+      return String(value).toLowerCase().replace(/(^\s*|\s*$)/g, '');
+    };
+
     Store.prototype.push = function(choice, isChosen) {
       if (isChosen == null) {
         isChosen = false;
       }
       choice.chosen = isChosen;
+      choice.name = this.normalize(choice.name);
       if (this.find(choice) == null) {
         this.arr.push(choice);
         this.map[choice.name] = choice;

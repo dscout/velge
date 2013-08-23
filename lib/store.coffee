@@ -7,8 +7,12 @@ class Velge.Store
   objects: ->
     @arr
 
+  normalize: (value) ->
+    String(value).toLowerCase().replace(/(^\s*|\s*$)/g, '')
+
   push: (choice, isChosen = false) ->
     choice.chosen = isChosen
+    choice.name   = @normalize(choice.name)
 
     unless @find(choice)?
       @arr.push(choice)
