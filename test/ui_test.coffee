@@ -145,3 +145,22 @@ describe 'Velge.UI', ->
       expect($dropdown).to.not.contain('kiwi')
       expect($list).to.contain('kiwi')
       expect($dropdown).to.not.have.class('open')
+
+  describe 'choice matching', ->
+    beforeEach ->
+      velge = new Velge($container, choices: [
+        { name: 'apple'   },
+        { name: 'apricot' },
+        { name: 'orange'  }
+      ]).setup()
+
+      $input = $('.velge-input', $container)
+
+    it 'filters down choices on input', (done) ->
+      $input.val('ap')
+      press($input, 'space')
+
+      setTimeout((->
+        expect($('.velge-dropdown li:visible').length).to.eq(2)
+        done()
+      ), 11)

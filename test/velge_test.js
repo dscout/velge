@@ -29,47 +29,47 @@
         return expect(store.objects()[0].name).to.eq('apple');
       });
     });
-    describe('#length', function() {
-      return it('counts choices with a filter', function() {
-        store = new Velge.Store().push({
-          name: 'apple'
+    describe('#filter', function() {
+      beforeEach(function() {
+        return store = new Velge.Store().push({
+          name: 'apple',
+          chosen: false
         }).push({
-          name: 'kiwi'
-        }, true).push({
-          name: 'orange'
+          name: 'kiwi',
+          chosen: true
+        }).push({
+          name: 'orange',
+          chosen: false
         });
-        expect(store.length()).to.eq(2);
-        return expect(store.length(true)).to.eq(3);
+      });
+      return it('filters down by the chosen property', function() {
+        expect(store.filter({
+          chosen: false
+        }).length).to.eq(2);
+        return expect(store.filter({
+          chosen: true
+        }).length).to.eq(1);
       });
     });
-    return describe('#cycle', function() {
-      it('iterates the selected index', function() {
-        store = new Velge.Store().push({
+    return describe('#fuzzy', function() {
+      beforeEach(function() {
+        return store = new Velge.Store().push({
           name: 'apple'
         }).push({
-          name: 'kiwi'
+          name: 'apricot'
         }).push({
-          name: 'orange'
+          name: 'opples'
         });
-        store.cycle();
-        expect(store.selected().name).to.eq('apple');
-        store.cycle();
-        expect(store.selected().name).to.eq('kiwi');
-        store.cycle();
-        store.cycle();
-        return expect(store.selected().name).to.eq('apple');
       });
-      return it('skips over chosen objects', function() {
-        store = new Velge.Store().push({
-          name: 'apple'
-        }).push({
-          name: 'kiwi'
-        }, true).push({
-          name: 'orange'
-        });
-        store.cycle();
-        store.cycle();
-        return expect(store.selected().name).to.eq('orange');
+      it('finds all choices matching the query', function() {
+        expect(store.fuzzy('p').length).to.eq(3);
+        expect(store.fuzzy('ap').length).to.eq(2);
+        expect(store.fuzzy('Ap').length).to.eq(2);
+        expect(store.fuzzy('pp').length).to.eq(2);
+        return expect(store.fuzzy('PP').length).to.eq(2);
+      });
+      return it('sanitizes to prevent matching errors', function() {
+        return expect(store.fuzzy('{}[]()*+').length).to.eq(0);
       });
     });
   });
@@ -220,7 +220,7 @@
         return expect($('.highlighted', $dropdown)).to.have.text('apple');
       });
     });
-    return describe('choice selection', function() {
+    describe('choice selection', function() {
       beforeEach(function() {
         velge = new Velge($container, {
           choices: [
@@ -243,6 +243,30 @@
         expect($dropdown).to.not.contain('kiwi');
         expect($list).to.contain('kiwi');
         return expect($dropdown).to.not.have["class"]('open');
+      });
+    });
+    return describe('choice matching', function() {
+      beforeEach(function() {
+        velge = new Velge($container, {
+          choices: [
+            {
+              name: 'apple'
+            }, {
+              name: 'apricot'
+            }, {
+              name: 'orange'
+            }
+          ]
+        }).setup();
+        return $input = $('.velge-input', $container);
+      });
+      return it('filters down choices on input', function(done) {
+        $input.val('ap');
+        press($input, 'space');
+        return setTimeout((function() {
+          expect($('.velge-dropdown li:visible').length).to.eq(2);
+          return done();
+        }), 11);
       });
     });
   });

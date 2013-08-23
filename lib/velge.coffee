@@ -12,7 +12,8 @@ class window.Velge
     @
 
   addChosen: (choice) ->
-    @store.push(choice, true)
+    choice.chosen = true
+    @store.push(choice)
     @ui.renderChosen()
     @
 
@@ -33,4 +34,6 @@ class window.Velge
     @
 
   _preloadChoices: (choices, isChosen) ->
-    @store.push(choice, isChosen) for choice in choices
+    for choice in choices
+      choice.chosen = isChosen
+      @store.push(choice)

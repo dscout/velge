@@ -2,17 +2,22 @@ class Velge.Store
   constructor: ->
     @arr    = []
     @map    = {}
-    @index  = -1
 
   objects: ->
     @arr
 
+  isEmpty: ->
+    @arr.length is 0
+
   normalize: (value) ->
     String(value).toLowerCase().replace(/(^\s*|\s*$)/g, '')
 
-  push: (choice, isChosen = false) ->
-    choice.chosen = isChosen
-    choice.name   = @normalize(choice.name)
+  sanitize: (value) ->
+    value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&")
+
+  push: (choice) ->
+    choice.name = @normalize(choice.name)
+    choice.chosen ||= false
 
     unless @find(choice)?
       @arr.push(choice)
@@ -37,31 +42,20 @@ class Velge.Store
 
     choice[key] = value for key, value of values
 
-  length: (withChosen = false) ->
-    if withChosen
-      @arr.length
-    else
-      @filter(withChosen).length
-
-  cycle: (direction = 'down') ->
-    length = @length()
-
-    @index = if direction is 'down'
-      (@index + 1) % length
-    else
-      (@index + (length - 1)) % length
-
-  selected: ->
-    @filter(false)[@index]
-
-  filter: (isChosen) ->
-    choice for choice in @arr when choice.chosen is isChosen
-
   find: (toFind) ->
     @map[toFind.name]
 
-  isEmpty: ->
-    @arr.length is 0
+  fuzzy: (value) ->
+    value = @sanitize(value)
+    query = if (/^\s*$/.test(value)) then '.*' else value
+    regex = RegExp(query, 'i')
+
+    choice for choice in @arr when regex.test(choice.name)
+
+  filter: (options = {}) ->
+    options.chosen ||= false
+
+    choice for choice in @arr when choice.chosen is options.chosen
 
   sort: ->
     @arr = @arr.sort (a, b) ->

@@ -16,7 +16,8 @@
     };
 
     Velge.prototype.addChosen = function(choice) {
-      this.store.push(choice, true);
+      choice.chosen = true;
+      this.store.push(choice);
       this.ui.renderChosen();
       return this;
     };
@@ -47,7 +48,8 @@
       _results = [];
       for (_i = 0, _len = choices.length; _i < _len; _i++) {
         choice = choices[_i];
-        _results.push(this.store.push(choice, isChosen));
+        choice.chosen = isChosen;
+        _results.push(this.store.push(choice));
       }
       return _results;
     };
@@ -78,6 +80,7 @@
       this.$container = $container;
       this.velge = velge;
       this.store = store;
+      this.index = -1;
     }
 
     UI.prototype.setup = function() {
@@ -93,18 +96,25 @@
       keycodes = this.KEYCODES;
       self = this;
       this.$wrapper.on('keydown.velge', '.velge-input', function(event) {
+        var callback;
         switch (event.which) {
           case keycodes.ESCAPE:
             self.closeDropdown();
             return self.$input.val('');
           case keycodes.DOWN:
             self.openDropdown();
-            self.store.cycle('down');
+            self.cycle('down');
             return self.renderHighlighted();
           case keycodes.UP:
             self.openDropdown();
-            self.store.cycle('up');
+            self.cycle('up');
             return self.renderHighlighted();
+          default:
+            callback = function() {
+              self.index = -1;
+              return self.filterChoices(self.$input.val());
+            };
+            return setTimeout(callback, 10);
         }
       });
       this.$wrapper.on('blur.velge', '.velge-input', function(event) {
@@ -149,7 +159,9 @@
       var choice, choices;
       choices = (function() {
         var _i, _len, _ref, _results;
-        _ref = this.store.filter(true);
+        _ref = this.store.filter({
+          chosen: true
+        });
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           choice = _ref[_i];
@@ -160,14 +172,16 @@
       return this.$list.empty().html(choices);
     };
 
-    UI.prototype.renderChoices = function() {
+    UI.prototype.renderChoices = function(filtered) {
       var choice, choices;
+      filtered || (filtered = this.store.filter({
+        chosen: false
+      }));
       choices = (function() {
-        var _i, _len, _ref, _results;
-        _ref = this.store.filter(false);
+        var _i, _len, _results;
         _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          choice = _ref[_i];
+        for (_i = 0, _len = filtered.length; _i < _len; _i++) {
+          choice = filtered[_i];
           _results.push(this.choiceTemplate.replace('{{name}}', choice.name));
         }
         return _results;
@@ -177,7 +191,7 @@
 
     UI.prototype.renderHighlighted = function() {
       var index, li, selected, _i, _len, _ref, _results;
-      selected = this.store.index;
+      selected = this.index;
       _ref = this.$dropdown.find('li');
       _results = [];
       for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
@@ -201,6 +215,26 @@
       return this.$input.blur();
     };
 
+    UI.prototype.filterChoices = function(value) {
+      var matching;
+      matching = this.store.fuzzy(value);
+      this.renderChoices(matching);
+      return this.$dropdown.toggleClass('open', matching.length !== 0);
+    };
+
+    UI.prototype.cycle = function(direction) {
+      var length;
+      if (direction == null) {
+        direction = 'down';
+      }
+      length = this.$dropdown.find('li').length;
+      if (length > 0) {
+        return this.index = direction === 'down' ? (this.index + 1) % length : (this.index + (length - 1)) % length;
+      } else {
+        return this.index = -1;
+      }
+    };
+
     return UI;
 
   })();
@@ -209,23 +243,27 @@
     function Store() {
       this.arr = [];
       this.map = {};
-      this.index = -1;
     }
 
     Store.prototype.objects = function() {
       return this.arr;
     };
 
+    Store.prototype.isEmpty = function() {
+      return this.arr.length === 0;
+    };
+
     Store.prototype.normalize = function(value) {
       return String(value).toLowerCase().replace(/(^\s*|\s*$)/g, '');
     };
 
-    Store.prototype.push = function(choice, isChosen) {
-      if (isChosen == null) {
-        isChosen = false;
-      }
-      choice.chosen = isChosen;
+    Store.prototype.sanitize = function(value) {
+      return value.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+    };
+
+    Store.prototype.push = function(choice) {
       choice.name = this.normalize(choice.name);
+      choice.chosen || (choice.chosen = false);
       if (this.find(choice) == null) {
         this.arr.push(choice);
         this.map[choice.name] = choice;
@@ -259,49 +297,41 @@
       return _results;
     };
 
-    Store.prototype.length = function(withChosen) {
-      if (withChosen == null) {
-        withChosen = false;
-      }
-      if (withChosen) {
-        return this.arr.length;
-      } else {
-        return this.filter(withChosen).length;
-      }
+    Store.prototype.find = function(toFind) {
+      return this.map[toFind.name];
     };
 
-    Store.prototype.cycle = function(direction) {
-      var length;
-      if (direction == null) {
-        direction = 'down';
-      }
-      length = this.length();
-      return this.index = direction === 'down' ? (this.index + 1) % length : (this.index + (length - 1)) % length;
-    };
-
-    Store.prototype.selected = function() {
-      return this.filter(false)[this.index];
-    };
-
-    Store.prototype.filter = function(isChosen) {
-      var choice, _i, _len, _ref, _results;
+    Store.prototype.fuzzy = function(value) {
+      var choice, query, regex, _i, _len, _ref, _results;
+      value = this.sanitize(value);
+      query = /^\s*$/.test(value) ? '.*' : value;
+      regex = RegExp(query, 'i');
       _ref = this.arr;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         choice = _ref[_i];
-        if (choice.chosen === isChosen) {
+        if (regex.test(choice.name)) {
           _results.push(choice);
         }
       }
       return _results;
     };
 
-    Store.prototype.find = function(toFind) {
-      return this.map[toFind.name];
-    };
-
-    Store.prototype.isEmpty = function() {
-      return this.arr.length === 0;
+    Store.prototype.filter = function(options) {
+      var choice, _i, _len, _ref, _results;
+      if (options == null) {
+        options = {};
+      }
+      options.chosen || (options.chosen = false);
+      _ref = this.arr;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        choice = _ref[_i];
+        if (choice.chosen === options.chosen) {
+          _results.push(choice);
+        }
+      }
+      return _results;
     };
 
     Store.prototype.sort = function() {

@@ -33,6 +33,7 @@ class Velge.UI
     @$container = $container
     @velge      = velge
     @store      = store
+    @index      = -1
 
   setup: ->
     @render()
@@ -53,12 +54,17 @@ class Velge.UI
           self.$input.val('')
         when keycodes.DOWN
           self.openDropdown()
-          self.store.cycle('down')
+          self.cycle('down')
           self.renderHighlighted()
         when keycodes.UP
           self.openDropdown()
-          self.store.cycle('up')
+          self.cycle('up')
           self.renderHighlighted()
+        else
+          callback = ->
+            self.index = -1
+            self.filterChoices(self.$input.val())
+          setTimeout(callback, 10)
 
     @$wrapper.on 'blur.velge', '.velge-input', (event) ->
       clearTimeout(self.closeTimeout)
@@ -91,19 +97,21 @@ class Velge.UI
     @$container.append(@$wrapper)
 
   renderChosen: ->
-    choices = for choice in @store.filter(true)
+    choices = for choice in @store.filter(chosen: true)
       @chosenTemplate.replace('{{name}}', choice.name)
 
     @$list.empty().html(choices)
 
-  renderChoices: ->
-    choices = for choice in @store.filter(false)
+  renderChoices: (filtered) ->
+    filtered ||= @store.filter(chosen: false)
+
+    choices = for choice in filtered
       @choiceTemplate.replace('{{name}}', choice.name)
 
     @$dropdown.empty().html(choices)
 
   renderHighlighted: ->
-    selected = @store.index
+    selected = @index
 
     for li, index in @$dropdown.find('li')
       $(li).toggleClass 'highlighted', index is selected
@@ -116,3 +124,21 @@ class Velge.UI
 
   blurInput: ->
     @$input.blur()
+
+  filterChoices: (value) ->
+    matching = @store.fuzzy(value)
+
+    @renderChoices(matching)
+
+    @$dropdown.toggleClass('open', matching.length isnt 0)
+
+  cycle: (direction = 'down') ->
+    length = @$dropdown.find('li').length
+
+    if length > 0
+      @index = if direction is 'down'
+        (@index + 1) % length
+      else
+        (@index + (length - 1)) % length
+    else
+      @index = -1

@@ -24,39 +24,30 @@ describe 'Velge.Store', ->
       store.push(name: 'Apple')
       expect(store.objects()[0].name).to.eq('apple')
 
-  describe '#length', ->
-    it 'counts choices with a filter', ->
+  describe '#filter', ->
+    beforeEach ->
+      store = new Velge.Store()
+        .push(name: 'apple', chosen: false)
+        .push(name: 'kiwi', chosen: true)
+        .push(name: 'orange', chosen: false)
+
+    it 'filters down by the chosen property', ->
+      expect(store.filter(chosen: false).length).to.eq(2)
+      expect(store.filter(chosen: true).length).to.eq(1)
+
+  describe '#fuzzy', ->
+    beforeEach ->
       store = new Velge.Store()
         .push(name: 'apple')
-        .push({ name: 'kiwi' }, true)
-        .push(name: 'orange')
+        .push(name: 'apricot')
+        .push(name: 'opples')
 
-      expect(store.length()).to.eq(2)
-      expect(store.length(true)).to.eq(3)
+    it 'finds all choices matching the query', ->
+      expect(store.fuzzy('p').length).to.eq(3)
+      expect(store.fuzzy('ap').length).to.eq(2)
+      expect(store.fuzzy('Ap').length).to.eq(2)
+      expect(store.fuzzy('pp').length).to.eq(2)
+      expect(store.fuzzy('PP').length).to.eq(2)
 
-  describe '#cycle', ->
-    it 'iterates the selected index', ->
-      store = new Velge.Store()
-        .push(name: 'apple')
-        .push(name: 'kiwi')
-        .push(name: 'orange')
-
-      store.cycle()
-      expect(store.selected().name).to.eq('apple')
-
-      store.cycle()
-      expect(store.selected().name).to.eq('kiwi')
-
-      store.cycle()
-      store.cycle()
-      expect(store.selected().name).to.eq('apple')
-
-    it 'skips over chosen objects', ->
-      store = new Velge.Store()
-        .push(name: 'apple')
-        .push({ name: 'kiwi' }, true)
-        .push(name: 'orange')
-
-      store.cycle()
-      store.cycle()
-      expect(store.selected().name).to.eq('orange')
+    it 'sanitizes to prevent matching errors', ->
+      expect(store.fuzzy('{}[]()*+').length).to.eq(0)
