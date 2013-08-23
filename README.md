@@ -7,7 +7,17 @@
 
 ## Installation
 
-I have no idea yet. Something with grunt? Bower? Just use the built file?
+The simplest way is via bower:
+
+```bash
+bower install velge
+```
+
+You'll then want to import the compiled `.js` and `.css`:
+
+```html
+<script src="/bower_components/velge/velge.min.js"></script>
+```
 
 ## Usage
 
@@ -20,9 +30,7 @@ Velge can be attached to any container. The structure isn't of any importance:
 Initialize velge with a selector for the container and customization options:
 
 ```javascript
-var $element = $('.velge')
-  , options  = {}
-  , velge    = new Velge($element, options)
+var velge = new Velge($('.container'), options)
 ```
 
 ### Loading Tags
@@ -31,16 +39,14 @@ All tag matching is performed locally. As such you must load in all possible
 choices and an optional set of applied choices:
 
 ```javascript
-velge.addApplied([
-  { name: "Apple" },
-  { name: "Juicy" }
-])
+velge
+  .addChosen({ name: "Apple" })
+  .addChosen({ name: "Juicy" })
 
-velge.addChoices([
-  { name: "Orange" },
-  { name: "Berry" },
-  { name: "Tangy" }
-])
+velge
+  .addChoice({ name: "Orange" })
+  .addChoice({ name: "Berry" })
+  .addChoice({ name: "Tangy" })
 ```
 
 Tag objects can be anything that have a "name" property or method. Whatever
@@ -59,8 +65,8 @@ The velge instance exposes hooks for persisting changes after tags have been
 added or removed:
 
 ```javascript
-var addCallback = function(tag, velge) { /* Persist Me */ }
-  , remCallback = function(tag, velge) { /* Destroy Me */ }
+var addCallback = function(choice, velge) { /* Persist Me */ }
+  , remCallback = function(choice, velge) { /* Destroy Me */ }
 
 velge
   .onAdd(addCallback)
@@ -74,13 +80,13 @@ sync with the underlying collection. If, for example, an ajax request fails you
 can rollback the addition:
 
 ```javascript
-var addCallback = function(tag, velge) {
+var addCallback = function(choice, velge) {
   $.ajax({
-    data: tag,
+    data: choice,
     type: "POST",
     url:  "/api/resource/1/tags"
   }).fail(function(error) {
-    velge.remove(tag);
+    velge.remChosen(choice);
   })
 }
 ```
