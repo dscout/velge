@@ -125,7 +125,9 @@ class Velge.UI
     selected = @index
 
     for li, index in @$dropdown.find('li')
-      $(li).toggleClass 'highlighted', index is selected
+      $choice = $(li)
+      $choice.toggleClass 'highlighted', index is selected
+      Velge.Util.autoScroll($choice, @$dropdown) if index is selected
 
   openDropdown: ->
     @$dropdown.addClass('open') unless @store.isEmpty()

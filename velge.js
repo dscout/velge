@@ -58,6 +58,30 @@
 
   })();
 
+  Velge.Util = (function() {
+    function Util() {}
+
+    Util.autoScroll = function($element, $container, padding) {
+      var baseTop, cHeight, eHeight, offset, scroll;
+      if (padding == null) {
+        padding = 10;
+      }
+      eHeight = $element.height();
+      cHeight = $container.height();
+      offset = $element.offset().top - $container.offset().top;
+      scroll = $container.scrollTop();
+      baseTop = scroll + offset + padding;
+      if (offset < 0) {
+        return $container.scrollTop(baseTop);
+      } else if (offset + (eHeight > cHeight)) {
+        return $container.scrollTop(baseTop - cHeight + eHeight);
+      }
+    };
+
+    return Util;
+
+  })();
+
   Velge.UI = (function() {
     UI.prototype.KEYCODES = {
       TAB: 9,
@@ -207,13 +231,19 @@
     };
 
     UI.prototype.renderHighlighted = function() {
-      var index, li, selected, _i, _len, _ref, _results;
+      var $choice, index, li, selected, _i, _len, _ref, _results;
       selected = this.index;
       _ref = this.$dropdown.find('li');
       _results = [];
       for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
         li = _ref[index];
-        _results.push($(li).toggleClass('highlighted', index === selected));
+        $choice = $(li);
+        $choice.toggleClass('highlighted', index === selected);
+        if (index === selected) {
+          _results.push(Velge.Util.autoScroll($choice, this.$dropdown));
+        } else {
+          _results.push(void 0);
+        }
       }
       return _results;
     };

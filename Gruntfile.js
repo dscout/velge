@@ -10,7 +10,7 @@ module.exports = function(grunt) {
           join: true
         },
         files: {
-          'velge.js': ['lib/velge.coffee', 'lib/ui.coffee', 'lib/store.coffee'],
+          'velge.js': ['lib/velge.coffee', 'lib/util.coffee', 'lib/ui.coffee', 'lib/store.coffee'],
           'test/velge_test.js': ['test/store_test.coffee', 'test/ui_test.coffee', 'test/velge_test.coffee']
         }
       }
