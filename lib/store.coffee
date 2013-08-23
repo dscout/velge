@@ -46,7 +46,7 @@ class Velge.Store
     choice[key] = value for key, value of values
 
   find: (toFind) ->
-    @map[toFind.name]
+    @map[@normalize(toFind.name)]
 
   fuzzy: (value) ->
     value = @sanitize(value)
