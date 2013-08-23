@@ -70,7 +70,7 @@
 
     UI.prototype.wrapTemplate = "<div class='velge'>\n  <ul class='velge-list'></ul>\n  <input type='text' autocomplete='off' placeholder='Add Tags' class='velge-input placeholder' />\n  <span class='velge-trigger'></span>\n  <ol class='velge-dropdown'></ol>\n</div>";
 
-    UI.prototype.chosenTemplate = "<li>\n  <b>{{name}}</b>\n  <i>&times;</i>\n</li>";
+    UI.prototype.chosenTemplate = "<li>\n  <span class='name'>{{name}}</span>\n  <span class='remove'>&times;</span>\n</li>";
 
     UI.prototype.choiceTemplate = "<li>{{name}}</li>";
 
