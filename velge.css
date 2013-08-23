@@ -1,0 +1,128 @@
+.velge {
+  background: #f1f1f1;
+  border: none;
+  cursor: text;
+  font-size: 11px;
+  min-height: 30px;
+  position: relative;
+  width: 100%;
+}
+
+.velge-list {
+  float: left;
+  overflow: hidden;
+  margin: 0;
+  padding: 5px 5px 0 5px;
+  width: 95%;
+}
+
+.velge-list li {
+  cursor: pointer;
+  display: inline-block;
+  font-size: 11px;
+  height: 20px;
+  list-style-type: none;
+  margin: 5px 5px 3px 0;
+}
+
+.velge-list b {
+  background: #e1e6e9;
+  border: 1px solid #cfcfcf;
+  border-radius: 6px 0 0 6px;
+  border-right: none;
+  color: #52595d;
+  font-style: normal;
+  padding: 4px 4px 4px 6px;
+}
+
+.velge-list i {
+  background: #e1e6e9;
+  border: 1px solid #cfcfcf;
+  border-left: none;
+  border-radius: 0 5px 5px 0;
+  color: #52595d;
+  padding: 4px 6px 4px 4px;
+  text-decoration: none;
+}
+
+.velge-list li:hover b, .velge-list li:hover i {
+  background: #eeeeee;
+}
+
+.velge-input {
+  background: none;
+  border: none;
+  float: left;
+  font-size: inherit;
+  line-height: 20px;
+  outline: none;
+  padding: 7px 5px 0 7px;
+  width: 100px;
+}
+
+.velge-input.placeholder {
+  padding-bottom: 7px;
+  padding-top: 7px;
+}
+
+.velge-input:focus {
+  border: none;
+  box-shadow: none;
+  padding-bottom: 7px;
+  padding-top: 7px;
+}
+
+.velge-trigger {
+  cursor: pointer;
+  height: 30px;
+  padding: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 30px;
+}
+
+.velge-trigger:after {
+  color: #999999
+  content: '\25be';
+  font-size: 16px;
+  font-style: normal;
+  position: relative;
+  right: 0;
+  top: 10px;
+}
+
+.velge-trigger:hover:after {
+  color: #52595d;
+}
+
+.velge-dropdown {
+  background: #f1f1f1;
+  border: 1px solid #eeeeee;
+  box-shadow: 0 1px 3px #7a7a7a;
+  display: none;
+  list-style-type: none;
+  margin: 0;
+  max-height: 310px;
+  overflow-y: scroll;
+  padding: 0;
+  position: absolute;
+  top: 32px;
+  width: 100%;
+  z-index: 9999;
+}
+
+.velge-dropdown.open {
+  display: block;
+}
+
+.velge-dropdown li {
+  border-top: 1px solid #cfcfcf;
+  padding: 5px;
+  line-height: 20px;
+}
+
+.velge-dropdown li.highlighted, .velge-dropdown li:hover {
+  background: #C6F4F6;
+  cursor: pointer;
+}
