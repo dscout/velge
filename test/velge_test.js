@@ -33,11 +33,28 @@
       beforeEach(function() {
         return store = new Velge.Store();
       });
-      return it('normalizes names before storing', function() {
+      it('normalizes names before storing', function() {
         store.push({
           name: 'Apple'
         });
-        return expect(store.objects()[0].name).to.eq('apple');
+        return expect(store.choices()[0].name).to.eq('apple');
+      });
+      it('does not store duplicate choices', function() {
+        store.push({
+          name: 'apple'
+        }).push({
+          name: 'apple'
+        });
+        return expect(store.choices().length).to.eq(1);
+      });
+      return it('maintains choices in alphabetical order', function() {
+        store.push({
+          name: 'plum'
+        }).push({
+          name: 'apple'
+        });
+        expect(store.choices()[0].name).to.eq('apple');
+        return expect(store.choices()[1].name).to.eq('plum');
       });
     });
     describe('#filter', function() {
@@ -405,26 +422,6 @@
           name: 'banana'
         });
         return expect($('.velge-dropdown', $container)).to.contain('banana');
-      });
-      it('maintains choices in alphabetical order', function() {
-        velge.addChoice({
-          name: 'watermelon'
-        }).addChoice({
-          name: 'banana'
-        }).addChoice({
-          name: 'kiwi'
-        });
-        expect($('.velge-dropdown li', $container).eq(0).text()).to.contain('banana');
-        expect($('.velge-dropdown li', $container).eq(1).text()).to.contain('kiwi');
-        return expect($('.velge-dropdown li', $container).eq(2).text()).to.contain('watermelon');
-      });
-      it('does not display duplicate choices', function() {
-        velge.addChoice({
-          name: 'Fig'
-        }).addChoice({
-          name: 'Fig'
-        });
-        return expect($('.velge-dropdown li', $container).length).to.eq(1);
       });
       return it('does not display choices that have been chosen', function() {
         velge.addChosen({

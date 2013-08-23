@@ -340,7 +340,7 @@
       this.map = {};
     }
 
-    Store.prototype.objects = function() {
+    Store.prototype.choices = function() {
       return this.arr;
     };
 

@@ -1,9 +1,9 @@
 class Velge.Store
   constructor: ->
-    @arr    = []
-    @map    = {}
+    @arr = []
+    @map = {}
 
-  objects: ->
+  choices: ->
     @arr
 
   isEmpty: ->

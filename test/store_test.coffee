@@ -32,7 +32,22 @@ describe 'Velge.Store', ->
 
     it 'normalizes names before storing', ->
       store.push(name: 'Apple')
-      expect(store.objects()[0].name).to.eq('apple')
+      expect(store.choices()[0].name).to.eq('apple')
+
+    it 'does not store duplicate choices', ->
+      store
+        .push(name: 'apple')
+        .push(name: 'apple')
+
+      expect(store.choices().length).to.eq(1)
+
+    it 'maintains choices in alphabetical order', ->
+      store
+        .push(name: 'plum')
+        .push(name: 'apple')
+
+      expect(store.choices()[0].name).to.eq('apple')
+      expect(store.choices()[1].name).to.eq('plum')
 
   describe '#filter', ->
     beforeEach ->

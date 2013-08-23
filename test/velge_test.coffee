@@ -34,23 +34,6 @@ describe 'Velge', ->
 
       expect($('.velge-dropdown', $container)).to.contain('banana')
 
-    it 'maintains choices in alphabetical order', ->
-      velge
-        .addChoice(name: 'watermelon')
-        .addChoice(name: 'banana')
-        .addChoice(name: 'kiwi')
-
-      expect($('.velge-dropdown li', $container).eq(0).text()).to.contain('banana')
-      expect($('.velge-dropdown li', $container).eq(1).text()).to.contain('kiwi')
-      expect($('.velge-dropdown li', $container).eq(2).text()).to.contain('watermelon')
-
-    it 'does not display duplicate choices', ->
-      velge
-        .addChoice(name: 'Fig')
-        .addChoice(name: 'Fig')
-
-      expect($('.velge-dropdown li', $container).length).to.eq(1)
-
     it 'does not display choices that have been chosen', ->
       velge
         .addChosen(name: 'Fig')
