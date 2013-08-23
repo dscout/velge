@@ -71,6 +71,9 @@ class Velge.UI
           setTimeout(callback, 10)
           self.openDropdown()
 
+    @$wrapper.on 'click.velge', ->
+      self.$input.focus() unless self.$input.is(':focus')
+
     @$wrapper.on 'click.velge', '.velge-list .remove', (event) ->
       $target = $(event.currentTarget).parent().find('.name')
       self.unchoose($target.text())

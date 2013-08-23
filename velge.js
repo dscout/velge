@@ -173,6 +173,11 @@
             return self.openDropdown();
         }
       });
+      this.$wrapper.on('click.velge', function() {
+        if (!self.$input.is(':focus')) {
+          return self.$input.focus();
+        }
+      });
       this.$wrapper.on('click.velge', '.velge-list .remove', function(event) {
         var $target;
         $target = $(event.currentTarget).parent().find('.name');
