@@ -104,10 +104,10 @@
 .velge-trigger {
   cursor: pointer;
   height: 30px;
-  padding: 5px;
+  padding: 0;
   position: absolute;
-  right: 0;
-  top: 0;
+  right: 5px;
+  top: 5px;
   width: 30px;
 }
 
