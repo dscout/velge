@@ -434,7 +434,7 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         choice = _ref[_i];
-        if (regex.test(choice.name)) {
+        if (!choice.chosen && regex.test(choice.name)) {
           _results.push(choice);
         }
       }

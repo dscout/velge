@@ -18,12 +18,15 @@ describe 'Velge', ->
     it 'renders all provided choices', ->
       velge = new Velge($container,
         chosen:  [{ name: 'apple' }, { name: 'melon' }]
-        choices: [{ name: 'banana' }]
+        choices: [{ name: 'apple' }, { name: 'melon' }, { name: 'banana' }]
       ).setup()
 
       expect($('.velge-list', $container)).to.contain('apple')
       expect($('.velge-list', $container)).to.contain('melon')
+      expect($('.velge-list', $container)).to.not.contain('banana')
       expect($('.velge-dropdown', $container)).to.contain('banana')
+      expect($('.velge-dropdown', $container)).to.not.contain('apple')
+      expect($('.velge-dropdown', $container)).to.not.contain('melon')
 
   describe '#addChoice', ->
     beforeEach ->

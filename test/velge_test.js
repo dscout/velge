@@ -290,6 +290,11 @@
     describe('choice matching', function() {
       beforeEach(function() {
         velge = new Velge($container, {
+          chosen: [
+            {
+              name: 'aplomb'
+            }
+          ],
           choices: [
             {
               name: 'apple'
@@ -404,13 +409,20 @@
           ],
           choices: [
             {
+              name: 'apple'
+            }, {
+              name: 'melon'
+            }, {
               name: 'banana'
             }
           ]
         }).setup();
         expect($('.velge-list', $container)).to.contain('apple');
         expect($('.velge-list', $container)).to.contain('melon');
-        return expect($('.velge-dropdown', $container)).to.contain('banana');
+        expect($('.velge-list', $container)).to.not.contain('banana');
+        expect($('.velge-dropdown', $container)).to.contain('banana');
+        expect($('.velge-dropdown', $container)).to.not.contain('apple');
+        return expect($('.velge-dropdown', $container)).to.not.contain('melon');
       });
     });
     describe('#addChoice', function() {

@@ -159,11 +159,16 @@ describe 'Velge.UI', ->
 
   describe 'choice matching', ->
     beforeEach ->
-      velge = new Velge($container, choices: [
-        { name: 'apple'   },
-        { name: 'apricot' },
-        { name: 'orange'  }
-      ]).setup()
+      velge = new Velge($container,
+        chosen: [
+          { name: 'aplomb' }
+        ],
+        choices: [
+          { name: 'apple'   },
+          { name: 'apricot' },
+          { name: 'orange'  }
+        ]
+      ).setup()
 
       $input = $('.velge-input', $container)
 
