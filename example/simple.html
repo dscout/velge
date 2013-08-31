@@ -7,38 +7,51 @@
 
     <style>
       body { font: 14px/1.5 "Helvetica-Neue", Helvetica, sans-serif; }
-      #wrapper { width: 600px; }
+      .wrapper { width: 600px; }
     </style>
   </head>
 
   <body>
-    <h1>Velge Example</h1>
-    <div id="wrapper"></div>
+    <h1>Multi Example</h1>
+    <div class="wrapper" id="multi"></div>
+
+    <h1>Single Example</h1>
+    <div class="wrapper" id="single"></div>
 
     <script src="../bower_components/jquery/jquery.js"></script>
     <script src="../velge.js" type="text/javascript"></script>
     <script type="text/javascript">
-      new window.Velge($('#wrapper'), {
-        choices: [
-          { name: "apple"      },
-          { name: "kumquat"    },
-          { name: "pear"       },
-          { name: "peach"      },
-          { name: "orange"     },
-          { name: "kiwi"       },
-          { name: "gooseberry" },
-          { name: "raspeberry" },
-          { name: "nectarine"  },
-          { name: "plum"       },
-          { name: "mango"      },
-          { name: "pineapple"  },
-          { name: "guava"      },
-          { name: "taro"       }
-        ],
+      var choices = [
+        { name: "apple"      },
+        { name: "kumquat"    },
+        { name: "pear"       },
+        { name: "peach"      },
+        { name: "orange"     },
+        { name: "kiwi"       },
+        { name: "gooseberry" },
+        { name: "raspeberry" },
+        { name: "nectarine"  },
+        { name: "plum"       },
+        { name: "mango"      },
+        { name: "pineapple"  },
+        { name: "guava"      },
+        { name: "taro"       }
+      ]
+
+      window.velge = new window.Velge($('#multi'), {
+        choices: choices,
         chosen: [
           { name: "banana"   },
           { name: "persimon" }
         ]
+      }).setup();
+
+      window.velge = new window.Velge($('#single'), {
+        choices: choices,
+        chosen: [
+          { name: "gooseberry" }
+        ],
+        single: true
       }).setup();
     </script>
   </body>
