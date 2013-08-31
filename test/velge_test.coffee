@@ -39,12 +39,12 @@ describe 'Velge', ->
 
     it 'does not display choices that have been chosen', ->
       velge
-        .addChosen(name: 'Fig')
-        .addChosen(name: 'Grape')
-        .addChoice(name: 'Fig')
-        .addChoice(name: 'Peach')
+        .addChosen(name: 'fig')
+        .addChosen(name: 'grape')
+        .addChoice(name: 'fig')
+        .addChoice(name: 'peach')
 
-      expect($('.velge-dropdown', $container)).to.not.contain('Fig')
+      expect($('.velge-dropdown', $container)).to.not.contain('fig')
 
   describe '#addChosen', ->
     beforeEach ->
