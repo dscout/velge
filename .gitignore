@@ -1,4 +1,4 @@
 bower_components
 node_modules
-test/spec/*.js
+test/*.js
 .DS_Store
