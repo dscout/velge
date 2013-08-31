@@ -1,15 +1,13 @@
 (function() {
   window.Velge = (function() {
     function Velge($container, options) {
-      if (options == null) {
-        options = {};
-      }
+      this.options = options != null ? options : {};
       this.store = new Velge.Store();
       this.ui = new Velge.UI($container, this, this.store);
       this.addCallbacks = [];
       this.remCallbacks = [];
-      this._preloadChoices(options.chosen || [], true);
-      this._preloadChoices(options.choices || [], false);
+      this._preloadChoices(this.options.chosen || [], true);
+      this._preloadChoices(this.options.choices || [], false);
     }
 
     Velge.prototype.setup = function() {
@@ -17,20 +15,37 @@
       return this;
     };
 
+    Velge.prototype.setOptions = function(newOptions) {
+      var key, value, _results;
+      _results = [];
+      for (key in newOptions) {
+        value = newOptions[key];
+        _results.push(this.options[key] = value);
+      }
+      return _results;
+    };
+
+    Velge.prototype.addChoice = function(choice) {
+      this.store.push(choice);
+      this.ui.renderChoices();
+      return this;
+    };
+
+    Velge.prototype.remChoice = function(choice) {
+      this.store["delete"](choice);
+      this.ui.renderChoices();
+      return this;
+    };
+
     Velge.prototype.addChosen = function(choice) {
       var chosen;
+      this._enforceSingleChoice();
       chosen = this.store.find(choice) || choice;
       chosen.chosen = true;
       this.store.push(chosen);
       this.ui.renderChosen();
       this.ui.renderChoices();
       this._applyCallbacks(chosen, this.addCallbacks);
-      return this;
-    };
-
-    Velge.prototype.addChoice = function(choice) {
-      this.store.push(choice);
-      this.ui.renderChoices();
       return this;
     };
 
@@ -44,12 +59,6 @@
       return this;
     };
 
-    Velge.prototype.remChoice = function(choice) {
-      this.store["delete"](choice);
-      this.ui.renderChoices();
-      return this;
-    };
-
     Velge.prototype.onAdd = function(callback) {
       this.addCallbacks.push(callback);
       return this;
@@ -58,6 +67,21 @@
     Velge.prototype.onRem = function(callback) {
       this.remCallbacks.push(callback);
       return this;
+    };
+
+    Velge.prototype._enforceSingleChoice = function() {
+      var choice, _i, _len, _ref, _results;
+      if (this.options.single != null) {
+        _ref = this.store.choices();
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          choice = _ref[_i];
+          _results.push(this.store.update(choice, {
+            chosen: false
+          }));
+        }
+        return _results;
+      }
     };
 
     Velge.prototype._preloadChoices = function(choices, isChosen) {
@@ -155,6 +179,7 @@
           case keycodes.COMMA:
           case keycodes.ENTER:
           case keycodes.TAB:
+            event.preventDefault();
             self.submit(self.$input.val());
             self.blurInput();
             return self.closeDropdown();

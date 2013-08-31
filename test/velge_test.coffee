@@ -55,6 +55,18 @@ describe 'Velge', ->
 
       expect($('.velge-list', $container)).to.contain('apple')
 
+    it 'pops existing choices when a limit has been set', ->
+      velge.setOptions(single: true)
+
+      velge
+        .addChosen(name: 'apple')
+        .addChosen(name: 'carrot')
+        .addChosen(name: 'avacado')
+
+      expect($('.velge-list', $container)).to.contain('avacado')
+      expect($('.velge-list', $container)).to.not.contain('carrot')
+      expect($('.velge-list', $container)).to.not.contain('apple')
+
   describe '#remChoice', ->
     beforeEach ->
       velge = new Velge($container, choices: [{ name: 'apple' }]).setup()

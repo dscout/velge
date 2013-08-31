@@ -1,31 +1,40 @@
 class window.Velge
-  constructor: ($container, options = {}) ->
+  constructor: ($container, @options = {}) ->
     @store = new Velge.Store()
     @ui    = new Velge.UI($container, @, @store)
 
     @addCallbacks = []
     @remCallbacks = []
 
-    @_preloadChoices(options.chosen  || [], true)
-    @_preloadChoices(options.choices || [], false)
+    @_preloadChoices(@options.chosen  || [], true)
+    @_preloadChoices(@options.choices || [], false)
 
   setup: ->
     @ui.setup()
 
     @
 
+  setOptions: (newOptions) ->
+    @options[key] = value for key, value of newOptions
+
+  addChoice: (choice) ->
+    @store.push(choice)
+    @ui.renderChoices()
+    @
+
+  remChoice: (choice) ->
+    @store.delete(choice)
+    @ui.renderChoices()
+    @
+
   addChosen: (choice) ->
+    @_enforceSingleChoice()
     chosen = @store.find(choice) || choice
     chosen.chosen = true
     @store.push(chosen)
     @ui.renderChosen()
     @ui.renderChoices()
     @_applyCallbacks(chosen, @addCallbacks)
-    @
-
-  addChoice: (choice) ->
-    @store.push(choice)
-    @ui.renderChoices()
     @
 
   remChosen: (choice) ->
@@ -35,11 +44,6 @@ class window.Velge
     @_applyCallbacks(choice, @remCallbacks)
     @
 
-  remChoice: (choice) ->
-    @store.delete(choice)
-    @ui.renderChoices()
-    @
-
   onAdd: (callback) ->
     @addCallbacks.push(callback)
     @
@@ -47,6 +51,11 @@ class window.Velge
   onRem: (callback) ->
     @remCallbacks.push(callback)
     @
+
+  _enforceSingleChoice: ->
+    if @options.single?
+      for choice in @store.choices()
+        @store.update(choice, chosen: false)
 
   _preloadChoices: (choices, isChosen) ->
     for choice in choices
