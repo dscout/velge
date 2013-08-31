@@ -53,6 +53,7 @@ class Velge.UI
           self.closeDropdown()
           self.$input.val('')
         when keycodes.COMMA, keycodes.ENTER, keycodes.TAB
+          event.preventDefault()
           self.submit(self.$input.val())
           self.blurInput()
           self.closeDropdown()
