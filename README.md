@@ -30,8 +30,11 @@ Velge can be attached to any container. The structure isn't of any importance:
 Initialize velge with a selector for the container and customization options:
 
 ```javascript
-var velge = new Velge($('.container'), options)
+var velge = new Velge($('.container'), {})
 ```
+
+Any choices that are provided at initialization will be used to pre-populate
+the dropdown and chosen lists.
 
 ### Loading Tags
 
@@ -52,11 +55,20 @@ velge
 Tag objects can be anything that have a "name" property or method. Whatever
 object is loaded is what will be passed to any callbacks.
 
-It isn't always tidy to add choices and applied separately. For convenience they can
+It isn't always tidy to add choices and chosen separately. For convenience they can
 also be loaded during construction:
 
 ```javascript
-new Velge($selector, { applied: [], choices: [] })
+new Velge($selector,
+  choices: [
+    { name: "apple"  },
+    { name: "pear"   },
+    { name: "quince" }
+  ],
+  chosen: [
+    { name: "kiwi" }
+  ]
+})
 ```
 
 ### Persisting
@@ -71,6 +83,16 @@ var addCallback = function(choice, velge) { /* Persist Me */ }
 velge
   .onAdd(addCallback)
   .onRem(remCallback)
+```
+
+### Single Mode
+
+While velge is designed as an interface for applying multiple "tags" to a
+resource it can also operate in single mode. Under single mode only the most
+recent tag will be kept, all others will be unchosen.
+
+```javascript
+var velge = new Velge($('.container'), { single: true })
 ```
 
 ### Error Handling
