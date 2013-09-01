@@ -1,9 +1,11 @@
-[![Build Status](https://magnum.travis-ci.com/dscout/velge.png?token=qVRrqXZfaiPzkgrHbzVZ&branch=master)](https://magnum.travis-ci.com/dscout/velge)
+[![Build Status](https://travis-ci.org/dscout/velge.png?token=qVRrqXZfaiPzkgrHbzVZ&branch=master)](https://travis-ci.org/dscout/velge)
 
 # Velge |CHooz|
 
 1. verb - Pick out or select as being the most appropriate of two or more alternatives.
-2. noun - Nimble autocompleting tag management widget
+2. noun - Nimble autocompleting tag management in javascript
+
+![Velge Example](http://assets-dscoutapp-com.s3.amazonaws.com/velge_sample.png)
 
 ## Installation
 
