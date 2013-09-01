@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/dscout/velge.png?token=qVRrqXZfaiPzkgrHbzVZ&branch=master)](https://travis-ci.org/dscout/velge)
+[![Build Status](https://travis-ci.org/dscout/velge.png?branch=master)](https://travis-ci.org/dscout/velge)
 
-# Velge |CHooz|
+# Velge |Choose|
 
 1. verb - Pick out or select as being the most appropriate of two or more alternatives.
 2. noun - Nimble autocompleting tag management in javascript
