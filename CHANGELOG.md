@@ -1,3 +1,7 @@
+# v0.6.2
+
+* Callbacks setters accept a context object that will be used when calling.
+
 # v0.6.1
 
 * Use `Velge#remChosen` when un-choosing from the UI. This change ensures that
