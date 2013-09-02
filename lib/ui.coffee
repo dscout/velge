@@ -94,9 +94,7 @@ class Velge.UI
 
     @$wrapper.on 'click.velge', '.velge-list .remove', (event) ->
       $target = $(event.currentTarget).parent().find('.name')
-      self.unchoose($target.text())
-      self.renderChoices()
-      self.renderChosen()
+      self.velge.remChosen(name: $target.text())
       false
 
     @$wrapper.on 'click.velge', '.velge-trigger', (event) ->
@@ -114,9 +112,6 @@ class Velge.UI
 
   choose: (name) ->
     @store.update({ name: name }, { chosen: true })
-
-  unchoose: (name) ->
-    @store.update({ name: name }, { chosen: false })
 
   submit: (name) ->
     return false unless @store.validate(name)
