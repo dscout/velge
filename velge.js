@@ -100,7 +100,7 @@
       _results = [];
       for (_i = 0, _len = callbacks.length; _i < _len; _i++) {
         callback = callbacks[_i];
-        _results.push(callback.call(choice, this));
+        _results.push(callback.call(this, choice, this));
       }
       return _results;
     };
@@ -225,9 +225,9 @@
       this.$wrapper.on('click.velge', '.velge-list .remove', function(event) {
         var $target;
         $target = $(event.currentTarget).parent().find('.name');
-        self.unchoose($target.text());
-        self.renderChoices();
-        self.renderChosen();
+        self.velge.remChosen({
+          name: $target.text()
+        });
         return false;
       });
       this.$wrapper.on('click.velge', '.velge-trigger', function(event) {
@@ -251,14 +251,6 @@
         name: name
       }, {
         chosen: true
-      });
-    };
-
-    UI.prototype.unchoose = function(name) {
-      return this.store.update({
-        name: name
-      }, {
-        chosen: false
       });
     };
 

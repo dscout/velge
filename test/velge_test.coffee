@@ -105,6 +105,8 @@ describe 'Velge', ->
 
       expect(spyA.called).to.be.true
       expect(spyB.called).to.be.true
+      expect(spyA.calledWith({ chosen: true, name: 'persimon' }, velge)).to.be.true
+      expect(spyB.calledWith({ chosen: true, name: 'persimon' }, velge)).to.be.true
 
   describe '#onRem', ->
     beforeEach ->

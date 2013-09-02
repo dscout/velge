@@ -63,4 +63,4 @@ class window.Velge
       @store.push(choice)
 
   _applyCallbacks: (choice, callbacks) ->
-    callback.call(choice, @) for callback in callbacks
+    callback.call(@, choice, @) for callback in callbacks
