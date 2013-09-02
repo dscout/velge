@@ -1,3 +1,10 @@
+# v0.6.1
+
+* Use `Velge#remChosen` when un-choosing from the UI. This change ensures that
+  then `onRem` callbacks are fired properly.
+* Fix callback application, callback methods were being invoked with the choice
+  passed as the `this` value.
+
 # v0.6.0
 
 * Add single choice mode.
