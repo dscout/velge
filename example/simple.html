@@ -44,6 +44,10 @@
           { name: "banana"   },
           { name: "persimon" }
         ]
+      }).onAdd(function(choice, velge) {
+        console.log("Added", choice, velge);
+      }).onRem(function(choice, velge) {
+        console.log("Removed", choice, velge);
       }).setup();
 
       window.velge = new window.Velge($('#single'), {
@@ -52,6 +56,10 @@
           { name: "gooseberry" }
         ],
         single: true
+      }).onAdd(function(choice, velge) {
+        console.log("Added", choice, velge);
+      }).onRem(function(choice, velge) {
+        console.log("Removed", choice, velge);
       }).setup();
     </script>
   </body>
