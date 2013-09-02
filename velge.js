@@ -59,13 +59,19 @@
       return this;
     };
 
-    Velge.prototype.onAdd = function(callback) {
-      this.addCallbacks.push(callback);
+    Velge.prototype.onAdd = function(callback, context) {
+      this.addCallbacks.push({
+        callback: callback,
+        context: context
+      });
       return this;
     };
 
-    Velge.prototype.onRem = function(callback) {
-      this.remCallbacks.push(callback);
+    Velge.prototype.onRem = function(callback, context) {
+      this.remCallbacks.push({
+        callback: callback,
+        context: context
+      });
       return this;
     };
 
@@ -96,11 +102,13 @@
     };
 
     Velge.prototype._applyCallbacks = function(choice, callbacks) {
-      var callback, _i, _len, _results;
+      var callObject, callback, context, _i, _len, _results;
       _results = [];
       for (_i = 0, _len = callbacks.length; _i < _len; _i++) {
-        callback = callbacks[_i];
-        _results.push(callback.call(this, choice, this));
+        callObject = callbacks[_i];
+        callback = callObject.callback;
+        context = callObject.context || this;
+        _results.push(callback.call(context, choice, this));
       }
       return _results;
     };

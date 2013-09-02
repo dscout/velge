@@ -44,12 +44,12 @@ class window.Velge
     @_applyCallbacks(choice, @remCallbacks)
     @
 
-  onAdd: (callback) ->
-    @addCallbacks.push(callback)
+  onAdd: (callback, context) ->
+    @addCallbacks.push(callback: callback, context: context)
     @
 
-  onRem: (callback) ->
-    @remCallbacks.push(callback)
+  onRem: (callback, context) ->
+    @remCallbacks.push(callback: callback, context: context)
     @
 
   _enforceSingleChoice: ->
@@ -63,4 +63,8 @@ class window.Velge
       @store.push(choice)
 
   _applyCallbacks: (choice, callbacks) ->
-    callback.call(@, choice, @) for callback in callbacks
+    for callObject in callbacks
+      callback = callObject.callback
+      context  = callObject.context || @
+
+      callback.call(context, choice, @)

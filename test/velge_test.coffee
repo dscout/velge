@@ -108,6 +108,15 @@ describe 'Velge', ->
       expect(spyA.calledWith({ chosen: true, name: 'persimon' }, velge)).to.be.true
       expect(spyB.calledWith({ chosen: true, name: 'persimon' }, velge)).to.be.true
 
+    it 'calls within the supplied context when given', ->
+      context = new Object()
+      spy = sinon.spy()
+
+      velge.onAdd(spy, context)
+      velge.addChosen(name: 'persimon')
+
+      expect(spy.calledOn(context)).to.be.true
+
   describe '#onRem', ->
     beforeEach ->
       velge = new Velge($container, chosen: [
