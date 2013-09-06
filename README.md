@@ -7,6 +7,22 @@
 
 ![Velge Example](http://assets-dscoutapp-com.s3.amazonaws.com/velge_sample.png)
 
+Velge is a nimble tag management widget. It is written in CoffeeScript, fully
+tested with Mocha, depends only on jQuery, and can be installed via Bower. If
+you have ever wanted a tag widget similar to label management in Pivotal
+Tracker, velge is it.
+
+Some of the features:
+
+* Automatic sorting, validation, normalization
+* Fuzzy pattern matching
+* Keyboard shortcuts
+* Very simple callback hooks for addition and removal
+
+The library is very lightweight and constructed in a way that allows for easy
+feature additions. We'd love more people to use it, request features, and
+contribute!
+
 ## Installation
 
 The simplest way is via bower:
