@@ -34,6 +34,7 @@ bower install velge
 You'll then want to import the compiled `.js` and `.css`:
 
 ```html
+<link href="/bower_components/velge/velge.css" rel="stylesheet" type="text/css">
 <script src="/bower_components/velge/velge.min.js"></script>
 ```
 
