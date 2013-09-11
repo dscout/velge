@@ -295,7 +295,7 @@
         }
         return _results;
       }).call(this);
-      return this.$list.empty().html(choices);
+      return this.$list.html(choices);
     };
 
     UI.prototype.renderChoices = function(filtered) {
@@ -314,7 +314,7 @@
         }
         return _results;
       }).call(this);
-      return this.$dropdown.empty().html(choices);
+      return this.$dropdown.html(choices);
     };
 
     UI.prototype.renderHighlighted = function() {

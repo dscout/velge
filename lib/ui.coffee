@@ -132,7 +132,7 @@ class Velge.UI
     choices = for choice in @store.filter(chosen: true)
       @_template(@chosenTemplate, name: choice.name)
 
-    @$list.empty().html(choices)
+    @$list.html(choices)
 
   renderChoices: (filtered) ->
     filtered ||= @store.filter(chosen: false)
@@ -140,7 +140,7 @@ class Velge.UI
     choices = for choice in filtered
       @_template(@choiceTemplate, name: choice.name)
 
-    @$dropdown.empty().html(choices)
+    @$dropdown.html(choices)
 
   renderHighlighted: ->
     selected = @index
