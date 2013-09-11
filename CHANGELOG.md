@@ -1,5 +1,7 @@
-# v0.6.3 (Unreleased)
+# v0.7.0 (Unreleased)
 
+* Style fixes around margin, padding, and line height.
+* Customizable placeholder value.
 * Enforce "single" mode when clicking on choices directly.
 * Remove placeholder class and styling from input. Caused unecessary padding.
 
