@@ -246,19 +246,11 @@
       return this.$wrapper.on('click.velge', '.velge-dropdown li', function(event) {
         var $target;
         $target = $(event.currentTarget);
-        self.choose($target.text());
+        self.submit($target.text());
         self.renderChoices();
         self.renderChosen();
         self.closeDropdown();
         return false;
-      });
-    };
-
-    UI.prototype.choose = function(name) {
-      return this.store.update({
-        name: name
-      }, {
-        chosen: true
       });
     };
 

@@ -104,14 +104,11 @@ class Velge.UI
 
     @$wrapper.on 'click.velge', '.velge-dropdown li', (event) ->
       $target = $(event.currentTarget)
-      self.choose($target.text())
+      self.submit($target.text())
       self.renderChoices()
       self.renderChosen()
       self.closeDropdown()
       false
-
-  choose: (name) ->
-    @store.update({ name: name }, { chosen: true })
 
   submit: (name) ->
     return false unless @store.validate(name)

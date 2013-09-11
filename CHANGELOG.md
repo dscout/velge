@@ -1,3 +1,8 @@
+# v0.6.3 (Unreleased)
+
+* Enforce "single" mode when clicking on choices directly.
+* Remove placeholder class and styling from input. Caused unecessary padding.
+
 # v0.6.2
 
 * Callbacks setters accept a context object that will be used when calling.
