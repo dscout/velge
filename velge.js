@@ -289,7 +289,9 @@
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           choice = _ref[_i];
-          _results.push(this.chosenTemplate.replace('{{name}}', choice.name));
+          _results.push(this._template(this.chosenTemplate, {
+            name: choice.name
+          }));
         }
         return _results;
       }).call(this);
@@ -306,7 +308,9 @@
         _results = [];
         for (_i = 0, _len = filtered.length; _i < _len; _i++) {
           choice = filtered[_i];
-          _results.push(this.choiceTemplate.replace('{{name}}', choice.name));
+          _results.push(this._template(this.choiceTemplate, {
+            name: choice.name
+          }));
         }
         return _results;
       }).call(this);

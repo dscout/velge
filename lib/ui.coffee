@@ -130,7 +130,7 @@ class Velge.UI
 
   renderChosen: ->
     choices = for choice in @store.filter(chosen: true)
-      @chosenTemplate.replace('{{name}}', choice.name)
+      @_template(@chosenTemplate, name: choice.name)
 
     @$list.empty().html(choices)
 
@@ -138,7 +138,7 @@ class Velge.UI
     filtered ||= @store.filter(chosen: false)
 
     choices = for choice in filtered
-      @choiceTemplate.replace('{{name}}', choice.name)
+      @_template(@choiceTemplate, name: choice.name)
 
     @$dropdown.empty().html(choices)
 
