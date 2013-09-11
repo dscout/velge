@@ -38,9 +38,15 @@
   font-weight: bold;
   list-style-type: none;
   margin: 0 5px 0 0;
+  max-height: 30px;
+  min-height: 30px;
   overflow: hidden;
   padding: 6px;
   padding-right: 8px;
+
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
 
   -webkit-transition: color 0.4s;
      -moz-transition: color 0.4s;
@@ -83,17 +89,15 @@
   border: none;
   float: left;
   font-size: inherit;
-  line-height: 20px;
+  line-height: 1;
   outline: none;
-  padding: 7px 5px 0 7px;
+  padding: 5px;
   width: 100px;
 }
 
 .velge-input:focus {
   border: none;
   box-shadow: none;
-  padding-bottom: 7px;
-  padding-top: 7px;
 }
 
 .velge-trigger {
