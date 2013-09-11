@@ -12,7 +12,7 @@ class Velge.UI
   wrapTemplate: """
     <div class='velge'>
       <ul class='velge-list'></ul>
-      <input type='text' autocomplete='off' placeholder='Add Tags' class='velge-input' />
+      <input type='text' autocomplete='off' placeholder='{{placeholder}}' class='velge-input' />
       <span class='velge-trigger'></span>
       <ol class='velge-dropdown'></ol>
     </div>
@@ -29,11 +29,16 @@ class Velge.UI
     <li>{{name}}</li>
   """
 
-  constructor: ($container, velge, store) ->
+  defaults:
+    placeholder: 'Add Tag'
+
+  constructor: ($container, velge, store, options = {}) ->
     @$container = $container
     @velge      = velge
     @store      = store
     @index      = -1
+
+    @options = @_defaults(options, @defaults)
 
   setup: ->
     @render()
@@ -116,7 +121,7 @@ class Velge.UI
     @velge.addChosen(name: name)
 
   render: ->
-    @$wrapper  = $(@wrapTemplate)
+    @$wrapper  = $(@_template(@wrapTemplate, @options))
     @$list     = $('.velge-list',     @$wrapper)
     @$input    = $('.velge-input',    @$wrapper)
     @$dropdown = $('.velge-dropdown', @$wrapper)
@@ -183,3 +188,14 @@ class Velge.UI
     $highlighted = @$dropdown.find('.highlighted')
 
     @$input.val($highlighted.text())
+
+  _defaults: (options, defaults) ->
+    for key, value of defaults
+      options[key] = defaults[key] unless options[key]?
+
+    options
+
+  _template: (string, object) ->
+    buffer = string
+    buffer = buffer.replace("{{#{key}}}", value) for key, value of object
+    buffer

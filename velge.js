@@ -3,7 +3,7 @@
     function Velge($container, options) {
       this.options = options != null ? options : {};
       this.store = new Velge.Store();
-      this.ui = new Velge.UI($container, this, this.store);
+      this.ui = new Velge.UI($container, this, this.store, this.options);
       this.addCallbacks = [];
       this.remCallbacks = [];
       this._preloadChoices(this.options.chosen || [], true);
@@ -153,17 +153,25 @@
       COMMA: 188
     };
 
-    UI.prototype.wrapTemplate = "<div class='velge'>\n  <ul class='velge-list'></ul>\n  <input type='text' autocomplete='off' placeholder='Add Tags' class='velge-input' />\n  <span class='velge-trigger'></span>\n  <ol class='velge-dropdown'></ol>\n</div>";
+    UI.prototype.wrapTemplate = "<div class='velge'>\n  <ul class='velge-list'></ul>\n  <input type='text' autocomplete='off' placeholder='{{placeholder}}' class='velge-input' />\n  <span class='velge-trigger'></span>\n  <ol class='velge-dropdown'></ol>\n</div>";
 
     UI.prototype.chosenTemplate = "<li>\n  <span class='name'>{{name}}</span>\n  <span class='remove'>&times;</span>\n</li>";
 
     UI.prototype.choiceTemplate = "<li>{{name}}</li>";
 
-    function UI($container, velge, store) {
+    UI.prototype.defaults = {
+      placeholder: 'Add Tag'
+    };
+
+    function UI($container, velge, store, options) {
+      if (options == null) {
+        options = {};
+      }
       this.$container = $container;
       this.velge = velge;
       this.store = store;
       this.index = -1;
+      this.options = this._defaults(options, this.defaults);
     }
 
     UI.prototype.setup = function() {
@@ -264,7 +272,7 @@
     };
 
     UI.prototype.render = function() {
-      this.$wrapper = $(this.wrapTemplate);
+      this.$wrapper = $(this._template(this.wrapTemplate, this.options));
       this.$list = $('.velge-list', this.$wrapper);
       this.$input = $('.velge-input', this.$wrapper);
       this.$dropdown = $('.velge-dropdown', this.$wrapper);
@@ -370,6 +378,27 @@
       var $highlighted;
       $highlighted = this.$dropdown.find('.highlighted');
       return this.$input.val($highlighted.text());
+    };
+
+    UI.prototype._defaults = function(options, defaults) {
+      var key, value;
+      for (key in defaults) {
+        value = defaults[key];
+        if (options[key] == null) {
+          options[key] = defaults[key];
+        }
+      }
+      return options;
+    };
+
+    UI.prototype._template = function(string, object) {
+      var buffer, key, value;
+      buffer = string;
+      for (key in object) {
+        value = object[key];
+        buffer = buffer.replace("{{" + key + "}}", value);
+      }
+      return buffer;
     };
 
     return UI;

@@ -36,6 +36,11 @@ describe 'Velge.UI', ->
       expect($container).to.have('.velge-trigger')
       expect($container).to.have('.velge-dropdown')
 
+    it 'applies the placeholder option', ->
+      velge = new Velge($container, placeholder: 'Choose').setup()
+
+      expect($('.velge-input', $container).attr('placeholder')).to.eq('Choose')
+
   describe 'choice dropdown', ->
     beforeEach ->
       velge = new Velge($container, choices: [{ name: 'apple' }]).setup()
