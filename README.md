@@ -64,7 +64,7 @@ jQuery must be installed via bower for the examples to operate:
 bower install jquery
 ```
 
-Alernativly you can sawp in jquery from a CDN if you don't have bower installed:
+Alernativly you can swap in jquery from a CDN if you don't have bower installed:
 
 ```html
 <!-- replace this -->
