@@ -12,7 +12,7 @@ class Velge.UI
   wrapTemplate: """
     <div class='velge'>
       <ul class='velge-list'></ul>
-      <input type='text' autocomplete='off' placeholder='Add Tags' class='velge-input placeholder' />
+      <input type='text' autocomplete='off' placeholder='Add Tags' class='velge-input' />
       <span class='velge-trigger'></span>
       <ol class='velge-dropdown'></ol>
     </div>

@@ -89,12 +89,6 @@
   width: 100px;
 }
 
-.velge-input.placeholder {
-  display: inline-block;
-  padding-bottom: 7px;
-  padding-top: 7px;
-}
-
 .velge-input:focus {
   border: none;
   box-shadow: none;
