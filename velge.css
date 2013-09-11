@@ -26,6 +26,7 @@
   line-height: 1;
   overflow: hidden;
   margin: 0;
+  max-width: 95%;
   padding: 0;
 }
 
