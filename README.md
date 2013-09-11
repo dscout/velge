@@ -54,6 +54,25 @@ var velge = new Velge($('.container'), {})
 Any choices that are provided at initialization will be used to pre-populate
 the dropdown and chosen lists.
 
+## Example
+
+There is an example page that sets up a few instances of velge to play with.
+jQuery must be installed via bower for the examples to operate:
+
+```bash
+bower install jquery
+```
+
+Alernativly you can sawp in jquery from a CDN if you don't have bower installed:
+
+```html
+<!-- replace this -->
+<script src="../bower_components/jquery/jquery.js"></script>
+
+<!-- with this -->
+<script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+```
+
 ### Loading Tags
 
 All tag matching is performed locally. As such you must load in all possible
