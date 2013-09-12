@@ -3,10 +3,15 @@
   border-radius: 7px;
   cursor: text;
   font-size: 11px;
+  margin: 0;
   min-height: 30px;
   padding: 5px;
   position: relative;
   width: 100%;
+
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 .velge:after {
@@ -15,19 +20,21 @@
   display: block;
   font-size: 0;
   height: 0;
-  line-height: 0;
   visibility: hidden;
   width: 0;
 }
 
 .velge-list {
-  background: #fff;
   float: left;
   line-height: 1;
-  overflow: hidden;
-  margin: 0;
+  margin: 0 0 -5px 0;
   max-width: 95%;
+  overflow: hidden;
   padding: 0;
+
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
 .velge-list li {
@@ -38,7 +45,7 @@
   display: inline-block;
   font-weight: bold;
   list-style-type: none;
-  margin: 0 5px 0 0;
+  margin: 0 5px 5px 0;
   max-height: 30px;
   min-height: 30px;
   overflow: hidden;
@@ -90,9 +97,11 @@
   border: none;
   float: left;
   font-size: inherit;
-  line-height: 1;
+  line-height: 30px;
+  margin: 0;
+  min-height: 30px;
   outline: none;
-  padding: 5px;
+  padding: 0;
   width: 100px;
 }
 
