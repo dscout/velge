@@ -1,3 +1,9 @@
+# v0.7.1
+
+* More reliable tag height and positioning.
+* Define max-width on list to avoid overlap with handle.
+* Enforce tag height and better vertical alignment.
+
 # v0.7.0
 
 * Emphasize characters that match during fuzzy search.
