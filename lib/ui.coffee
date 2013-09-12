@@ -1,13 +1,14 @@
 class Velge.UI
   KEYCODES:
-    TAB:    9
-    ENTER:  13
-    ESCAPE: 27
-    LEFT:   37
-    UP:     38
-    RIGHT:  39
-    DOWN:   40
-    COMMA:  188
+    BACKSPACE: 8
+    TAB:       9
+    ENTER:     13
+    ESCAPE:    27
+    LEFT:      37
+    UP:        38
+    RIGHT:     39
+    DOWN:      40
+    COMMA:     188
 
   wrapTemplate: """
     <div class='velge'>
@@ -82,7 +83,6 @@ class Velge.UI
             self.index = -1
             self.filterChoices(self.$input.val())
           setTimeout(callback, 10)
-          self.openDropdown()
 
     @$wrapper.on 'blur.velge', '.velge-input', (event) ->
       clearTimeout(self.closeTimeout)

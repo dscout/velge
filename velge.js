@@ -143,6 +143,7 @@
 
   Velge.UI = (function() {
     UI.prototype.KEYCODES = {
+      BACKSPACE: 8,
       TAB: 9,
       ENTER: 13,
       ESCAPE: 27,
@@ -219,8 +220,7 @@
               self.index = -1;
               return self.filterChoices(self.$input.val());
             };
-            setTimeout(callback, 10);
-            return self.openDropdown();
+            return setTimeout(callback, 10);
         }
       });
       this.$wrapper.on('blur.velge', '.velge-input', function(event) {
