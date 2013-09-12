@@ -1,6 +1,6 @@
 {
   "name": "velge",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "main": "velge.js",
   "dependencies": {
     "jquery": "~2.0.3"
