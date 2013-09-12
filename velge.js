@@ -298,7 +298,7 @@
       return this.$list.html(choices);
     };
 
-    UI.prototype.renderChoices = function(filtered) {
+    UI.prototype.renderChoices = function(filtered, value) {
       var choice, choices;
       filtered || (filtered = this.store.filter({
         chosen: false
@@ -309,7 +309,7 @@
         for (_i = 0, _len = filtered.length; _i < _len; _i++) {
           choice = filtered[_i];
           _results.push(this._template(this.choiceTemplate, {
-            name: choice.name
+            name: this._emphasize(choice.name, value)
           }));
         }
         return _results;
@@ -361,7 +361,7 @@
     UI.prototype.filterChoices = function(value) {
       var matching;
       matching = this.store.fuzzy(value);
-      this.renderChoices(matching);
+      this.renderChoices(matching, value);
       return this.$dropdown.toggleClass('open', matching.length !== 0);
     };
 
@@ -403,6 +403,14 @@
         buffer = buffer.replace("{{" + key + "}}", value);
       }
       return buffer;
+    };
+
+    UI.prototype._emphasize = function(string, value) {
+      if ((value != null) && value.length > 0) {
+        return string.replace(new RegExp("(" + value + ")", 'i'), "<b>$1</b>");
+      } else {
+        return string;
+      }
     };
 
     return UI;

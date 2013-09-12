@@ -186,6 +186,17 @@ describe 'Velge.UI', ->
         done()
       ), 11)
 
+    it 'emphasizes the matched characters in each choice', (done) ->
+      $input.val('ap')
+      press($input, 'space')
+
+      setTimeout((->
+        $matches = $('.velge-dropdown li:visible')
+        expect($matches.eq(0)).to.have.html('<b>ap</b>ple')
+        expect($matches.eq(1)).to.have.html('<b>ap</b>ricot')
+        done()
+      ), 11)
+
   describe 'removing chosen', ->
     beforeEach ->
       velge = new Velge($container, chosen: [

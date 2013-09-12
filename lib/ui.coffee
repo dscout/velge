@@ -134,11 +134,11 @@ class Velge.UI
 
     @$list.html(choices)
 
-  renderChoices: (filtered) ->
+  renderChoices: (filtered, value) ->
     filtered ||= @store.filter(chosen: false)
 
     choices = for choice in filtered
-      @_template(@choiceTemplate, name: choice.name)
+      @_template(@choiceTemplate, name: @_emphasize(choice.name, value))
 
     @$dropdown.html(choices)
 
@@ -169,7 +169,7 @@ class Velge.UI
   filterChoices: (value) ->
     matching = @store.fuzzy(value)
 
-    @renderChoices(matching)
+    @renderChoices(matching, value)
 
     @$dropdown.toggleClass('open', matching.length isnt 0)
 
@@ -199,3 +199,9 @@ class Velge.UI
     buffer = string
     buffer = buffer.replace("{{#{key}}}", value) for key, value of object
     buffer
+
+  _emphasize: (string, value) ->
+    if value? and value.length > 0
+      string.replace(new RegExp("(#{value})", 'i'), "<b>$1</b>")
+    else
+      string

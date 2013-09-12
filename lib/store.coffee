@@ -53,7 +53,8 @@ class Velge.Store
     query = if (/^\s*$/.test(value)) then '.*' else value
     regex = RegExp(query, 'i')
 
-    choice for choice in @arr when !choice.chosen and regex.test(choice.name)
+    for choice in @arr when !choice.chosen and regex.test(choice.name)
+      choice
 
   filter: (options = {}) ->
     options.chosen ||= false
