@@ -205,7 +205,7 @@ describe 'Velge.UI', ->
         { name: 'orange'  }
       ]).setup()
 
-    it 'removes the choice from the chosen list', ->
+    it 'removes the choice from the chosen list when remove is clicked', ->
       $list = $('.velge-list', $container)
       $dropdown = $('.velge-dropdown', $container)
 
@@ -213,6 +213,19 @@ describe 'Velge.UI', ->
 
       expect($list).to.not.contain('apple')
       expect($dropdown).to.contain('apple')
+
+    it 'highlights and then removes the last choice via backspace', ->
+      $input = $('.velge-input', $container)
+      $list  = $('.velge-list', $container)
+
+      press($input, 'backspace')
+
+      expect($list).to.have('.highlighted')
+      expect($('.highlighted', $list)).to.contain('orange')
+
+      press($input, 'backspace')
+      expect($list).to.not.have('.highlighted')
+      expect($list).to.not.contain('orange')
 
   describe 'choice selection', ->
     beforeEach ->

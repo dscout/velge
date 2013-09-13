@@ -34,10 +34,11 @@ class Velge.UI
     placeholder: 'Add Tag'
 
   constructor: ($container, velge, store, options = {}) ->
-    @$container = $container
-    @velge      = velge
-    @store      = store
-    @index      = -1
+    @$container  = $container
+    @velge       = velge
+    @store       = store
+    @choiceIndex = -1
+    @chosenIndex = -1
 
     @options = @_defaults(options, @defaults)
 
@@ -55,8 +56,18 @@ class Velge.UI
 
     @$wrapper.on 'keydown.velge', '.velge-input', (event) ->
       switch event.which
+        when keycodes.BACKSPACE
+          break unless self.$input.val() is ''
+
+          if self.chosenIndex > -1
+            self.removeHighlightedChosen()
+          else
+            self.chosenIndex = 0
+            self.cycleChosen('up')
+            self.renderHighlightedChosen()
         when keycodes.ESCAPE
           self.closeDropdown()
+          self.renderHighlightedChosen()
           self.$input.val('')
         when keycodes.COMMA, keycodes.ENTER, keycodes.TAB
           event.preventDefault()
@@ -66,21 +77,21 @@ class Velge.UI
         when keycodes.DOWN
           event.preventDefault()
           self.openDropdown()
-          self.cycle('down')
-          self.renderHighlighted()
+          self.cycleChoice('down')
+          self.renderHighlightedChoice()
           self.autoComplete()
         when keycodes.UP
           event.preventDefault()
           self.openDropdown()
-          self.cycle('up')
-          self.renderHighlighted()
+          self.cycleChoice('up')
+          self.renderHighlightedChoice()
           self.autoComplete()
         when keycodes.LEFT, keycodes.RIGHT
           # Stop this from bubbling up while editing
           event.stopPropagation()
         else
           callback = ->
-            self.index = -1
+            self.choiceIndex = -1
             self.filterChoices(self.$input.val())
           setTimeout(callback, 10)
 
@@ -142,20 +153,40 @@ class Velge.UI
 
     @$dropdown.html(choices)
 
-  renderHighlighted: ->
-    selected = @index
+  renderHighlightedChoice: ->
+    selected = @choiceIndex
 
     for li, index in @$dropdown.find('li')
       $choice = $(li)
       $choice.toggleClass 'highlighted', index is selected
       Velge.Util.autoScroll($choice, @$dropdown) if index is selected
 
+  renderHighlightedChosen: ->
+    selected = @chosenIndex
+
+    for li, index in @$list.find('li')
+      $(li).toggleClass 'highlighted', index is selected
+
+  removeHighlightedChosen: ->
+    $target = @$list.find('.highlighted .name')
+    @velge.remChosen(name: $target.text())
+    @chosenIndex = -1
+
+  cycleChoice: (direction) ->
+    length = @$dropdown.find('li').length
+    @choiceIndex = @_cycle(@choiceIndex, length, direction)
+
+  cycleChosen: (direction) ->
+    length = @$list.find('li').length
+    @chosenIndex = @_cycle(@chosenIndex, length, direction)
+
   openDropdown: ->
     @$dropdown.addClass('open') unless @store.isEmpty()
 
   closeDropdown: ->
     @$dropdown.removeClass('open')
-    @index = -1
+    @choiceIndex = -1
+    @chosenIndex = -1
 
   toggleDropdown: ->
     if @$dropdown.hasClass('open')
@@ -173,21 +204,19 @@ class Velge.UI
 
     @$dropdown.toggleClass('open', matching.length isnt 0)
 
-  cycle: (direction = 'down') ->
-    length = @$dropdown.find('li').length
-
-    if length > 0
-      @index = if direction is 'down'
-        (@index + 1) % length
-      else
-        (@index + (length - 1)) % length
-    else
-      @index = -1
-
   autoComplete: ->
     $highlighted = @$dropdown.find('.highlighted')
 
     @$input.val($highlighted.text())
+
+  _cycle: (index, length, direction = 'down') ->
+    if length > 0
+      if direction is 'down'
+        (index + 1) % length
+      else
+        (index + (length - 1)) % length
+    else
+      -1
 
   _defaults: (options, defaults) ->
     for key, value of defaults

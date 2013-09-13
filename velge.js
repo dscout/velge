@@ -171,7 +171,8 @@
       this.$container = $container;
       this.velge = velge;
       this.store = store;
-      this.index = -1;
+      this.choiceIndex = -1;
+      this.chosenIndex = -1;
       this.options = this._defaults(options, this.defaults);
     }
 
@@ -190,8 +191,21 @@
       this.$wrapper.on('keydown.velge', '.velge-input', function(event) {
         var callback;
         switch (event.which) {
+          case keycodes.BACKSPACE:
+            if (self.$input.val() !== '') {
+              break;
+            }
+            if (self.chosenIndex > -1) {
+              return self.removeHighlightedChosen();
+            } else {
+              self.chosenIndex = 0;
+              self.cycleChosen('up');
+              return self.renderHighlightedChosen();
+            }
+            break;
           case keycodes.ESCAPE:
             self.closeDropdown();
+            self.renderHighlightedChosen();
             return self.$input.val('');
           case keycodes.COMMA:
           case keycodes.ENTER:
@@ -203,21 +217,21 @@
           case keycodes.DOWN:
             event.preventDefault();
             self.openDropdown();
-            self.cycle('down');
-            self.renderHighlighted();
+            self.cycleChoice('down');
+            self.renderHighlightedChoice();
             return self.autoComplete();
           case keycodes.UP:
             event.preventDefault();
             self.openDropdown();
-            self.cycle('up');
-            self.renderHighlighted();
+            self.cycleChoice('up');
+            self.renderHighlightedChoice();
             return self.autoComplete();
           case keycodes.LEFT:
           case keycodes.RIGHT:
             return event.stopPropagation();
           default:
             callback = function() {
-              self.index = -1;
+              self.choiceIndex = -1;
               return self.filterChoices(self.$input.val());
             };
             return setTimeout(callback, 10);
@@ -317,9 +331,9 @@
       return this.$dropdown.html(choices);
     };
 
-    UI.prototype.renderHighlighted = function() {
+    UI.prototype.renderHighlightedChoice = function() {
       var $choice, index, li, selected, _i, _len, _ref, _results;
-      selected = this.index;
+      selected = this.choiceIndex;
       _ref = this.$dropdown.find('li');
       _results = [];
       for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
@@ -335,6 +349,39 @@
       return _results;
     };
 
+    UI.prototype.renderHighlightedChosen = function() {
+      var index, li, selected, _i, _len, _ref, _results;
+      selected = this.chosenIndex;
+      _ref = this.$list.find('li');
+      _results = [];
+      for (index = _i = 0, _len = _ref.length; _i < _len; index = ++_i) {
+        li = _ref[index];
+        _results.push($(li).toggleClass('highlighted', index === selected));
+      }
+      return _results;
+    };
+
+    UI.prototype.removeHighlightedChosen = function() {
+      var $target;
+      $target = this.$list.find('.highlighted .name');
+      this.velge.remChosen({
+        name: $target.text()
+      });
+      return this.chosenIndex = -1;
+    };
+
+    UI.prototype.cycleChoice = function(direction) {
+      var length;
+      length = this.$dropdown.find('li').length;
+      return this.choiceIndex = this._cycle(this.choiceIndex, length, direction);
+    };
+
+    UI.prototype.cycleChosen = function(direction) {
+      var length;
+      length = this.$list.find('li').length;
+      return this.chosenIndex = this._cycle(this.chosenIndex, length, direction);
+    };
+
     UI.prototype.openDropdown = function() {
       if (!this.store.isEmpty()) {
         return this.$dropdown.addClass('open');
@@ -343,7 +390,8 @@
 
     UI.prototype.closeDropdown = function() {
       this.$dropdown.removeClass('open');
-      return this.index = -1;
+      this.choiceIndex = -1;
+      return this.chosenIndex = -1;
     };
 
     UI.prototype.toggleDropdown = function() {
@@ -365,23 +413,25 @@
       return this.$dropdown.toggleClass('open', matching.length !== 0);
     };
 
-    UI.prototype.cycle = function(direction) {
-      var length;
-      if (direction == null) {
-        direction = 'down';
-      }
-      length = this.$dropdown.find('li').length;
-      if (length > 0) {
-        return this.index = direction === 'down' ? (this.index + 1) % length : (this.index + (length - 1)) % length;
-      } else {
-        return this.index = -1;
-      }
-    };
-
     UI.prototype.autoComplete = function() {
       var $highlighted;
       $highlighted = this.$dropdown.find('.highlighted');
       return this.$input.val($highlighted.text());
+    };
+
+    UI.prototype._cycle = function(index, length, direction) {
+      if (direction == null) {
+        direction = 'down';
+      }
+      if (length > 0) {
+        if (direction === 'down') {
+          return (index + 1) % length;
+        } else {
+          return (index + (length - 1)) % length;
+        }
+      } else {
+        return -1;
+      }
     };
 
     UI.prototype._defaults = function(options, defaults) {

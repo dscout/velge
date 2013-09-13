@@ -1,3 +1,8 @@
+# v0.8.0 (Unreleased)
+
+* Keyboard interface for removing chosen. Backspace to highlight the last
+  chosen item, backspace again to remove it.
+
 # v0.7.1
 
 * More reliable tag height and positioning.

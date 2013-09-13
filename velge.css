@@ -61,7 +61,8 @@
           transition: color 0.4s;
 }
 
-.velge-list li:hover {
+.velge-list li:hover,
+.velge-list li.highlighted {
   background: #dae2e4;
   color: #52595d;
 }
@@ -89,8 +90,15 @@
           transition: right 0.4s;
 }
 
-.velge-list li:hover .name   { left: 0; }
-.velge-list li:hover .remove { right: -2px; }
+.velge-list li:hover .name,
+.velge-list li.highlighted .name {
+  left: 0;
+}
+
+.velge-list li:hover .remove,
+.velge-list li.highlighted .remove {
+  right: -2px;
+}
 
 .velge-input {
   background: none;
