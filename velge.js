@@ -227,8 +227,25 @@
             self.renderHighlightedChoice();
             return self.autoComplete();
           case keycodes.LEFT:
+            event.stopPropagation();
+            if (self.$input.val() === '') {
+              if (self.chosenIndex === -1) {
+                self.chosenIndex = 0;
+              }
+              self.cycleChosen('up');
+              return self.renderHighlightedChosen();
+            }
+            break;
           case keycodes.RIGHT:
-            return event.stopPropagation();
+            event.stopPropagation();
+            if (self.$input.val() === '') {
+              if (self.chosenIndex === -1) {
+                self.chosenIndex = 0;
+              }
+              self.cycleChosen('down');
+              return self.renderHighlightedChosen();
+            }
+            break;
           default:
             callback = function() {
               self.choiceIndex = -1;

@@ -8,6 +8,8 @@ describe 'Velge.UI', ->
       when 'space'     then 32
       when 'up'        then 38
       when 'down'      then 40
+      when 'left'      then 37
+      when 'right'     then 39
       when ','         then 188
 
     $input.trigger($.Event('keydown', { which: key }))
@@ -226,6 +228,20 @@ describe 'Velge.UI', ->
       press($input, 'backspace')
       expect($list).to.not.have('.highlighted')
       expect($list).to.not.contain('orange')
+
+    it 'cycles highlighting through chosen', ->
+      $input = $('.velge-input', $container)
+      $list  = $('.velge-list', $container)
+
+      press($input, 'left')
+      expect($list).to.have('.highlighted')
+      expect($('.highlighted', $list)).to.contain('orange')
+
+      press($input, 'left')
+      expect($('.highlighted', $list)).to.contain('apricot')
+
+      press($input, 'right')
+      expect($('.highlighted', $list)).to.contain('orange')
 
   describe 'choice selection', ->
     beforeEach ->

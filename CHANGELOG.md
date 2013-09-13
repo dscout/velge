@@ -1,5 +1,7 @@
 # v0.8.0 (Unreleased)
 
+* Keyboard interface for highlighting chosen. Use left and right arrows to
+  highlight chosen items.
 * Keyboard interface for removing chosen. Backspace to highlight the last
   chosen item, backspace again to remove it.
 

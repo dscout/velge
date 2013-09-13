@@ -86,9 +86,18 @@ class Velge.UI
           self.cycleChoice('up')
           self.renderHighlightedChoice()
           self.autoComplete()
-        when keycodes.LEFT, keycodes.RIGHT
-          # Stop this from bubbling up while editing
+        when keycodes.LEFT
           event.stopPropagation()
+          if self.$input.val() is ''
+            self.chosenIndex = 0 if self.chosenIndex is -1
+            self.cycleChosen('up')
+            self.renderHighlightedChosen()
+        when keycodes.RIGHT
+          event.stopPropagation()
+          if self.$input.val() is ''
+            self.chosenIndex = 0 if self.chosenIndex is -1
+            self.cycleChosen('down')
+            self.renderHighlightedChosen()
         else
           callback = ->
             self.choiceIndex = -1
