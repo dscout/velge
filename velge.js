@@ -59,6 +59,16 @@
       return this;
     };
 
+    Velge.prototype.getChoices = function() {
+      return this.store.choices();
+    };
+
+    Velge.prototype.getChosen = function() {
+      return this.store.filter({
+        chosen: true
+      });
+    };
+
     Velge.prototype.onAdd = function(callback, context) {
       this.addCallbacks.push({
         callback: callback,

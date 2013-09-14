@@ -123,6 +123,14 @@ velge
   .onRem(remCallback)
 ```
 
+You may prefer to save all changes at the same time, maybe via a more form-like
+submit action. That can be achieved by using `getChosen`:
+
+```javascript
+var chosen = velge.getChosen(),
+  , names  = chosen.map(function(choice) { return choice.name });
+```
+
 ### Single Mode
 
 While velge is designed as an interface for applying multiple "tags" to a

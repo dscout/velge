@@ -86,6 +86,37 @@ describe 'Velge', ->
       expect($('.velge-list', $container)).to.not.contain('apple')
       expect($('.velge-dropdown', $container)).to.contain('apple')
 
+  describe '#getChoices', ->
+    beforeEach ->
+      velge = new Velge($container).setup()
+
+    it 'returns all existing choices', ->
+      velge
+        .addChoice(name: 'apple')
+        .addChoice(name: 'orange')
+        .addChosen(name: 'kiwi')
+
+      expect(velge.getChoices()).to.eql([
+        { name: 'apple', chosen: false }
+        { name: 'kiwi', chosen: true }
+        { name: 'orange', chosen: false }
+      ])
+
+  describe '#getChosen', ->
+    beforeEach ->
+      velge = new Velge($container).setup()
+
+    it 'fetches all chosen items', ->
+      velge
+        .addChosen(name: 'apple')
+        .addChoice(name: 'orange')
+        .addChosen(name: 'kiwi')
+
+      expect(velge.getChosen()).to.eql([
+        { name: 'apple', chosen: true }
+        { name: 'kiwi', chosen: true }
+      ])
+
   describe '#onAdd', ->
     beforeEach ->
       velge = new Velge($container).setup()

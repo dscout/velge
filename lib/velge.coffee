@@ -44,6 +44,12 @@ class window.Velge
     @_applyCallbacks(choice, @remCallbacks)
     @
 
+  getChoices: ->
+    @store.choices()
+
+  getChosen: ->
+    @store.filter(chosen: true)
+
   onAdd: (callback, context) ->
     @addCallbacks.push(callback: callback, context: context)
     @

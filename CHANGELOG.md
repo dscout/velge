@@ -1,5 +1,6 @@
 # v0.8.0 (Unreleased)
 
+* Top level methods for extracting all choices and all chosen.
 * Keyboard interface for highlighting chosen. Use left and right arrows to
   highlight chosen items.
 * Keyboard interface for removing chosen. Backspace to highlight the last
