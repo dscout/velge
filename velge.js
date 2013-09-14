@@ -1,5 +1,7 @@
 (function() {
   window.Velge = (function() {
+    Velge.VERSION = '0.7.1';
+
     function Velge($container, options) {
       this.options = options != null ? options : {};
       this.store = new Velge.Store();
