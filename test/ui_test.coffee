@@ -137,6 +137,13 @@ describe 'Velge.UI', ->
       press($input, 'down')
       expect($('.highlighted', $dropdown)).to.have.text('kiwi')
 
+    it 'cycles the highlight down through choices', ->
+      press($input, 'tab')
+      expect($('.highlighted', $dropdown)).to.have.text('apple')
+
+      press($input, 'tab')
+      expect($('.highlighted', $dropdown)).to.have.text('kiwi')
+
     it 'cycles the highlight up through choices', ->
       press($input, 'up')
       expect($('.highlighted', $dropdown)).to.have.text('kiwi')
@@ -269,12 +276,6 @@ describe 'Velge.UI', ->
     it 'adds choices on "comma"', ->
       $input.val('plum')
       press($input, ',')
-
-      expect($list).to.contain('plum')
-
-    it 'adds choices on "tab"', ->
-      $input.val('plum')
-      press($input, 'tab')
 
       expect($list).to.contain('plum')
 

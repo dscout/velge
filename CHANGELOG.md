@@ -1,5 +1,6 @@
 # v0.8.0 (Unreleased)
 
+* Change the behavior of "tab" to autocomplete and cycle through choices.
 * Top level methods for extracting all choices and all chosen.
 * Keyboard interface for highlighting chosen. Use left and right arrows to
   highlight chosen items.
