@@ -200,19 +200,11 @@
       self = this;
       this.$wrapper.on('keydown.velge', '.velge-input', function(event) {
         var callback;
+        callback = function() {
+          self.choiceIndex = -1;
+          return self.filterChoices(self.$input.val());
+        };
         switch (event.which) {
-          case keycodes.BACKSPACE:
-            if (self.$input.val() !== '') {
-              break;
-            }
-            if (self.chosenIndex > -1) {
-              return self.removeHighlightedChosen();
-            } else {
-              self.chosenIndex = 0;
-              self.cycleChosen('up');
-              return self.renderHighlightedChosen();
-            }
-            break;
           case keycodes.ESCAPE:
             self.closeDropdown();
             self.renderHighlightedChosen();
@@ -256,11 +248,20 @@
               return self.renderHighlightedChosen();
             }
             break;
+          case keycodes.BACKSPACE:
+            if (self.$input.val() === '') {
+              if (self.chosenIndex > -1) {
+                return self.removeHighlightedChosen();
+              } else {
+                self.chosenIndex = 0;
+                self.cycleChosen('up');
+                return self.renderHighlightedChosen();
+              }
+            } else {
+              return setTimeout(callback, 10);
+            }
+            break;
           default:
-            callback = function() {
-              self.choiceIndex = -1;
-              return self.filterChoices(self.$input.val());
-            };
             return setTimeout(callback, 10);
         }
       });

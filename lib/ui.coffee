@@ -55,16 +55,11 @@ class Velge.UI
     self     = @
 
     @$wrapper.on 'keydown.velge', '.velge-input', (event) ->
-      switch event.which
-        when keycodes.BACKSPACE
-          break unless self.$input.val() is ''
+      callback = ->
+        self.choiceIndex = -1
+        self.filterChoices(self.$input.val())
 
-          if self.chosenIndex > -1
-            self.removeHighlightedChosen()
-          else
-            self.chosenIndex = 0
-            self.cycleChosen('up')
-            self.renderHighlightedChosen()
+      switch event.which
         when keycodes.ESCAPE
           self.closeDropdown()
           self.renderHighlightedChosen()
@@ -98,10 +93,17 @@ class Velge.UI
             self.chosenIndex = 0 if self.chosenIndex is -1
             self.cycleChosen('down')
             self.renderHighlightedChosen()
+        when keycodes.BACKSPACE
+          if self.$input.val() is ''
+            if self.chosenIndex > -1
+              self.removeHighlightedChosen()
+            else
+              self.chosenIndex = 0
+              self.cycleChosen('up')
+              self.renderHighlightedChosen()
+          else
+            setTimeout(callback, 10)
         else
-          callback = ->
-            self.choiceIndex = -1
-            self.filterChoices(self.$input.val())
           setTimeout(callback, 10)
 
     @$wrapper.on 'blur.velge', '.velge-input', (event) ->
