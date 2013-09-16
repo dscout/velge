@@ -1,0 +1,45 @@
+body {
+  background: #eee;
+  color: #444;
+  font: 14px/1.5 "Helvetica-Neue", Helvetica, sans-serif;
+}
+
+.wrapper {
+  width: 600px;
+  margin: 60px auto;
+}
+
+h1 { font-size: 32px; }
+h2 { font-weight: normal; }
+
+.version {
+  color: #666;
+  font-size: 24px;
+  font-weight: normal;
+}
+
+.shortcuts-wrapper {
+  margin-top: 40px;
+}
+
+.shortcuts dt {
+  display: inline-block;
+  font-size: 12px;
+  text-align: right;
+  width: 15%;
+}
+
+.shortcuts b {
+  background: #666;
+  border-radius: 5px;
+  color: #fff;
+  font-weight: normal;
+  padding: 5px;
+}
+
+.shortcuts dd {
+  display: inline-block;
+  line-height: 30px;
+  margin: 0 0 0 10px;
+  width: 70%;
+}

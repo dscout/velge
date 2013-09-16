@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Velge - Nimble Tag Management</title>
+    <link rel="stylesheet" href="velge.css" type="text/css">
+    <link rel="stylesheet" href="style.css" type="text/css">
+  </head>
+
+  <body>
+    <div class="wrapper">
+      <h1>Velge <span class="version"></span></h1>
+      <h2>A light weight javascript library for intuitive tag management.</h2>
+      <div id="multi"></div>
+
+      <div class="shortcuts-wrapper">
+        <dl class="shortcuts">
+          <dt><b>enter / comma</b></dt> <dd>Submit the current choice</dd>
+          <dt><b>escape</b></dt> <dd>Reset input, close dropdown, cancel removal</dd>
+          <dt><b>tab</b></dt> <dd>Cycle choices and autocomplete input</dd>
+          <dt><b>down</b></dt> <dd>Cycle down through choices</dd>
+          <dt><b>up</b></dt> <dd>Cycle up through choices</dd>
+          <dt><b>left</b></dt> <dd>Cycle left through chosen</dd>
+          <dt><b>right</b></dt> <dd>Cycle right through chosen</dd>
+          <dt><b>backspace</b></dt> <dd>Confirm chosen removal</dd>
+        </dl>
+      </div>
+    </div>
+
+    <script src="http://codeorigin.jquery.com/jquery-2.0.3.min.js"></script>
+    <script src="velge.js" type="text/javascript"></script>
+    <script type="text/javascript">
+      var choices = [
+        { name: "apple"      },
+        { name: "kumquat"    },
+        { name: "pear"       },
+        { name: "peach"      },
+        { name: "orange"     },
+        { name: "kiwi"       },
+        { name: "gooseberry" },
+        { name: "raspberry"  },
+        { name: "nectarine"  },
+        { name: "plum"       },
+        { name: "mango"      },
+        { name: "pineapple"  },
+        { name: "guava"      },
+        { name: "taro"       }
+      ]
+
+      window.velge = new window.Velge($('#multi'), {
+        choices: choices,
+        chosen: [
+          { name: "banana"    },
+          { name: "persimmon" }
+        ]
+      }).onAdd(function(choice, velge) {
+        console.log("Added", choice, velge);
+      }).onRem(function(choice, velge) {
+        console.log("Removed", choice, velge);
+      }).setup();
+
+      $('.version').text(Velge.VERSION)
+    </script>
+  </body>
+</html>

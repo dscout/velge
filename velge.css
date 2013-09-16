@@ -1,0 +1,185 @@
+.velge {
+  background: #fff;
+  border: 2px solid #bdc3c7;
+  border-radius: 7px;
+  cursor: text;
+  font-size: 11px;
+  margin: 0;
+  min-height: 30px;
+  padding: 5px;
+  position: relative;
+  width: 100%;
+
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.velge:after {
+  clear: both;
+  content: ' ';
+  display: block;
+  font-size: 0;
+  height: 0;
+  visibility: hidden;
+  width: 0;
+}
+
+.velge-list {
+  float: left;
+  line-height: 1;
+  margin: 0 0 -5px 0;
+  max-width: 95%;
+  overflow: hidden;
+  padding: 0;
+
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+.velge-list li {
+  background: #ecf0f1;
+  border-radius: 4px;
+  color: #7f8c9a;
+  cursor: pointer;
+  display: inline-block;
+  font-weight: bold;
+  list-style-type: none;
+  margin: 0 5px 5px 0;
+  max-height: 30px;
+  min-height: 30px;
+  overflow: hidden;
+  padding: 6px;
+  padding-right: 8px;
+
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+
+  -webkit-transition: color 0.4s;
+     -moz-transition: color 0.4s;
+          transition: color 0.4s;
+}
+
+.velge-list li:hover,
+.velge-list li.highlighted {
+  background: #dae2e4;
+  color: #52595d;
+}
+
+.velge-list li .name {
+  font-size: 12px;
+  position: relative;
+  left: 8px;
+
+  -webkit-transition: left 0.4s;
+     -moz-transition: left 0.4s;
+          transition: left 0.4s;
+}
+
+.velge-list li .remove {
+  display: inline-block;
+  font-size: 16px;
+  line-height: 1;
+  position: relative;
+  top: 1px;
+  right: -30px;
+
+  -webkit-transition: right 0.4s;
+     -moz-transition: right 0.4s;
+          transition: right 0.4s;
+}
+
+.velge-list li:hover .name,
+.velge-list li.highlighted .name {
+  left: 0;
+}
+
+.velge-list li:hover .remove,
+.velge-list li.highlighted .remove {
+  right: -2px;
+}
+
+.velge-input {
+  background: none;
+  border: none;
+  float: left;
+  font-size: inherit;
+  line-height: 30px;
+  margin: 0;
+  min-height: 30px;
+  outline: none;
+  padding: 0;
+  width: 100px;
+}
+
+.velge-input:focus {
+  border: none;
+  box-shadow: none;
+}
+
+.velge-trigger {
+  cursor: pointer;
+  height: 30px;
+  padding: 0;
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  width: 30px;
+}
+
+.velge-trigger:after {
+  background: #ecf0f1;
+  border-radius: 5px;
+  color: #7f8c9a;
+  content: '\25be';
+  display: block;
+  font-size: 16px;
+  font-style: normal;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  width: 30px;
+}
+
+.velge-trigger:hover:after {
+  color: #52595d;
+}
+
+.velge-dropdown {
+  background: #fff;
+  border: 1px solid #ecf0f1;
+  box-shadow: 0 0 5px #ecf0f1;
+  display: none;
+  left: 0;
+  list-style-type: none;
+  margin: 0;
+  max-height: 310px;
+  overflow-y: scroll;
+  padding: 0;
+  position: absolute;
+  top: 40px;
+  width: 100%;
+  z-index: 9999;
+}
+
+.velge-dropdown.open {
+  display: block;
+}
+
+.velge-dropdown li {
+  color: #52595d;
+  padding: 5px;
+  line-height: 20px;
+}
+
+.velge-dropdown li:not(:first-child) {
+  border-top: 1px solid #ecf0f1;
+}
+
+.velge-dropdown li.highlighted,
+.velge-dropdown li:hover {
+  background: #ecf0f1;
+  cursor: pointer;
+}
