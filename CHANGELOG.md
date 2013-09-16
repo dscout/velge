@@ -1,3 +1,8 @@
+# v0.8.1
+
+* Stop propagation when `escape` is pressed. It is common for velge to be
+  loaded inside of a modal, most of which will close when `escape` is pressed.
+
 # v0.8.0
 
 * Root object level version, `Velge.VERSION`.

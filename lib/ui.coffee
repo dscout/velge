@@ -61,6 +61,7 @@ class Velge.UI
 
       switch event.which
         when keycodes.ESCAPE
+          event.stopPropagation()
           self.closeDropdown()
           self.renderHighlightedChosen()
           self.$input.val('')

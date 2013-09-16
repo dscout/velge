@@ -208,6 +208,7 @@
         };
         switch (event.which) {
           case keycodes.ESCAPE:
+            event.stopPropagation();
             self.closeDropdown();
             self.renderHighlightedChosen();
             return self.$input.val('');
