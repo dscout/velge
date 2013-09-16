@@ -211,7 +211,8 @@
             event.stopPropagation();
             self.closeDropdown();
             self.renderHighlightedChosen();
-            return self.$input.val('');
+            self.renderChoices();
+            return self.blurInput();
           case keycodes.COMMA:
           case keycodes.ENTER:
             event.preventDefault();
