@@ -64,7 +64,8 @@ class Velge.UI
           event.stopPropagation()
           self.closeDropdown()
           self.renderHighlightedChosen()
-          self.$input.val('')
+          self.renderChoices()
+          self.blurInput()
         when keycodes.COMMA, keycodes.ENTER
           event.preventDefault()
           self.submit(self.$input.val())

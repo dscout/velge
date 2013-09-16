@@ -1,5 +1,7 @@
 # v0.8.1
 
+* Always re-render the choices on escape. Corrects partial list being displayed
+  after filtering.
 * Stop propagation when `escape` is pressed. It is common for velge to be
   loaded inside of a modal, most of which will close when `escape` is pressed.
 
