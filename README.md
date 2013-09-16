@@ -16,7 +16,7 @@ Some of the features:
 
 * Automatic sorting, validation, normalization
 * Fuzzy pattern matching
-* Keyboard shortcuts
+* Keyboard shortcuts for submission, removal, and navigation
 * Very simple callback hooks for addition and removal
 
 The library is very lightweight and constructed in a way that allows for easy
