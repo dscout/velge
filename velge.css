@@ -45,13 +45,11 @@
   cursor: pointer;
   display: inline-block;
   font-weight: bold;
+  height: 30px;
   list-style-type: none;
   margin: 0 5px 5px 0;
-  max-height: 30px;
-  min-height: 30px;
   overflow: hidden;
-  padding: 6px;
-  padding-right: 8px;
+  padding: 6px 8px 6px 6px;
 
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
