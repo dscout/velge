@@ -194,7 +194,12 @@ class Velge.UI
     @chosenIndex = @_cycle(@chosenIndex, length, direction)
 
   openDropdown: ->
-    @$dropdown.addClass('open') unless @store.isEmpty()
+    unless @store.isEmpty()
+      @positionDropdown()
+      @$dropdown.addClass('open')
+
+  positionDropdown: ->
+    @$dropdown.css(top: @$list.outerHeight() + @$input.outerHeight())
 
   closeDropdown: ->
     @$dropdown.removeClass('open')

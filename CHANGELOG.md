@@ -1,5 +1,6 @@
 # v0.8.1
 
+* Force the dropdown menu to always be below the bottom of the input.
 * Always re-render the choices on escape. Corrects partial list being displayed
   after filtering.
 * Stop propagation when `escape` is pressed. It is common for velge to be
