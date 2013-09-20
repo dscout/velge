@@ -422,9 +422,15 @@
     };
 
     UI.prototype.positionDropdown = function() {
-      return this.$dropdown.css({
-        top: this.$list.outerHeight() + this.$input.outerHeight()
-      });
+      if (this.$input.position().top > this.$list.position().top) {
+        return this.$dropdown.css({
+          top: this.$list.outerHeight() + this.$input.outerHeight()
+        });
+      } else {
+        return this.$dropdown.css({
+          top: this.$list.outerHeight()
+        });
+      }
     };
 
     UI.prototype.closeDropdown = function() {

@@ -199,7 +199,10 @@ class Velge.UI
       @$dropdown.addClass('open')
 
   positionDropdown: ->
-    @$dropdown.css(top: @$list.outerHeight() + @$input.outerHeight())
+    if @$input.position().top > @$list.position().top
+      @$dropdown.css(top: @$list.outerHeight() + @$input.outerHeight())
+    else
+      @$dropdown.css(top: @$list.outerHeight())
 
   closeDropdown: ->
     @$dropdown.removeClass('open')
