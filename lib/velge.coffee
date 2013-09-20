@@ -1,5 +1,5 @@
 class window.Velge
-  @VERSION: '0.8.1'
+  @VERSION: '0.8.2'
 
   constructor: ($container, @options = {}) ->
     @store = new Velge.Store()

@@ -1,3 +1,7 @@
+# v0.8.2
+
+* Correctly re-position the dropdown after choices are removed.
+
 # v0.8.1
 
 * Force the dropdown menu to always be below the bottom of the input.
