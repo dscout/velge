@@ -416,8 +416,15 @@
 
     UI.prototype.openDropdown = function() {
       if (!this.store.isEmpty()) {
+        this.positionDropdown();
         return this.$dropdown.addClass('open');
       }
+    };
+
+    UI.prototype.positionDropdown = function() {
+      return this.$dropdown.css({
+        top: this.$list.outerHeight() + this.$input.outerHeight()
+      });
     };
 
     UI.prototype.closeDropdown = function() {
