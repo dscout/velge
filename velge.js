@@ -1,6 +1,6 @@
 (function() {
   window.Velge = (function() {
-    Velge.VERSION = '0.8.0';
+    Velge.VERSION = '0.8.2';
 
     function Velge($container, options) {
       this.options = options != null ? options : {};
@@ -416,7 +416,20 @@
 
     UI.prototype.openDropdown = function() {
       if (!this.store.isEmpty()) {
+        this.positionDropdown();
         return this.$dropdown.addClass('open');
+      }
+    };
+
+    UI.prototype.positionDropdown = function() {
+      if (this.$input.position().top > this.$list.position().top) {
+        return this.$dropdown.css({
+          top: this.$list.outerHeight() + this.$input.outerHeight()
+        });
+      } else {
+        return this.$dropdown.css({
+          top: this.$list.outerHeight()
+        });
       }
     };
 
