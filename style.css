@@ -1,49 +1,113 @@
 body {
   background: #f5f7f9;
-  color: #444;
-  font: 14px/1.5 "Helvetica-Neue", Helvetica, sans-serif;
+  color: #4c5259;
+  font: 16px/1.5 "Helvetica-Neue", Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
 }
 
 .wrapper {
   width: 600px;
-  margin: 60px auto;
+  margin: 30px auto;
 }
 
 header {
+  padding: 40px 0 30px 0;
   text-align: center;
 }
 
-h1 { font-size: 32px; }
-h2 { font-weight: normal; }
+h1, h2 { margin: 0; }
+
+h1 { font-size: 64px; }
+
+h2 {
+  color: #95a5a6;
+  font-weight: 300;
+}
+
+section {
+  background: #31c1bf;
+  overflow: hidden;
+  padding: 60px 0;
+}
+
+.github {
+  background-color: #ecf0f1;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#ffffff), to(#ecf0f1));
+  background-image: -webkit-linear-gradient(top, #ffffff, #ecf0f1);
+  background-image:    -moz-linear-gradient(top, #ffffff, #ecf0f1);
+  background-image:     -ms-linear-gradient(top, #ffffff, #ecf0f1);
+  border: 1px solid #bdc3c7;
+  border-radius: 7px;
+  color: #95a5a6;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 14px;
+  font-weight: bold;
+  margin-right: 20px;
+  margin-top: 10px;
+  padding: 10px 15px;
+  text-decoration: none;
+
+  -webkit-transition: color 0.3s;
+     -moz-transition: color 0.3s;
+          transition: color 0.3s;
+}
+
+.github:hover { color: #4c5259; }
 
 .version {
+  background: #fff;
+  border-radius: 4px;
   color: #666;
-  font-size: 24px;
-  font-weight: normal;
+  display: inline-block;
+  font-size: 21px;
+  font-weight: 300;
+  padding: 3px 7px;
+  position: relative;
+  top: -10px;
+  width: auto;
 }
 
-.shortcuts-wrapper {
-  margin-top: 40px;
-}
+.shortcuts-wrapper { margin-top: 40px; }
 
 .shortcuts dt {
   display: inline-block;
-  font-size: 12px;
+  font-size: 14px;
   text-align: right;
-  width: 15%;
+  width: 20%;
 }
 
 .shortcuts b {
-  background: #666;
+  background: #fff;
   border-radius: 5px;
-  color: #fff;
+  color: #95a5a6;
   font-weight: normal;
   padding: 5px;
 }
 
 .shortcuts dd {
+  color: #fff;
   display: inline-block;
-  line-height: 30px;
+  line-height: 36px;
   margin: 0 0 0 10px;
   width: 70%;
 }
+
+footer {
+  color: #bdc3c7;
+  font-size: 0.9em;
+  margin-top: 30px;
+  text-align: center;
+  width: 100%;
+}
+
+footer a {
+  color: #bdc3c7;
+
+  -webkit-transition: color 0.3s;
+     -moz-transition: color 0.3s;
+          transition: color 0.3s;
+}
+
+footer a:hover { color: #4c5259; }
