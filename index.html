@@ -21,7 +21,7 @@
         <div class="shortcuts-wrapper">
           <dl class="shortcuts">
             <dt><b>enter / comma</b></dt> <dd>Submit the current choice</dd>
-            <dt><b>escape</b></dt> <dd>Reset input, close dropdown, cancel removal</dd>
+            <dt><b>escape</b></dt> <dd>Reset input, close dropdown, cancel removal, blur input</dd>
             <dt><b>tab</b></dt> <dd>Cycle choices and autocomplete input</dd>
             <dt><b>down</b></dt> <dd>Cycle down through choices</dd>
             <dt><b>up</b></dt> <dd>Cycle up through choices</dd>
@@ -57,7 +57,7 @@
         { name: "taro"       }
       ]
 
-      window.velge = new window.Velge($('#multi'), {
+      window.velge = new window.Velge($("#multi"), {
         choices: choices,
         chosen: [
           { name: "banana"    },
@@ -69,7 +69,7 @@
         console.log("Removed", choice, velge);
       }).setup();
 
-      $('.version').text(Velge.VERSION)
+      $(".version").text(Velge.VERSION)
     </script>
   </body>
 </html>
