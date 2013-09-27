@@ -62,14 +62,15 @@ class Velge.UI
       switch event.which
         when keycodes.ESCAPE
           event.stopPropagation()
+          self.blurInput()
           self.closeDropdown()
           self.renderHighlightedChosen()
           self.renderChoices()
-          self.blurInput()
+          self.clearInput()
         when keycodes.COMMA, keycodes.ENTER
           event.preventDefault()
           self.submit(self.$input.val())
-          self.blurInput()
+          self.clearInput()
           self.closeDropdown()
         when keycodes.DOWN, keycodes.TAB
           event.preventDefault()
@@ -113,7 +114,7 @@ class Velge.UI
 
       callback = ->
         self.closeDropdown()
-        self.blurInput()
+        self.clearInput()
 
       self.closeTimeout = setTimeout(callback, 75)
 
@@ -216,6 +217,10 @@ class Velge.UI
       @openDropdown()
 
   blurInput: ->
+    if @$input.val() is '' and @choiceIndex is -1 and @chosenIndex is -1
+      @$input.blur()
+
+  clearInput: ->
     @$input.val('')
 
   filterChoices: (value) ->

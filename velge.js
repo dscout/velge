@@ -209,15 +209,16 @@
         switch (event.which) {
           case keycodes.ESCAPE:
             event.stopPropagation();
+            self.blurInput();
             self.closeDropdown();
             self.renderHighlightedChosen();
             self.renderChoices();
-            return self.blurInput();
+            return self.clearInput();
           case keycodes.COMMA:
           case keycodes.ENTER:
             event.preventDefault();
             self.submit(self.$input.val());
-            self.blurInput();
+            self.clearInput();
             return self.closeDropdown();
           case keycodes.DOWN:
           case keycodes.TAB:
@@ -274,7 +275,7 @@
         clearTimeout(self.closeTimeout);
         callback = function() {
           self.closeDropdown();
-          return self.blurInput();
+          return self.clearInput();
         };
         return self.closeTimeout = setTimeout(callback, 75);
       });
@@ -448,6 +449,12 @@
     };
 
     UI.prototype.blurInput = function() {
+      if (this.$input.val() === '' && this.choiceIndex === -1 && this.chosenIndex === -1) {
+        return this.$input.blur();
+      }
+    };
+
+    UI.prototype.clearInput = function() {
       return this.$input.val('');
     };
 
