@@ -1,6 +1,6 @@
 (function() {
   window.Velge = (function() {
-    Velge.VERSION = '0.8.2';
+    Velge.VERSION = '0.9.0';
 
     function Velge($container, options) {
       this.options = options != null ? options : {};

@@ -1,6 +1,6 @@
 {
   "name": "velge",
-  "version": "0.8.2",
+  "version": "0.9.0",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-coffee":   "~0.7.0",

@@ -1,4 +1,4 @@
-# v0.9.0 (Unreleased)
+# v0.9.0
 
 * Position the dropdown when filtering choices, the same as during navigation.
 * Tollerate (ignore) null or undefined choice input during preload.
