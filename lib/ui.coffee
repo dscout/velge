@@ -228,7 +228,10 @@ class Velge.UI
 
     @renderChoices(matching, value)
 
-    @$dropdown.toggleClass('open', matching.length isnt 0)
+    if matching.length isnt 0
+      @openDropdown()
+    else
+      @closeDropdown()
 
   autoComplete: ->
     $highlighted = @$dropdown.find('.highlighted')

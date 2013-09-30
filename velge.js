@@ -465,7 +465,11 @@
       var matching;
       matching = this.store.fuzzy(value);
       this.renderChoices(matching, value);
-      return this.$dropdown.toggleClass('open', matching.length !== 0);
+      if (matching.length !== 0) {
+        return this.openDropdown();
+      } else {
+        return this.closeDropdown();
+      }
     };
 
     UI.prototype.autoComplete = function() {
