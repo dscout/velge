@@ -107,6 +107,9 @@
       _results = [];
       for (_i = 0, _len = choices.length; _i < _len; _i++) {
         choice = choices[_i];
+        if (!(choice != null)) {
+          continue;
+        }
         choice.chosen = isChosen;
         _results.push(this.store.push(choice));
       }

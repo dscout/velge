@@ -15,7 +15,7 @@ describe 'Velge', ->
 
       expect(velge.setup()).to.be(velge)
 
-    it 'renders all provided choices', ->
+    it 'preloads and renders all provided choices', ->
       velge = new Velge($container,
         chosen:  [{ name: 'apple' }, { name: 'melon' }]
         choices: [{ name: 'apple' }, { name: 'melon' }, { name: 'banana' }]
@@ -27,6 +27,9 @@ describe 'Velge', ->
       expect($('.velge-dropdown', $container)).to.contain('banana')
       expect($('.velge-dropdown', $container)).to.not.contain('apple')
       expect($('.velge-dropdown', $container)).to.not.contain('melon')
+
+    it 'ignores any non-object choice when preloading', ->
+      new Velge($container, choices: [undefined, null, { name: 'banana' }])
 
   describe '#addChoice', ->
     beforeEach ->

@@ -66,7 +66,7 @@ class window.Velge
         @store.update(choice, chosen: false)
 
   _preloadChoices: (choices, isChosen) ->
-    for choice in choices
+    for choice in choices when choice?
       choice.chosen = isChosen
       @store.push(choice)
 

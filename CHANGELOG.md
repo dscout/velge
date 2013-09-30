@@ -1,7 +1,8 @@
 # v0.9.0 (Unreleased)
 
+* Tollerate (ignore) null or undefined choice input during preload.
 * Fully blur the input when `escape` is pressed while input is blank and there
-  isn't any choice highlighted. That includes dropdowns.
+  arent't any choices highlighted. That includes dropdowns.
 
 # v0.8.2
 
