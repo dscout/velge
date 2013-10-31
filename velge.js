@@ -1,6 +1,6 @@
 (function() {
   window.Velge = (function() {
-    Velge.VERSION = '0.8.2';
+    Velge.VERSION = '0.9.0';
 
     function Velge($container, options) {
       this.options = options != null ? options : {};
@@ -107,6 +107,9 @@
       _results = [];
       for (_i = 0, _len = choices.length; _i < _len; _i++) {
         choice = choices[_i];
+        if (!(choice != null)) {
+          continue;
+        }
         choice.chosen = isChosen;
         _results.push(this.store.push(choice));
       }
@@ -462,7 +465,11 @@
       var matching;
       matching = this.store.fuzzy(value);
       this.renderChoices(matching, value);
-      return this.$dropdown.toggleClass('open', matching.length !== 0);
+      if (matching.length !== 0) {
+        return this.openDropdown();
+      } else {
+        return this.closeDropdown();
+      }
     };
 
     UI.prototype.autoComplete = function() {
