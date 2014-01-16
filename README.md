@@ -117,10 +117,11 @@ added or removed:
 ```javascript
 var addCallback = function(choice, velge) { /* Persist Me */ }
   , remCallback = function(choice, velge) { /* Destroy Me */ }
+  , context     = this;
 
 velge
-  .onAdd(addCallback)
-  .onRem(remCallback)
+  .onAdd(addCallback, context)
+  .onRem(remCallback, context)
 ```
 
 You may prefer to save all changes at the same time, maybe via a more form-like
