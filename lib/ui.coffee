@@ -12,9 +12,11 @@ class Velge.UI
 
   wrapTemplate: """
     <div class='velge'>
-      <ul class='velge-list'></ul>
-      <input type='text' autocomplete='off' placeholder='{{placeholder}}' class='velge-input' />
-      <span class='velge-trigger'></span>
+      <div class='velge-inner'>
+        <ul class='velge-list'></ul>
+        <input type='text' autocomplete='off' placeholder='{{placeholder}}' class='velge-input' />
+        <span class='velge-trigger'></span>
+      </div>
       <ol class='velge-dropdown'></ol>
     </div>
   """
@@ -147,6 +149,7 @@ class Velge.UI
 
   render: ->
     @$wrapper  = $(@_template(@wrapTemplate, @options))
+    @$inner    = $('.velge-inner',    @$wrapper)
     @$list     = $('.velge-list',     @$wrapper)
     @$input    = $('.velge-input',    @$wrapper)
     @$dropdown = $('.velge-dropdown', @$wrapper)
@@ -199,11 +202,8 @@ class Velge.UI
       @positionDropdown()
       @$dropdown.addClass('open')
 
-  positionDropdown: ->
-    if @$input.position().top > @$list.position().top
-      @$dropdown.css(top: @$list.outerHeight() + @$input.outerHeight())
-    else
-      @$dropdown.css(top: @$list.outerHeight())
+  positionDropdown: (offset = 13) ->
+    @$dropdown.css(top: @$inner.outerHeight() + offset)
 
   closeDropdown: ->
     @$dropdown.removeClass('open')

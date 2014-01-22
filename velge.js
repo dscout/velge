@@ -169,7 +169,7 @@
       COMMA: 188
     };
 
-    UI.prototype.wrapTemplate = "<div class='velge'>\n  <ul class='velge-list'></ul>\n  <input type='text' autocomplete='off' placeholder='{{placeholder}}' class='velge-input' />\n  <span class='velge-trigger'></span>\n  <ol class='velge-dropdown'></ol>\n</div>";
+    UI.prototype.wrapTemplate = "<div class='velge'>\n  <div class='velge-inner'>\n    <ul class='velge-list'></ul>\n    <input type='text' autocomplete='off' placeholder='{{placeholder}}' class='velge-input' />\n    <span class='velge-trigger'></span>\n  </div>\n  <ol class='velge-dropdown'></ol>\n</div>";
 
     UI.prototype.chosenTemplate = "<li>\n  <span class='name'>{{name}}</span>\n  <span class='remove'>&times;</span>\n</li>";
 
@@ -323,6 +323,7 @@
 
     UI.prototype.render = function() {
       this.$wrapper = $(this._template(this.wrapTemplate, this.options));
+      this.$inner = $('.velge-inner', this.$wrapper);
       this.$list = $('.velge-list', this.$wrapper);
       this.$input = $('.velge-input', this.$wrapper);
       this.$dropdown = $('.velge-dropdown', this.$wrapper);
@@ -425,16 +426,13 @@
       }
     };
 
-    UI.prototype.positionDropdown = function() {
-      if (this.$input.position().top > this.$list.position().top) {
-        return this.$dropdown.css({
-          top: this.$list.outerHeight() + this.$input.outerHeight()
-        });
-      } else {
-        return this.$dropdown.css({
-          top: this.$list.outerHeight()
-        });
+    UI.prototype.positionDropdown = function(offset) {
+      if (offset == null) {
+        offset = 13;
       }
+      return this.$dropdown.css({
+        top: this.$inner.outerHeight() + offset
+      });
     };
 
     UI.prototype.closeDropdown = function() {

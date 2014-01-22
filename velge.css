@@ -25,6 +25,10 @@
   width: 0;
 }
 
+.velge-inner {
+  overflow: hidden;
+}
+
 .velge-list {
   float: left;
   line-height: 1;
