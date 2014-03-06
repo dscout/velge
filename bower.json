@@ -3,12 +3,12 @@
   "version": "0.9.1",
   "main": "velge.js",
   "dependencies": {
-    "jquery": "~2.0.3"
+    "jquery": "~2"
   },
   "devDependencies": {
-    "chai":        "~1.7.2",
-    "chai-jquery": "~1.1.1",
-    "mocha":       "~1.12.0",
+    "chai":        "~1.7",
+    "chai-jquery": "~1.1",
+    "mocha":       "~1.12",
     "sinon":       "http://sinonjs.org/releases/sinon-1.7.1.js"
   }
 }
