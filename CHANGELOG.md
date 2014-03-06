@@ -1,3 +1,7 @@
+# v0.9.2
+
+* Loosen jQuery constraint to any 2.x release
+
 # v0.9.1
 
 * Fix dropdown positioning with an empty list.
