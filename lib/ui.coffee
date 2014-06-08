@@ -42,7 +42,7 @@ class Velge.UI
     @choiceIndex = -1
     @chosenIndex = -1
 
-    @options = @_defaults(options, @defaults)
+    @options = Velge.Util.defaults(options, @defaults)
 
   setup: ->
     @render()
@@ -148,7 +148,7 @@ class Velge.UI
     @velge.addChosen(name: name)
 
   render: ->
-    @$wrapper  = $(@_template(@wrapTemplate, @options))
+    @$wrapper  = $(Velge.Util.template(@wrapTemplate, @options))
     @$inner    = $('.velge-inner',    @$wrapper)
     @$list     = $('.velge-list',     @$wrapper)
     @$input    = $('.velge-input',    @$wrapper)
@@ -158,7 +158,7 @@ class Velge.UI
 
   renderChosen: ->
     choices = for choice in @store.filter(chosen: true)
-      @_template(@chosenTemplate, name: choice.name)
+      Velge.Util.template(@chosenTemplate, name: choice.name)
 
     @$list.html(choices)
 
@@ -166,7 +166,7 @@ class Velge.UI
     filtered ||= @store.filter(chosen: false)
 
     choices = for choice in filtered
-      @_template(@choiceTemplate, name: @_emphasize(choice.name, value))
+      Velge.Util.template(@choiceTemplate, name: Velge.Util.emphasize(choice.name, value))
 
     @$dropdown.html(choices)
 
@@ -191,11 +191,11 @@ class Velge.UI
 
   cycleChoice: (direction) ->
     length = @$dropdown.find('li').length
-    @choiceIndex = @_cycle(@choiceIndex, length, direction)
+    @choiceIndex = Velge.Util.cycle(@choiceIndex, length, direction)
 
   cycleChosen: (direction) ->
     length = @$list.find('li').length
-    @chosenIndex = @_cycle(@chosenIndex, length, direction)
+    @chosenIndex = Velge.Util.cycle(@chosenIndex, length, direction)
 
   openDropdown: ->
     unless @store.isEmpty()
@@ -237,29 +237,3 @@ class Velge.UI
     $highlighted = @$dropdown.find('.highlighted')
 
     @$input.val($highlighted.text())
-
-  _cycle: (index, length, direction = 'down') ->
-    if length > 0
-      if direction is 'down'
-        (index + 1) % length
-      else
-        (index + (length - 1)) % length
-    else
-      -1
-
-  _defaults: (options, defaults) ->
-    for key, value of defaults
-      options[key] = defaults[key] unless options[key]?
-
-    options
-
-  _template: (string, object) ->
-    buffer = string
-    buffer = buffer.replace("{{#{key}}}", value) for key, value of object
-    buffer
-
-  _emphasize: (string, value) ->
-    if value? and value.length > 0
-      string.replace(new RegExp("(#{value})", 'i'), "<b>$1</b>")
-    else
-      string

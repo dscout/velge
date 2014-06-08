@@ -148,6 +148,46 @@
       } else if (offset + (eHeight > cHeight)) {
         return $container.scrollTop(baseTop - cHeight + eHeight);
       }
+    },
+    cycle: function(index, length, direction) {
+      if (direction == null) {
+        direction = 'down';
+      }
+      if (length > 0) {
+        if (direction === 'down') {
+          return (index + 1) % length;
+        } else {
+          return (index + (length - 1)) % length;
+        }
+      } else {
+        return -1;
+      }
+    },
+    defaults: function(options, defaults) {
+      var key, value;
+      for (key in defaults) {
+        value = defaults[key];
+        if (options[key] == null) {
+          options[key] = defaults[key];
+        }
+      }
+      return options;
+    },
+    emphasize: function(string, value) {
+      if ((value != null) && value.length > 0) {
+        return string.replace(new RegExp("(" + value + ")", 'i'), "<b>$1</b>");
+      } else {
+        return string;
+      }
+    },
+    template: function(string, object) {
+      var buffer, key, value;
+      buffer = string;
+      for (key in object) {
+        value = object[key];
+        buffer = buffer.replace("{{" + key + "}}", value);
+      }
+      return buffer;
     }
   };
 
@@ -183,7 +223,7 @@
       this.store = store;
       this.choiceIndex = -1;
       this.chosenIndex = -1;
-      this.options = this._defaults(options, this.defaults);
+      this.options = Velge.Util.defaults(options, this.defaults);
     }
 
     UI.prototype.setup = function() {
@@ -317,7 +357,7 @@
     };
 
     UI.prototype.render = function() {
-      this.$wrapper = $(this._template(this.wrapTemplate, this.options));
+      this.$wrapper = $(Velge.Util.template(this.wrapTemplate, this.options));
       this.$inner = $('.velge-inner', this.$wrapper);
       this.$list = $('.velge-list', this.$wrapper);
       this.$input = $('.velge-input', this.$wrapper);
@@ -335,7 +375,7 @@
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           choice = _ref[_i];
-          _results.push(this._template(this.chosenTemplate, {
+          _results.push(Velge.Util.template(this.chosenTemplate, {
             name: choice.name
           }));
         }
@@ -354,8 +394,8 @@
         _results = [];
         for (_i = 0, _len = filtered.length; _i < _len; _i++) {
           choice = filtered[_i];
-          _results.push(this._template(this.choiceTemplate, {
-            name: this._emphasize(choice.name, value)
+          _results.push(Velge.Util.template(this.choiceTemplate, {
+            name: Velge.Util.emphasize(choice.name, value)
           }));
         }
         return _results;
@@ -405,13 +445,13 @@
     UI.prototype.cycleChoice = function(direction) {
       var length;
       length = this.$dropdown.find('li').length;
-      return this.choiceIndex = this._cycle(this.choiceIndex, length, direction);
+      return this.choiceIndex = Velge.Util.cycle(this.choiceIndex, length, direction);
     };
 
     UI.prototype.cycleChosen = function(direction) {
       var length;
       length = this.$list.find('li').length;
-      return this.chosenIndex = this._cycle(this.chosenIndex, length, direction);
+      return this.chosenIndex = Velge.Util.cycle(this.chosenIndex, length, direction);
     };
 
     UI.prototype.openDropdown = function() {
@@ -469,50 +509,6 @@
       var $highlighted;
       $highlighted = this.$dropdown.find('.highlighted');
       return this.$input.val($highlighted.text());
-    };
-
-    UI.prototype._cycle = function(index, length, direction) {
-      if (direction == null) {
-        direction = 'down';
-      }
-      if (length > 0) {
-        if (direction === 'down') {
-          return (index + 1) % length;
-        } else {
-          return (index + (length - 1)) % length;
-        }
-      } else {
-        return -1;
-      }
-    };
-
-    UI.prototype._defaults = function(options, defaults) {
-      var key, value;
-      for (key in defaults) {
-        value = defaults[key];
-        if (options[key] == null) {
-          options[key] = defaults[key];
-        }
-      }
-      return options;
-    };
-
-    UI.prototype._template = function(string, object) {
-      var buffer, key, value;
-      buffer = string;
-      for (key in object) {
-        value = object[key];
-        buffer = buffer.replace("{{" + key + "}}", value);
-      }
-      return buffer;
-    };
-
-    UI.prototype._emphasize = function(string, value) {
-      if ((value != null) && value.length > 0) {
-        return string.replace(new RegExp("(" + value + ")", 'i'), "<b>$1</b>");
-      } else {
-        return string;
-      }
     };
 
     return UI;
