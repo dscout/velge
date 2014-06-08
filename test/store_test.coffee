@@ -1,30 +1,26 @@
 describe 'Velge.Store', ->
   store = null
 
-  describe '#normalize', ->
-    beforeEach ->
-      store = new Velge.Store()
-
-    it 'defaults to downcasing input', ->
-      expect(store.normalize('Apple')).to.eq('apple')
-
-    it 'strips leading and trailing whitespace', ->
-      expect(store.normalize(' apple ')).to.eq('apple')
-
-    it 'is tollerant of non-string input', ->
-      expect(store.normalize(null)).to.eq('null')
-      expect(store.normalize(undefined)).to.eq('undefined')
-      expect(store.normalize(1)).to.eq('1')
-
-  describe '#validate', ->
+  describe '#isValid', ->
     beforeEach ->
       store = new Velge.Store()
 
     it 'is true for valid values', ->
-      expect(store.validate('apple')).to.be.true
+      expect(store.isValid('apple')).to.be.true
 
-    it 'is false for invalid values', ->
-      expect(store.validate(' ')).to.be.false
+    it 'is false for blank values', ->
+      expect(store.isValid('')).to.be.false
+      expect(store.isValid(' ')).to.be.false
+      expect(store.isValid('\t')).to.be.false
+
+  describe '#isEmpty', ->
+    it 'is true when nothing is stored', ->
+      expect(store.isEmpty()).to.be.true
+
+    it 'is false when anything is stored', ->
+      store.push(name: 'apple')
+
+      expect(store.isEmpty()).to.be.false
 
   describe '#push', ->
     beforeEach ->
@@ -48,6 +44,14 @@ describe 'Velge.Store', ->
 
       expect(store.choices()[0].name).to.eq('apple')
       expect(store.choices()[1].name).to.eq('plum')
+
+    it 'normalizes choices values', ->
+      store
+        .push(name: ' Apple ')
+        .push(name: undefined)
+
+      expect(store.choices()[0].name).to.eq('apple')
+      expect(store.choices()[1].name).to.eq('undefined')
 
   describe '#filter', ->
     beforeEach ->

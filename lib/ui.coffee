@@ -143,7 +143,7 @@ class Velge.UI
       false
 
   submit: (name) ->
-    return false unless @store.validate(name)
+    return false unless @store.isValid(name)
 
     @velge.addChosen(name: name)
 

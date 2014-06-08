@@ -1,6 +1,6 @@
 (function() {
   window.Velge = (function() {
-    Velge.VERSION = '0.9.1';
+    Velge.VERSION = '0.9.2';
 
     function Velge($container, options) {
       this.options = options != null ? options : {};
@@ -132,10 +132,8 @@
 
   })();
 
-  Velge.Util = (function() {
-    function Util() {}
-
-    Util.autoScroll = function($element, $container, padding) {
+  Velge.Util = {
+    autoScroll: function($element, $container, padding) {
       var baseTop, cHeight, eHeight, offset, scroll;
       if (padding == null) {
         padding = 10;
@@ -150,11 +148,8 @@
       } else if (offset + (eHeight > cHeight)) {
         return $container.scrollTop(baseTop - cHeight + eHeight);
       }
-    };
-
-    return Util;
-
-  })();
+    }
+  };
 
   Velge.UI = (function() {
     UI.prototype.KEYCODES = {
@@ -313,7 +308,7 @@
     };
 
     UI.prototype.submit = function(name) {
-      if (!this.store.validate(name)) {
+      if (!this.store.isValid(name)) {
         return false;
       }
       return this.velge.addChosen({
@@ -538,26 +533,18 @@
       return this.arr.length === 0;
     };
 
-    Store.prototype.normalize = function(value) {
-      return String(value).toLowerCase().replace(/(^\s*|\s*$)/g, '');
-    };
-
-    Store.prototype.sanitize = function(value) {
-      return value.replace(/[-[\]{}()*+?.,\\^$|#]/g, "\\$&");
-    };
-
-    Store.prototype.validate = function(value) {
+    Store.prototype.isValid = function(value) {
       return !/^\s*$/.test(value);
     };
 
     Store.prototype.push = function(choice) {
-      choice.name = this.normalize(choice.name);
+      choice.name = this._normalize(choice.name);
       choice.chosen || (choice.chosen = false);
       if (this.find(choice) == null) {
         this.arr.push(choice);
         this.map[choice.name] = choice;
       }
-      this.sort();
+      this._sort();
       return this;
     };
 
@@ -571,8 +558,7 @@
           break;
         }
       }
-      delete this.map[toRemove.name];
-      return this;
+      return delete this.map[toRemove.name];
     };
 
     Store.prototype.update = function(toUpdate, values) {
@@ -587,12 +573,12 @@
     };
 
     Store.prototype.find = function(toFind) {
-      return this.map[this.normalize(toFind.name)];
+      return this.map[this._normalize(toFind.name)];
     };
 
     Store.prototype.fuzzy = function(value) {
       var choice, query, regex, _i, _len, _ref, _results;
-      value = this.sanitize(value);
+      value = this._sanitize(value);
       query = /^\s*$/.test(value) ? '.*' : value;
       regex = RegExp(query, 'i');
       _ref = this.arr;
@@ -606,32 +592,37 @@
       return _results;
     };
 
-    Store.prototype.filter = function(options) {
-      var choice, _i, _len, _ref, _results;
-      if (options == null) {
-        options = {};
-      }
-      options.chosen || (options.chosen = false);
+    Store.prototype.filter = function(_arg) {
+      var choice, chosen, _i, _len, _ref, _results;
+      chosen = _arg.chosen;
+      chosen || (chosen = false);
       _ref = this.arr;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         choice = _ref[_i];
-        if (choice.chosen === options.chosen) {
+        if (choice.chosen === chosen) {
           _results.push(choice);
         }
       }
       return _results;
     };
 
-    Store.prototype.sort = function() {
-      this.arr = this.arr.sort(function(a, b) {
+    Store.prototype._normalize = function(value) {
+      return String(value).toLowerCase().replace(/(^\s*|\s*$)/g, '');
+    };
+
+    Store.prototype._sanitize = function(value) {
+      return value.replace(/[-[\]{}()*+?.,\\^$|#]/g, "\\$&");
+    };
+
+    Store.prototype._sort = function() {
+      return this.arr.sort(function(a, b) {
         if (a.name > b.name) {
           return 1;
         } else {
           return -1;
         }
       });
-      return this.arr;
     };
 
     return Store;
