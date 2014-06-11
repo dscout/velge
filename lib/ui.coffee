@@ -203,7 +203,9 @@ class Velge.UI
       @$dropdown.addClass('open')
 
   positionDropdown: (offset = 13) ->
-    @$dropdown.css(top: @$inner.outerHeight() + offset)
+    @$dropdown.css
+      top: @$inner.outerHeight() + offset
+      left: @$input.offset()['left'] - @$wrapper.offset()['left']
 
   closeDropdown: ->
     @$dropdown.removeClass('open')
