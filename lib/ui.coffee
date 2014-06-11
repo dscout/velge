@@ -187,6 +187,7 @@ class Velge.UI
   removeHighlightedChosen: ->
     $target = @$list.find('.highlighted .name')
     @velge.remChosen(name: $target.text())
+    @positionDropdown()
     @chosenIndex = -1
 
   cycleChoice: (direction) ->
