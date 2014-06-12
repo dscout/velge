@@ -1,6 +1,6 @@
 (function() {
   window.Velge = (function() {
-    Velge.VERSION = '0.9.0';
+    Velge.VERSION = '0.9.2';
 
     function Velge($container, options) {
       this.options = options != null ? options : {};
@@ -132,10 +132,8 @@
 
   })();
 
-  Velge.Util = (function() {
-    function Util() {}
-
-    Util.autoScroll = function($element, $container, padding) {
+  Velge.Util = {
+    autoScroll: function($element, $container, padding) {
       var baseTop, cHeight, eHeight, offset, scroll;
       if (padding == null) {
         padding = 10;
@@ -150,11 +148,48 @@
       } else if (offset + (eHeight > cHeight)) {
         return $container.scrollTop(baseTop - cHeight + eHeight);
       }
-    };
-
-    return Util;
-
-  })();
+    },
+    cycle: function(index, length, direction) {
+      if (direction == null) {
+        direction = 'down';
+      }
+      if (length > 0) {
+        if (direction === 'down') {
+          return (index + 1) % length;
+        } else {
+          return (index + (length - 1)) % length;
+        }
+      } else {
+        return -1;
+      }
+    },
+    defaults: function(options, defaults) {
+      var key, value;
+      for (key in defaults) {
+        value = defaults[key];
+        if (options[key] == null) {
+          options[key] = defaults[key];
+        }
+      }
+      return options;
+    },
+    emphasize: function(string, value) {
+      if ((value != null) && value.length > 0) {
+        return string.replace(new RegExp("(" + value + ")", 'i'), "<b>$1</b>");
+      } else {
+        return string;
+      }
+    },
+    template: function(string, object) {
+      var buffer, key, value;
+      buffer = string;
+      for (key in object) {
+        value = object[key];
+        buffer = buffer.replace("{{" + key + "}}", value);
+      }
+      return buffer;
+    }
+  };
 
   Velge.UI = (function() {
     UI.prototype.KEYCODES = {
@@ -169,7 +204,7 @@
       COMMA: 188
     };
 
-    UI.prototype.wrapTemplate = "<div class='velge'>\n  <ul class='velge-list'></ul>\n  <input type='text' autocomplete='off' placeholder='{{placeholder}}' class='velge-input' />\n  <span class='velge-trigger'></span>\n  <ol class='velge-dropdown'></ol>\n</div>";
+    UI.prototype.wrapTemplate = "<div class='velge'>\n  <div class='velge-inner'>\n    <ul class='velge-list'></ul>\n    <input type='text' autocomplete='off' placeholder='{{placeholder}}' class='velge-input' />\n    <span class='velge-trigger'></span>\n  </div>\n  <ol class='velge-dropdown'></ol>\n</div>";
 
     UI.prototype.chosenTemplate = "<li>\n  <span class='name'>{{name}}</span>\n  <span class='remove'>&times;</span>\n</li>";
 
@@ -188,7 +223,7 @@
       this.store = store;
       this.choiceIndex = -1;
       this.chosenIndex = -1;
-      this.options = this._defaults(options, this.defaults);
+      this.options = Velge.Util.defaults(options, this.defaults);
     }
 
     UI.prototype.setup = function() {
@@ -313,7 +348,7 @@
     };
 
     UI.prototype.submit = function(name) {
-      if (!this.store.validate(name)) {
+      if (!this.store.isValid(name)) {
         return false;
       }
       return this.velge.addChosen({
@@ -322,7 +357,8 @@
     };
 
     UI.prototype.render = function() {
-      this.$wrapper = $(this._template(this.wrapTemplate, this.options));
+      this.$wrapper = $(Velge.Util.template(this.wrapTemplate, this.options));
+      this.$inner = $('.velge-inner', this.$wrapper);
       this.$list = $('.velge-list', this.$wrapper);
       this.$input = $('.velge-input', this.$wrapper);
       this.$dropdown = $('.velge-dropdown', this.$wrapper);
@@ -339,7 +375,7 @@
         _results = [];
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           choice = _ref[_i];
-          _results.push(this._template(this.chosenTemplate, {
+          _results.push(Velge.Util.template(this.chosenTemplate, {
             name: choice.name
           }));
         }
@@ -358,8 +394,8 @@
         _results = [];
         for (_i = 0, _len = filtered.length; _i < _len; _i++) {
           choice = filtered[_i];
-          _results.push(this._template(this.choiceTemplate, {
-            name: this._emphasize(choice.name, value)
+          _results.push(Velge.Util.template(this.choiceTemplate, {
+            name: Velge.Util.emphasize(choice.name, value)
           }));
         }
         return _results;
@@ -403,19 +439,20 @@
       this.velge.remChosen({
         name: $target.text()
       });
+      this.positionDropdown();
       return this.chosenIndex = -1;
     };
 
     UI.prototype.cycleChoice = function(direction) {
       var length;
       length = this.$dropdown.find('li').length;
-      return this.choiceIndex = this._cycle(this.choiceIndex, length, direction);
+      return this.choiceIndex = Velge.Util.cycle(this.choiceIndex, length, direction);
     };
 
     UI.prototype.cycleChosen = function(direction) {
       var length;
       length = this.$list.find('li').length;
-      return this.chosenIndex = this._cycle(this.chosenIndex, length, direction);
+      return this.chosenIndex = Velge.Util.cycle(this.chosenIndex, length, direction);
     };
 
     UI.prototype.openDropdown = function() {
@@ -425,16 +462,14 @@
       }
     };
 
-    UI.prototype.positionDropdown = function() {
-      if (this.$input.position().top > this.$list.position().top) {
-        return this.$dropdown.css({
-          top: this.$list.outerHeight() + this.$input.outerHeight()
-        });
-      } else {
-        return this.$dropdown.css({
-          top: this.$list.outerHeight()
-        });
+    UI.prototype.positionDropdown = function(offset) {
+      if (offset == null) {
+        offset = 13;
       }
+      return this.$dropdown.css({
+        top: this.$inner.outerHeight() + offset,
+        left: this.$input.offset()['left'] - this.$wrapper.offset()['left']
+      });
     };
 
     UI.prototype.closeDropdown = function() {
@@ -478,50 +513,6 @@
       return this.$input.val($highlighted.text());
     };
 
-    UI.prototype._cycle = function(index, length, direction) {
-      if (direction == null) {
-        direction = 'down';
-      }
-      if (length > 0) {
-        if (direction === 'down') {
-          return (index + 1) % length;
-        } else {
-          return (index + (length - 1)) % length;
-        }
-      } else {
-        return -1;
-      }
-    };
-
-    UI.prototype._defaults = function(options, defaults) {
-      var key, value;
-      for (key in defaults) {
-        value = defaults[key];
-        if (options[key] == null) {
-          options[key] = defaults[key];
-        }
-      }
-      return options;
-    };
-
-    UI.prototype._template = function(string, object) {
-      var buffer, key, value;
-      buffer = string;
-      for (key in object) {
-        value = object[key];
-        buffer = buffer.replace("{{" + key + "}}", value);
-      }
-      return buffer;
-    };
-
-    UI.prototype._emphasize = function(string, value) {
-      if ((value != null) && value.length > 0) {
-        return string.replace(new RegExp("(" + value + ")", 'i'), "<b>$1</b>");
-      } else {
-        return string;
-      }
-    };
-
     return UI;
 
   })();
@@ -540,26 +531,18 @@
       return this.arr.length === 0;
     };
 
-    Store.prototype.normalize = function(value) {
-      return String(value).toLowerCase().replace(/(^\s*|\s*$)/g, '');
-    };
-
-    Store.prototype.sanitize = function(value) {
-      return value.replace(/[-[\]{}()*+?.,\\^$|#]/g, "\\$&");
-    };
-
-    Store.prototype.validate = function(value) {
+    Store.prototype.isValid = function(value) {
       return !/^\s*$/.test(value);
     };
 
     Store.prototype.push = function(choice) {
-      choice.name = this.normalize(choice.name);
+      choice.name = this._normalize(choice.name);
       choice.chosen || (choice.chosen = false);
       if (this.find(choice) == null) {
         this.arr.push(choice);
         this.map[choice.name] = choice;
       }
-      this.sort();
+      this._sort();
       return this;
     };
 
@@ -573,8 +556,7 @@
           break;
         }
       }
-      delete this.map[toRemove.name];
-      return this;
+      return delete this.map[toRemove.name];
     };
 
     Store.prototype.update = function(toUpdate, values) {
@@ -589,12 +571,12 @@
     };
 
     Store.prototype.find = function(toFind) {
-      return this.map[this.normalize(toFind.name)];
+      return this.map[this._normalize(toFind.name)];
     };
 
     Store.prototype.fuzzy = function(value) {
       var choice, query, regex, _i, _len, _ref, _results;
-      value = this.sanitize(value);
+      value = this._sanitize(value);
       query = /^\s*$/.test(value) ? '.*' : value;
       regex = RegExp(query, 'i');
       _ref = this.arr;
@@ -608,32 +590,37 @@
       return _results;
     };
 
-    Store.prototype.filter = function(options) {
-      var choice, _i, _len, _ref, _results;
-      if (options == null) {
-        options = {};
-      }
-      options.chosen || (options.chosen = false);
+    Store.prototype.filter = function(_arg) {
+      var choice, chosen, _i, _len, _ref, _results;
+      chosen = _arg.chosen;
+      chosen || (chosen = false);
       _ref = this.arr;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         choice = _ref[_i];
-        if (choice.chosen === options.chosen) {
+        if (choice.chosen === chosen) {
           _results.push(choice);
         }
       }
       return _results;
     };
 
-    Store.prototype.sort = function() {
-      this.arr = this.arr.sort(function(a, b) {
+    Store.prototype._normalize = function(value) {
+      return String(value).toLowerCase().replace(/(^\s*|\s*$)/g, '');
+    };
+
+    Store.prototype._sanitize = function(value) {
+      return value.replace(/[-[\]{}()*+?.,\\^$|#]/g, "\\$&");
+    };
+
+    Store.prototype._sort = function() {
+      return this.arr.sort(function(a, b) {
         if (a.name > b.name) {
           return 1;
         } else {
           return -1;
         }
       });
-      return this.arr;
     };
 
     return Store;
