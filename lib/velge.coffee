@@ -1,8 +1,8 @@
 class window.Velge
   @VERSION: '0.9.2'
-
+  
   constructor: ($container, @options = {}) ->
-    @store = new Velge.Store()
+    @store = new Velge.Store(@options)
     @ui = new Velge.UI($container, @, @store, @options)
 
     @addCallbacks = []

@@ -37,13 +37,22 @@ describe 'Velge.Store', ->
 
       expect(store.choices().length).to.eq(1)
 
-    it 'maintains choices in alphabetical order', ->
+    it 'maintains choices in alphabetical order by default', ->
       store
         .push(name: 'plum')
         .push(name: 'apple')
 
       expect(store.choices()[0].name).to.eq('apple')
       expect(store.choices()[1].name).to.eq('plum')
+
+    it 'maintains insert order if autoSort is false', ->
+      store.options.autoSort = false
+      store
+        .push(name: 'plum')
+        .push(name: 'apple')
+
+      expect(store.choices()[0].name).to.eq('plum')
+      expect(store.choices()[1].name).to.eq('apple')
 
     it 'normalizes choices values', ->
       store
