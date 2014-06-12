@@ -462,11 +462,18 @@
     };
 
     UI.prototype.positionDropdown = function(offset) {
+      var left, needsLeft, _ref, _ref1;
       if (offset == null) {
         offset = 13;
       }
+      needsLeft = ((_ref = this.$input.css('display')) === 'inline' || _ref === 'inline-block') && ((_ref1 = this.$list.css('display')) === 'inline' || _ref1 === 'inline-block') && (this.$list.css('float') === 'none');
+      left = 0;
+      if (needsLeft) {
+        left = this.$input.offset()['left'] - this.$wrapper.offset()['left'];
+      }
       return this.$dropdown.css({
-        top: this.$inner.outerHeight() + offset
+        top: this.$inner.outerHeight() + offset,
+        left: left
       });
     };
 
