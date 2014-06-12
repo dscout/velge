@@ -31,6 +31,10 @@ describe 'Velge', ->
     it 'ignores any non-object choice when preloading', ->
       new Velge($container, choices: [undefined, null, { name: 'banana' }])
 
+    it 'applies the autoSort option to the store', ->
+      velge = new Velge($container, autoSort: false).setup()
+      expect(velge.store.options.autoSort).to.be(false)
+
   describe '#addChoice', ->
     beforeEach ->
       velge = new Velge($container).setup()

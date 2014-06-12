@@ -4,7 +4,7 @@
 
     function Velge($container, options) {
       this.options = options != null ? options : {};
-      this.store = new Velge.Store();
+      this.store = new Velge.Store(this.options);
       this.ui = new Velge.UI($container, this, this.store, this.options);
       this.addCallbacks = [];
       this.remCallbacks = [];
@@ -518,9 +518,17 @@
   })();
 
   Velge.Store = (function() {
-    function Store() {
+    Store.prototype.defaults = {
+      autoSort: true
+    };
+
+    function Store(options) {
+      if (options == null) {
+        options = {};
+      }
       this.arr = [];
       this.map = {};
+      this.options = Velge.Util.defaults(options, this.defaults);
     }
 
     Store.prototype.choices = function() {
@@ -542,7 +550,9 @@
         this.arr.push(choice);
         this.map[choice.name] = choice;
       }
-      this._sort();
+      if (this.options.autoSort) {
+        this._sort();
+      }
       return this;
     };
 

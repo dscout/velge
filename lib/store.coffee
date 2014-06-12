@@ -1,7 +1,13 @@
 class Velge.Store
-  constructor: ->
+  
+  defaults:
+    autoSort: true
+  
+  constructor:(options={})->
     @arr = []
     @map = {}
+
+    @options = Velge.Util.defaults(options, @defaults)
 
   choices: ->
     @arr
@@ -20,7 +26,7 @@ class Velge.Store
       @arr.push(choice)
       @map[choice.name] = choice
 
-    @_sort()
+    @_sort() if @options.autoSort
 
     @
 
