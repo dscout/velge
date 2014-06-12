@@ -439,6 +439,7 @@
       this.velge.remChosen({
         name: $target.text()
       });
+      this.positionDropdown();
       return this.chosenIndex = -1;
     };
 
@@ -466,7 +467,8 @@
         offset = 13;
       }
       return this.$dropdown.css({
-        top: this.$inner.outerHeight() + offset
+        top: this.$inner.outerHeight() + offset,
+        left: this.$input.offset()['left'] - this.$wrapper.offset()['left']
       });
     };
 
