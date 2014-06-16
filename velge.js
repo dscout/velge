@@ -467,8 +467,7 @@
         offset = 13;
       }
       return this.$dropdown.css({
-        top: this.$inner.outerHeight() + offset,
-        left: this.$input.offset()['left'] - this.$wrapper.offset()['left']
+        top: this.$inner.outerHeight() + offset
       });
     };
 
