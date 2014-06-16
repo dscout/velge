@@ -315,7 +315,7 @@
           self.closeDropdown();
           return self.clearInput();
         };
-        return self.closeTimeout = setTimeout(callback, 75);
+        return self.closeTimeout = setTimeout(callback, 150);
       });
       this.$wrapper.on('click.velge', function() {
         if (!self.$input.is(':focus')) {

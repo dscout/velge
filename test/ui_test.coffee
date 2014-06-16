@@ -77,7 +77,7 @@ describe 'Velge.UI', ->
       expect($dropdown).to.not.have.class('open')
 
     it 'closes the dropdown on input blur', (done) ->
-      @slow(200)
+      @slow(300)
 
       $dropdown = $('.velge-dropdown', $container)
       $input    = $('.velge-input', $container)
@@ -89,7 +89,7 @@ describe 'Velge.UI', ->
       setTimeout((->
         expect($dropdown).to.not.have.class('open')
         done()
-      ), 76)
+      ), 200)
 
     it 'closes on escape', ->
       $dropdown = $('.velge-dropdown', $container)

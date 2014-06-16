@@ -118,7 +118,7 @@ class Velge.UI
         self.closeDropdown()
         self.clearInput()
 
-      self.closeTimeout = setTimeout(callback, 75)
+      self.closeTimeout = setTimeout(callback, 150)
 
     @$wrapper.on 'click.velge', ->
       self.$input.focus() unless self.$input.is(':focus')
