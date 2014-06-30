@@ -4,7 +4,7 @@
 
     function Velge($container, options) {
       this.options = options != null ? options : {};
-      this.store = new Velge.Store();
+      this.store = new Velge.Store(this.options);
       this.ui = new Velge.UI($container, this, this.store, this.options);
       this.addCallbacks = [];
       this.remCallbacks = [];
@@ -315,7 +315,7 @@
           self.closeDropdown();
           return self.clearInput();
         };
-        return self.closeTimeout = setTimeout(callback, 75);
+        return self.closeTimeout = setTimeout(callback, 150);
       });
       this.$wrapper.on('click.velge', function() {
         if (!self.$input.is(':focus')) {
@@ -467,8 +467,7 @@
         offset = 13;
       }
       return this.$dropdown.css({
-        top: this.$inner.outerHeight() + offset,
-        left: this.$input.offset()['left'] - this.$wrapper.offset()['left']
+        top: this.$inner.outerHeight() + offset
       });
     };
 
@@ -518,9 +517,17 @@
   })();
 
   Velge.Store = (function() {
-    function Store() {
+    Store.prototype.defaults = {
+      autoSort: true
+    };
+
+    function Store(options) {
+      if (options == null) {
+        options = {};
+      }
       this.arr = [];
       this.map = {};
+      this.options = Velge.Util.defaults(options, this.defaults);
     }
 
     Store.prototype.choices = function() {
@@ -542,7 +549,9 @@
         this.arr.push(choice);
         this.map[choice.name] = choice;
       }
-      this._sort();
+      if (this.options.autoSort) {
+        this._sort();
+      }
       return this;
     };
 
