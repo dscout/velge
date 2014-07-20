@@ -63,6 +63,22 @@ describe 'Velge.UI', ->
 
       expect($dropdown).to.have.class('open')
 
+    it 'allows top position to be set by options', ->
+      $container.html('')
+
+      velge = new Velge($container,
+        choices:        [{ name: 'apple'}]
+        dropdownOffset: 44
+      ).setup()
+
+      $trigger  = $('.velge-trigger', $container)
+      $dropdown = $('.velge-dropdown', $container)
+      $inner    = $('.velge-inner', $container)
+
+      $trigger.trigger('click')
+
+      expect($dropdown.attr('style')).to.contain("top: #{$inner.outerHeight() + 44}px;")
+
     it 'does not open the dropdown when down is pressed', ->
       velge.remChoice(name: 'apple')
 
