@@ -187,7 +187,7 @@ class Velge.UI
   removeHighlightedChosen: ->
     $target = @$list.find('.highlighted .name')
     @velge.remChosen(name: $target.text())
-    @positionDropdown()
+    @positionDropdown(@options.dropdownOffset)
     @chosenIndex = -1
 
   cycleChoice: (direction) ->
@@ -200,7 +200,7 @@ class Velge.UI
 
   openDropdown: ->
     unless @store.isEmpty()
-      @positionDropdown()
+      @positionDropdown(@options.dropdownOffset)
       @$dropdown.addClass('open')
 
   positionDropdown: (offset = 13) ->
