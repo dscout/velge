@@ -142,6 +142,10 @@ class Velge.UI
       self.closeDropdown()
       false
 
+    @$input.on 'focus', @options.onFocus
+
+    @$input.on 'blur',  @options.onBlur
+
   submit: (name) ->
     return false unless @store.isValid(name)
 

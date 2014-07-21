@@ -43,6 +43,36 @@ describe 'Velge.UI', ->
 
       expect($('.velge-input', $container).attr('placeholder')).to.eq('Choose')
 
+  describe 'input events', ->
+    blurCallback  = null
+    focusCallback = null
+
+    beforeEach ->
+      blurCallback  = sinon.spy()
+      focusCallback = sinon.spy()
+
+      velge = new Velge($container,
+        choices: [{ name: 'apple' }]
+        onBlur:  blurCallback
+        onFocus: focusCallback
+      ).setup()
+
+    it 'applies the onFocus callback option', ->
+      $input = $('.velge-input', $container)
+
+      $input.trigger('focus')
+
+      expect(focusCallback.calledOnce).to.be.true
+      expect(blurCallback.callCount).to.eq(0)
+
+    it 'applies the onBlur callback option', ->
+      $input = $('.velge-input', $container)
+
+      $input.trigger('blur')
+
+      expect(blurCallback.callCount).to.eq(1)
+      expect(focusCallback.callCount).to.eq(0)
+
   describe 'choice dropdown', ->
     beforeEach ->
       velge = new Velge($container, choices: [{ name: 'apple' }]).setup()
@@ -64,7 +94,7 @@ describe 'Velge.UI', ->
       expect($dropdown).to.have.class('open')
 
     it 'allows top position to be set by options', ->
-      $container.html('')
+      $container.empty()
 
       velge = new Velge($container,
         choices:        [{ name: 'apple'}]

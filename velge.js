@@ -336,7 +336,7 @@
         self.toggleDropdown();
         return false;
       });
-      return this.$wrapper.on('click.velge', '.velge-dropdown li', function(event) {
+      this.$wrapper.on('click.velge', '.velge-dropdown li', function(event) {
         var $target;
         $target = $(event.currentTarget);
         self.submit($target.text());
@@ -345,6 +345,8 @@
         self.closeDropdown();
         return false;
       });
+      this.$input.on('focus', this.options.onFocus);
+      return this.$input.on('blur', this.options.onBlur);
     };
 
     UI.prototype.submit = function(name) {
@@ -439,7 +441,7 @@
       this.velge.remChosen({
         name: $target.text()
       });
-      this.positionDropdown();
+      this.positionDropdown(this.options.dropdownOffset);
       return this.chosenIndex = -1;
     };
 
@@ -457,7 +459,7 @@
 
     UI.prototype.openDropdown = function() {
       if (!this.store.isEmpty()) {
-        this.positionDropdown();
+        this.positionDropdown(this.options.dropdownOffset);
         return this.$dropdown.addClass('open');
       }
     };
