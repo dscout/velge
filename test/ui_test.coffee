@@ -63,15 +63,15 @@ describe 'Velge.UI', ->
       $input.trigger('focus')
 
       expect(focusCallback.calledOnce).to.be.true
-      expect(blurCallback.callCount).to.eq(0)
+      expect(blurCallback.calledOnce).to.be.false
 
     it 'applies the onBlur callback option', ->
       $input = $('.velge-input', $container)
 
       $input.trigger('blur')
 
-      expect(blurCallback.callCount).to.eq(1)
-      expect(focusCallback.callCount).to.eq(0)
+      expect(blurCallback.calledOnce).to.be.true
+      expect(focusCallback.calledOnce).to.be.false
 
   describe 'choice dropdown', ->
     beforeEach ->
