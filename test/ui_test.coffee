@@ -93,6 +93,14 @@ describe 'Velge.UI', ->
 
       expect($dropdown).to.have.class('open')
 
+    it 'positions the dropdown below the trigger', ->
+      $trigger  = $('.velge-trigger',  $container)
+      $dropdown = $('.velge-dropdown', $container)
+
+      $trigger.trigger('click')
+
+      expect($dropdown.attr('style')).to.contain("top: #{$trigger.outerHeight() + 13}px;")
+
     it 'allows top position to be set by options', ->
       $container.empty()
 
@@ -107,7 +115,7 @@ describe 'Velge.UI', ->
 
       $trigger.trigger('click')
 
-      expect($dropdown.attr('style')).to.contain("top: #{$inner.outerHeight() + 44}px;")
+      expect($dropdown.attr('style')).to.contain("top: #{$trigger.outerHeight() + 44}px;")
 
     it 'does not open the dropdown when down is pressed', ->
       velge.remChoice(name: 'apple')

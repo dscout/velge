@@ -465,11 +465,13 @@
     };
 
     UI.prototype.positionDropdown = function(offset) {
+      var $trigger;
       if (offset == null) {
         offset = 13;
       }
+      $trigger = $('.velge-trigger', this.$container);
       return this.$dropdown.css({
-        top: this.$inner.outerHeight() + offset
+        top: $trigger.outerHeight() + offset
       });
     };
 

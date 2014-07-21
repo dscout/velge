@@ -208,7 +208,9 @@ class Velge.UI
       @$dropdown.addClass('open')
 
   positionDropdown: (offset = 13) ->
-    @$dropdown.css(top: @$inner.outerHeight() + offset)
+    $trigger = $('.velge-trigger', @$container)
+
+    @$dropdown.css(top: $trigger.outerHeight() + offset)
 
   closeDropdown: ->
     @$dropdown.removeClass('open')
