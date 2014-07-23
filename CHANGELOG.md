@@ -1,3 +1,8 @@
+# v.0.9.3
+
+* Position the dropdown below the trigger, and add a dropdownOffset option.
+* Add onFocus and onBlur callback options.
+
 # v0.9.2
 
 * Loosen jQuery constraint to any 2.x release
