@@ -43,6 +43,36 @@ describe 'Velge.UI', ->
 
       expect($('.velge-input', $container).attr('placeholder')).to.eq('Choose')
 
+  describe 'input events', ->
+    blurCallback  = null
+    focusCallback = null
+
+    beforeEach ->
+      blurCallback  = sinon.spy()
+      focusCallback = sinon.spy()
+
+      velge = new Velge($container,
+        choices: [{ name: 'apple' }]
+        onBlur:  blurCallback
+        onFocus: focusCallback
+      ).setup()
+
+    it 'applies the onFocus callback option', ->
+      $input = $('.velge-input', $container)
+
+      $input.trigger('focus')
+
+      expect(focusCallback.calledOnce).to.be.true
+      expect(blurCallback.calledOnce).to.be.false
+
+    it 'applies the onBlur callback option', ->
+      $input = $('.velge-input', $container)
+
+      $input.trigger('blur')
+
+      expect(blurCallback.calledOnce).to.be.true
+      expect(focusCallback.calledOnce).to.be.false
+
   describe 'choice dropdown', ->
     beforeEach ->
       velge = new Velge($container, choices: [{ name: 'apple' }]).setup()
@@ -63,8 +93,16 @@ describe 'Velge.UI', ->
 
       expect($dropdown).to.have.class('open')
 
+    it 'positions the dropdown below the trigger', ->
+      $trigger  = $('.velge-trigger',  $container)
+      $dropdown = $('.velge-dropdown', $container)
+
+      $trigger.trigger('click')
+
+      expect($dropdown.attr('style')).to.contain("top: #{$trigger.outerHeight() + 13}px;")
+
     it 'allows top position to be set by options', ->
-      $container.html('')
+      $container.empty()
 
       velge = new Velge($container,
         choices:        [{ name: 'apple'}]
@@ -77,7 +115,7 @@ describe 'Velge.UI', ->
 
       $trigger.trigger('click')
 
-      expect($dropdown.attr('style')).to.contain("top: #{$inner.outerHeight() + 44}px;")
+      expect($dropdown.attr('style')).to.contain("top: #{$trigger.outerHeight() + 44}px;")
 
     it 'does not open the dropdown when down is pressed', ->
       velge.remChoice(name: 'apple')

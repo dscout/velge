@@ -142,6 +142,10 @@ class Velge.UI
       self.closeDropdown()
       false
 
+    @$input.on 'focus', @options.onFocus
+
+    @$input.on 'blur',  @options.onBlur
+
   submit: (name) ->
     return false unless @store.isValid(name)
 
@@ -204,7 +208,9 @@ class Velge.UI
       @$dropdown.addClass('open')
 
   positionDropdown: (offset = 13) ->
-    @$dropdown.css(top: @$inner.outerHeight() + offset)
+    $trigger = $('.velge-trigger', @$container)
+
+    @$dropdown.css(top: $trigger.outerHeight() + offset)
 
   closeDropdown: ->
     @$dropdown.removeClass('open')
