@@ -49,7 +49,12 @@ Velge can be attached to any container. The structure isn't of any importance:
 Initialize velge with a selector for the container and customization options:
 
 ```javascript
-var velge = new Velge($('.container'), { placeholder: 'Choose' }).setup()
+var velge = new Velge($('.container'), {
+  dropdownOffset: 42,
+  onBlur:         blurCallback
+  onFocus:        focusCallback
+  placeholder:    'Choose'
+}).setup()
 ```
 
 Any choices that are provided at initialization will be used to pre-populate

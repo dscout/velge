@@ -1,6 +1,6 @@
 class window.Velge
-  @VERSION: '0.9.2'
-  
+  @VERSION: '0.9.3'
+
   constructor: ($container, @options = {}) ->
     @store = new Velge.Store(@options)
     @ui = new Velge.UI($container, @, @store, @options)
