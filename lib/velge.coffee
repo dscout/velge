@@ -1,4 +1,4 @@
-class window.Velge
+class @Velge
   @VERSION: '0.9.3'
 
   constructor: ($container, @options = {}) ->

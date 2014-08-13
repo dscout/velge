@@ -1,8 +1,7 @@
 class Velge.Store
-  
   defaults:
     autoSort: true
-  
+
   constructor:(options={})->
     @arr = []
     @map = {}

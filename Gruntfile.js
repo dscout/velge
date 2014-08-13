@@ -39,6 +39,15 @@ module.exports = function(grunt) {
     watch: {
       files: ['lib/*.coffee', 'test/*.coffee'],
       tasks: ['coffee:compile']
+    },
+
+    umd: {
+      all: {
+        src: 'velge.js',
+        indent: '  ',
+        objectToExport: 'Velge',
+        globalAlias: 'Velge'
+      }
     }
   });
 
@@ -46,8 +55,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-mocha');
+  grunt.loadNpmTasks('grunt-umd');
 
-  grunt.registerTask('test',    ['coffee:compile', 'mocha']);
+  grunt.registerTask('test',    ['coffee:compile', 'umd:all', 'mocha']);
   grunt.registerTask('default', ['test']);
-  grunt.registerTask('release', ['coffee:compile', 'mocha', 'uglify']);
+  grunt.registerTask('release', ['test', 'uglify']);
 };
