@@ -1,5 +1,5 @@
 class @Velge
-  @VERSION: '0.9.3'
+  @VERSION: '0.9.4'
 
   constructor: ($container, @options = {}) ->
     @store = new Velge.Store(@options)

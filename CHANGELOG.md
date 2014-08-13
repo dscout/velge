@@ -1,4 +1,8 @@
-# v.0.9.3
+# v0.9.4
+
+* Package compiled output in a universal module definition
+
+# v0.9.3
 
 * Position the dropdown below the trigger, and add a dropdownOffset option.
 * Add onFocus and onBlur callback options.

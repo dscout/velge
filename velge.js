@@ -12,7 +12,7 @@
 
   (function() {
     this.Velge = (function() {
-      Velge.VERSION = '0.9.3';
+      Velge.VERSION = '0.9.4';
 
       function Velge($container, options) {
         this.options = options != null ? options : {};
