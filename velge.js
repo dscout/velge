@@ -1,14 +1,14 @@
 (function(root, factory) {
     if(typeof exports === 'object') {
-        module.exports = factory();
+        module.exports = factory(require('jquery'));
     }
     else if(typeof define === 'function' && define.amd) {
-        define([], factory);
+        define(['jquery'], factory);
     }
     else {
-        root['Velge'] = factory();
+        root['Velge'] = factory(root.jQuery);
     }
-}(this, function() {
+}(this, function($) {
 
   (function() {
     this.Velge = (function() {

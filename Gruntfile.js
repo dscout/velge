@@ -46,7 +46,13 @@ module.exports = function(grunt) {
         src: 'velge.js',
         indent: '  ',
         objectToExport: 'Velge',
-        globalAlias: 'Velge'
+        globalAlias: 'Velge',
+        deps: {
+          'default': ['$'],
+          amd: ['jquery'],
+          cjs: ['jquery'],
+          global: ['jQuery']
+        }
       }
     }
   });
