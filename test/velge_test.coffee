@@ -146,6 +146,14 @@ describe 'Velge', ->
       expect(spyA.calledWith({ chosen: true, name: 'persimon' }, velge)).to.be.true
       expect(spyB.calledWith({ chosen: true, name: 'persimon' }, velge)).to.be.true
 
+    it 'does not apply callbacks when silent is passed', ->
+      spy = sinon.spy()
+      velge.onAdd(spy)
+
+      velge.addChosen({ name: 'persimon' }, { silent: true })
+
+      expect(spy.called).to.be.false
+
     it 'calls within the supplied context when given', ->
       context = new Object()
       spy = sinon.spy()
@@ -176,3 +184,11 @@ describe 'Velge', ->
 
       expect(spyA.called).to.be.true
       expect(spyB.called).to.be.true
+
+    it 'does not apply callbacks when silent is passed', ->
+      spy = sinon.spy()
+      velge.onRem(spy)
+
+      velge.remChosen({ name: 'persimon' }, { silent: true })
+
+      expect(spy.called).to.be.false

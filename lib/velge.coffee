@@ -29,21 +29,21 @@ class @Velge
     @ui.renderChoices()
     @
 
-  addChosen: (choice) ->
+  addChosen: (choice, options = {}) ->
     @_enforceSingleChoice()
     chosen = @store.find(choice) || choice
     chosen.chosen = true
     @store.push(chosen)
     @ui.renderChosen()
     @ui.renderChoices()
-    @_applyCallbacks(chosen, @addCallbacks)
+    @_applyCallbacks(chosen, @addCallbacks) unless options.silent
     @
 
-  remChosen: (choice) ->
+  remChosen: (choice, options = {}) ->
     @store.update(choice, chosen: false)
     @ui.renderChosen()
     @ui.renderChoices()
-    @_applyCallbacks(choice, @remCallbacks)
+    @_applyCallbacks(choice, @remCallbacks) unless options.silent
     @
 
   getChoices: ->
