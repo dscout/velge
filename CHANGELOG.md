@@ -1,3 +1,8 @@
+# v0.10.0
+
+* Passing `{ silent: true }` to `addChosen` or `remChosen` avoids triggering
+  any registered callbacks.
+
 # v0.9.4
 
 * Package compiled output in a universal module definition

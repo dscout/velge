@@ -126,7 +126,14 @@ var addCallback = function(choice, velge) { /* Persist Me */ }
 
 velge
   .onAdd(addCallback, context)
-  .onRem(remCallback, context)
+  .onRem(remCallback, context);
+```
+
+Callbacks can be bypassed by passing `silent: true` to chosen manipulation
+methods:
+
+```javascript
+velge.addChosen({ name: 'apple' }, { silent: true });
 ```
 
 You may prefer to save all changes at the same time, maybe via a more form-like
