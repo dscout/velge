@@ -37,12 +37,24 @@ describe('Dropdown', function() {
 
     it('highlights a given value', function() {
       var dropdown = new Dropdown();
-      var element  = dropdown.render(['melrose', 'suncrisp'], 'suncrisp');
+      var element  = dropdown.render(['melrose', 'suncrisp'], {
+        highlight: 'suncrisp'
+      });
 
       var highlighted = element.querySelector('.highlighted');
 
       expect(highlighted).to.exist;
       expect(highlighted.textContent).to.contain('suncrisp');
+    });
+
+    it('emphasizes particular fragments', function() {
+      var dropdown = new Dropdown();
+      var element  = dropdown.render(['ida red', 'red delicious'], {
+        emphasis: 'red'
+      });
+
+      expect(element.innerHTML).to.contain('ida <b>red</b>');
+      expect(element.innerHTML).to.contain('<b>red</b> delicious');
     });
   });
 
