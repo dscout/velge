@@ -4,7 +4,7 @@ var Helper   = require('../test_helper');
 
 describe('Dropdown', function() {
   describe('#render', function() {
-    it('emits a list element', function() {
+    it('returns a list element', function() {
       var dropdown = new Dropdown();
       var element  = dropdown.render();
 

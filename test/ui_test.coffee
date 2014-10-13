@@ -303,38 +303,3 @@ describe 'Velge.UI', ->
 
       press($input, 'right')
       expect($('.highlighted', $list)).to.contain('orange')
-
-  describe 'choice selection', ->
-    beforeEach ->
-      velge = new Velge($container, choices: [
-        { name: 'apple'   }
-        { name: 'apricot' }
-        { name: 'orange'  }
-      ]).setup()
-
-      $input = $('.velge-input', $container)
-      $list  = $('.velge-list', $container)
-
-    it 'does not add blank input', ->
-      $input.val('')
-      press($input, 'enter')
-
-      expect($('li', $list).length).to.eq(0)
-
-    it 'adds choices on "enter"', ->
-      $input.val('plum')
-      press($input, 'enter')
-
-      expect($list).to.contain('plum')
-
-    it 'adds choices on "comma"', ->
-      $input.val('plum')
-      press($input, ',')
-
-      expect($list).to.contain('plum')
-
-    it 'clears the input', ->
-      $input.val('plum')
-      press($input, 'enter')
-
-      expect($input).to.have.value('')
