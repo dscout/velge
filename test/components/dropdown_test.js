@@ -1,5 +1,6 @@
 var expect   = require('chai').expect;
 var Dropdown = require('../../lib/components/Dropdown');
+var Helper   = require('../test_helper');
 
 describe('Dropdown', function() {
   describe('#render', function() {
@@ -63,6 +64,36 @@ describe('Dropdown', function() {
       dropdown.close();
 
       expect(dropdown.element.className).not.to.contain('open');
+    });
+  });
+
+  describe('events', function() {
+    it('emits a "select" event when choices are clicked', function() {
+      var dropdown = new Dropdown();
+      var element  = dropdown.render(['melrose']);
+      var spy      = sinon.spy();
+      var melrose  = element.querySelector('span');
+
+      dropdown.on('select', spy);
+
+      Helper.simulateClick(melrose);
+
+      expect(spy.called).to.be.true;
+      expect(spy.calledWith('melrose')).to.be.true;
+    });
+
+    it('emits a "remove" event when choice removal is clicked', function() {
+      var dropdown = new Dropdown();
+      var element  = dropdown.render(['melrose']);
+      var spy      = sinon.spy();
+      var remove   = element.querySelector('.remove');
+
+      dropdown.on('remove', spy);
+
+      Helper.simulateClick(remove);
+
+      expect(spy.called).to.be.true;
+      expect(spy.calledWith('melrose')).to.be.true;
     });
   });
 });
