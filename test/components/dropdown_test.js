@@ -79,6 +79,18 @@ describe('Dropdown', function() {
     });
   });
 
+  describe('#toggle', function() {
+    it('flips the open status of the element', function() {
+      var dropdown = new Dropdown();
+
+      dropdown.toggle();
+      expect(dropdown.element.className).to.contain('open');
+
+      dropdown.toggle();
+      expect(dropdown.element.className).not.to.contain('open');
+    });
+  });
+
   describe('events', function() {
     it('emits a "select" event when choices are clicked', function() {
       var dropdown = new Dropdown();
