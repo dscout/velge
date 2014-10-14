@@ -96,25 +96,11 @@ describe('Dropdown', function() {
       var dropdown = new Dropdown();
       var element  = dropdown.render(['melrose']);
       var spy      = sinon.spy();
-      var melrose  = element.querySelector('span');
+      var melrose  = element.querySelector('li');
 
       dropdown.on('select', spy);
 
       Helper.simulateClick(melrose);
-
-      expect(spy.called).to.be.true;
-      expect(spy.calledWith('melrose')).to.be.true;
-    });
-
-    it('emits a "remove" event when choice removal is clicked', function() {
-      var dropdown = new Dropdown();
-      var element  = dropdown.render(['melrose']);
-      var spy      = sinon.spy();
-      var remove   = element.querySelector('.remove');
-
-      dropdown.on('remove', spy);
-
-      Helper.simulateClick(remove);
 
       expect(spy.called).to.be.true;
       expect(spy.calledWith('melrose')).to.be.true;
