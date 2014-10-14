@@ -23,6 +23,7 @@
     "karma-mocha": "^0.1.9",
     "mocha": "^1.21.5",
     "sinon": "^1.10.3",
-    "sinon-chai": "^2.6.0"
+    "sinon-chai": "^2.6.0",
+    "uglify-js": "^2.4.15"
   }
 }
