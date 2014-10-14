@@ -26,15 +26,4 @@ Velge.Util = {
       options[key] = defaults[key] unless options[key]?
 
     options
-
-  emphasize: (string, value) ->
-    if value? and value.length > 0
-      string.replace(new RegExp("(#{value})", 'i'), "<b>$1</b>")
-    else
-      string
-
-  template: (string, object) ->
-    buffer = string
-    buffer = buffer.replace("{{#{key}}}", value) for key, value of object
-    buffer
 }
