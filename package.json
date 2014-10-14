@@ -5,7 +5,7 @@
   "description": "Nimble autocompleting tag management",
   "main": "velge.js",
   "scripts": {
-    "test": "NODE_ENV=test node_modules/karma/bin/karma start karma.conf.js"
+    "test": "scripts/test --single-run"
   },
   "repository": {
     "type": "git",
