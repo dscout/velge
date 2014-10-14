@@ -21,6 +21,12 @@ merge(ChoiceStore.prototype, {
     });
   },
 
+  allNames: function() {
+    return this.all().map(function(object) {
+      return object.name;
+    });
+  },
+
   add: function(object) {
     object.name   = this._normalize(object.name);
     object.chosen = false;

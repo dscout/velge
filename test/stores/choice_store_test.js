@@ -4,11 +4,11 @@ var Store  = require('../../modules/stores/ChoiceStore');
 describe('Store', function() {
   var store;
 
-  describe('#isValid', function() {
-    beforeEach(function() {
-      store = new Store();
-    });
+  beforeEach(function() {
+    store = new Store();
+  });
 
+  describe('#isValid', function() {
     it('is true for valid values', function() {
       expect(store.isValid('apple')).to.be.true
     });
@@ -21,10 +21,6 @@ describe('Store', function() {
   });
 
   describe('#add', function() {
-    beforeEach(function() {
-      store = new Store();
-    });
-
     it('normalizes names before storing', function() {
       store.add({name: 'Apple'});
       expect(store.all()[0].name).to.eq('apple');
@@ -48,11 +44,15 @@ describe('Store', function() {
     });
   });
 
-  describe('#delete', function() {
-    beforeEach(function() {
-      store = new Store();
-    });
+  describe('#allNames', function() {
+    it('returns a list of names only', function() {
+      store.add({ name: 'melrose' });
 
+      expect(store.allNames()).to.eql(['melrose']);
+    });
+  });
+
+  describe('#delete', function() {
     it('removes the matching object by name', function() {
       store.add({name: 'apple'}).add({name: 'MANGO'});
       store.delete('apple').delete(' mango ');
@@ -62,10 +62,6 @@ describe('Store', function() {
   });
 
   describe('#isEmpty', function() {
-    beforeEach(function() {
-      store = new Store();
-    });
-
     it('is empty without any stored', function() {
       expect(store.isEmpty()).to.be.true;
     });
@@ -79,7 +75,7 @@ describe('Store', function() {
 
   describe('#fuzzy', function() {
     beforeEach(function() {
-      store = new Store()
+      store
         .add({name: 'apple'})
         .add({name: 'apricot'})
         .add({name: 'opples'});
