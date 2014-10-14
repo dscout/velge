@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var List   = require('../../lib/components/List');
+var List   = require('../../modules/components/List');
 var Helper = require('../test_helper');
 
 describe('List', function() {

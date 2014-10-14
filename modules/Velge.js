@@ -1,6 +1,5 @@
 var merge = require('./utils/merge');
 var Store = require('./Store');
-var UI    = require('./UI');
 
 // setOptions
 // addChoice
@@ -14,7 +13,6 @@ var UI    = require('./UI');
 var Velge = function(element) {
   this.element = element;
   this.store   = new Store();
-  this.ui      = new UI();
 };
 
 merge(Velge.prototype, {

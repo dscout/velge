@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var Store  = require('../lib/Store');
+var Store  = require('../modules/Store');
 
 describe('Store', function() {
   var store;

@@ -1,5 +1,5 @@
 var expect  = require('chai').expect;
-var Wrapper = require('../../lib/components/Wrapper');
+var Wrapper = require('../../modules/components/Wrapper');
 
 describe('Wrapper', function() {
   var element;

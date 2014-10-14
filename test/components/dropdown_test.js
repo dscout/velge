@@ -1,5 +1,5 @@
 var expect   = require('chai').expect;
-var Dropdown = require('../../lib/components/Dropdown');
+var Dropdown = require('../../modules/components/Dropdown');
 var Helper   = require('../test_helper');
 
 describe('Dropdown', function() {

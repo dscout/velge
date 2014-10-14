@@ -3,7 +3,7 @@
   "version": "0.10.0",
   "author": "Dscout, Inc",
   "description": "Nimble autocompleting tag management",
-  "main": "velge.js",
+  "main": "modules/index.js",
   "scripts": {
     "test": "scripts/test --single-run"
   },

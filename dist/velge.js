@@ -64,11 +64,8 @@ merge(Store.prototype, {
 module.exports = Store;
 
 },{"./utils/merge":4}],2:[function(_dereq_,module,exports){
-
-},{}],3:[function(_dereq_,module,exports){
 var merge = _dereq_('./utils/merge');
 var Store = _dereq_('./Store');
-var UI    = _dereq_('./UI');
 
 // setOptions
 // addChoice
@@ -82,7 +79,6 @@ var UI    = _dereq_('./UI');
 var Velge = function(element) {
   this.element = element;
   this.store   = new Store();
-  this.ui      = new UI();
 };
 
 merge(Velge.prototype, {
@@ -93,7 +89,10 @@ merge(Velge.prototype, {
 
 module.exports = Velge;
 
-},{"./Store":1,"./UI":2,"./utils/merge":4}],4:[function(_dereq_,module,exports){
+},{"./Store":1,"./utils/merge":4}],3:[function(_dereq_,module,exports){
+module.exports = _dereq_('./Velge');
+
+},{"./Velge":2}],4:[function(_dereq_,module,exports){
 module.exports = function(object) {
   [].slice.call(arguments, 1).forEach(function(source) {
     for (var prop in source) {
@@ -104,11 +103,6 @@ module.exports = function(object) {
   return object;
 };
 
-},{}],5:[function(_dereq_,module,exports){
-exports.Velge = _dereq_('./lib/Velge');
-exports.Store = _dereq_('./lib/Store');
-exports.UI    = _dereq_('./lib/UI');
-
-},{"./lib/Store":1,"./lib/UI":2,"./lib/Velge":3}]},{},[5])
-(5)
+},{}]},{},[3])
+(3)
 });
