@@ -3,8 +3,8 @@ var Dropdown = require('./Dropdown');
 var Input    = require('./Input');
 var List     = require('./List');
 
-var Wrapper = function(options) {
-  this.parent = options.element;
+var Wrapper = function(parent) {
+  this.parent = parent;
 };
 
 merge(Wrapper.prototype, {
@@ -45,9 +45,14 @@ merge(Wrapper.prototype, {
   },
 
   _renderList: function(options) {
-    this.list = new List();
-    this.element.appendChild(this.list.element);
-    this.list.render();
+    var chosen = options.chosen;
+
+    if (!this.list) {
+      this.list = new List();
+      this.element.appendChild(this.list.element);
+    }
+
+    this.list.render(chosen);
   }
 });
 

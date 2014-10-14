@@ -10,7 +10,7 @@ describe('Wrapper', function() {
 
   describe('#render', function() {
     it('renders into the element', function() {
-      var component = new Wrapper({ element: element });
+      var component = new Wrapper(element);
 
       component.render();
 

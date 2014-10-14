@@ -20,33 +20,41 @@ describe('Store', function() {
     });
   });
 
-  describe('#add', function() {
+  describe('#addChoice', function() {
     it('normalizes names before storing', function() {
-      store.add({name: 'Apple'});
+      store.addChoice({name: 'Apple'});
       expect(store.all()[0].name).to.eq('apple');
     });
 
     it('does not store duplicate stored objects', function() {
       store
-        .add({name: 'apple'})
-        .add({name: 'apple'});
+        .addChoice({name: 'apple'})
+        .addChoice({name: 'apple'});
 
       expect(store.all().length).to.eq(1);
     });
 
     it('normalizes stored values', function() {
       store
-        .add({name: ' Apple '})
-        .add({name: undefined});
+        .addChoice({name: ' Apple '})
+        .addChoice({name: undefined});
 
       expect(store.all()[0].name).to.eq('apple');
       expect(store.all()[1].name).to.eq('undefined');
     });
   });
 
+  describe('#addChosen', function() {
+    it('flags the choice as being chosen', function() {
+      store.addChosen({ name: 'cameo' });
+
+      expect(store.all()[0].chosen).to.be.true;
+    });
+  });
+
   describe('#allNames', function() {
     it('returns a list of names only', function() {
-      store.add({ name: 'melrose' });
+      store.addChoice({ name: 'melrose' });
 
       expect(store.allNames()).to.eql(['melrose']);
     });
@@ -54,7 +62,7 @@ describe('Store', function() {
 
   describe('#delete', function() {
     it('removes the matching object by name', function() {
-      store.add({name: 'apple'}).add({name: 'MANGO'});
+      store.addChoice({name: 'apple'}).addChoice({name: 'MANGO'});
       store.delete('apple').delete(' mango ');
 
       expect(store.all()).to.be.empty;
@@ -67,7 +75,7 @@ describe('Store', function() {
     });
 
     it('is not empty with any stored', function() {
-      store.add({name: 'something'});
+      store.addChoice({name: 'something'});
 
       expect(store.isEmpty()).to.be.false;
     });
@@ -76,9 +84,9 @@ describe('Store', function() {
   describe('#fuzzy', function() {
     beforeEach(function() {
       store
-        .add({name: 'apple'})
-        .add({name: 'apricot'})
-        .add({name: 'opples'});
+        .addChoice({name: 'apple'})
+        .addChoice({name: 'apricot'})
+        .addChoice({name: 'opples'});
     });
 
     it('finds all choices matching the query', function() {

@@ -95,14 +95,10 @@
 
       window.velge = new window.Velge(document.getElementById('multi'), {
         choices: choices,
-        chosen: [
+        chosens: [
           { name: "banana"    },
           { name: "persimmon" }
         ]
-      }).onAdd(function(choice, velge) {
-        console.log("Added", choice, velge);
-      }).onRem(function(choice, velge) {
-        console.log("Removed", choice, velge);
       }).setup();
     </script>
     <script>

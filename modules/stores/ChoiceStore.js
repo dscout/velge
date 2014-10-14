@@ -27,11 +27,24 @@ merge(ChoiceStore.prototype, {
     });
   },
 
-  add: function(object) {
-    object.name   = this._normalize(object.name);
-    object.chosen = false;
+  choiceNames: function() {
+    return this._filteredNames(false);
+  },
 
-    this.objects[object.name] = object;
+  chosenNames: function() {
+    return this._filteredNames(true);
+  },
+
+  addChoice: function(object) {
+    object.chosen = false
+    this._add(object);
+
+    return this;
+  },
+
+  addChosen: function(object) {
+    object.chosen = true;
+    this._add(object);
 
     return this;
   },
@@ -55,6 +68,19 @@ merge(ChoiceStore.prototype, {
 
       return memo;
     }, []);
+  },
+
+  _add: function(object) {
+    object.name = this._normalize(object.name);
+    this.objects[object.name] = object;
+  },
+
+  _filteredNames: function(chosen) {
+    return this.all().filter(function(object) {
+      return object.chosen === chosen;
+    }).map(function(object) {
+      return object.name;
+    });
   },
 
   _normalize: function(value) {

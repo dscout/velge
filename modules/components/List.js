@@ -45,8 +45,8 @@ merge(List.prototype, EventEmitter.prototype, {
       span.className   = 'name';
       span.textContent = name;
 
-      rem.className   = 'remove';
-      rem.textContent = '&times;';
+      rem.className = 'remove';
+      rem.innerHTML = '&times;';
       rem.addEventListener('click', this.handleClickRemove.bind(this, name));
 
       li.appendChild(span);
