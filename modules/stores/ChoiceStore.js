@@ -1,10 +1,10 @@
-var merge = require ('./utils/merge');
+var merge = require ('../utils/merge');
 
-var Store = function() {
+var ChoiceStore = function() {
   this.objects = {};
 };
 
-merge(Store.prototype, {
+merge(ChoiceStore.prototype, {
   isValid: function(value) {
     return !/^\s*$/.test(value)
   },
@@ -60,4 +60,4 @@ merge(Store.prototype, {
   }
 });
 
-module.exports = Store;
+module.exports = ChoiceStore;

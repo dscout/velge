@@ -1,18 +1,9 @@
-var merge = require('./utils/merge');
-var Store = require('./Store');
-
-// setOptions
-// addChoice
-// remChoice
-// addChosen
-// remChosen
-// getChoices
-// getChosen
-// on/off/emit
+var merge       = require('./utils/merge');
+var ChoiceStore = require('./stores/ChoiceStore');
 
 var Velge = function(element) {
   this.element = element;
-  this.store   = new Store();
+  this.store   = new ChoiceStore();
 };
 
 merge(Velge.prototype, {
