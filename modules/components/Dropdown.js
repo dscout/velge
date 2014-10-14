@@ -1,6 +1,6 @@
-var emphasize    = require('../utils/emphasize');
-var merge        = require('../utils/merge');
-var EventEmitter = require('events').EventEmitter;
+var emphasize = require('../utils/emphasize');
+var merge     = require('../utils/merge');
+var emitter   = require('../utils/emitter')
 
 var Dropdown = function() {
   this.element = document.createElement('ol');
@@ -8,7 +8,7 @@ var Dropdown = function() {
 
 var SELECT_EVENT = 'select';
 
-merge(Dropdown.prototype, EventEmitter.prototype, {
+merge(Dropdown.prototype, emitter, {
   render: function(choices, options) {
     choices = choices || [];
     options = options || {};

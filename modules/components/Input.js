@@ -1,5 +1,5 @@
-var merge        = require('../utils/merge');
-var EventEmitter = require('events').EventEmitter;
+var merge   = require('../utils/merge');
+var emitter = require('../utils/emitter')
 
 var Input = function() {
   this.element = document.createElement('input');
@@ -17,7 +17,7 @@ var keycodes = {
   COMMA:     188
 };
 
-merge(Input.prototype, EventEmitter.prototype, {
+merge(Input.prototype, emitter, {
   render: function(value) {
     this.element.type                    = 'text';
     this.element.attributes.autocomplete = 'off';

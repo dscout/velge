@@ -1,5 +1,5 @@
 var merge        = require('../utils/merge');
-var EventEmitter = require('events').EventEmitter;
+var emitter   = require('../utils/emitter')
 
 var List = function() {
   this.element = document.createElement('ul');
@@ -7,7 +7,7 @@ var List = function() {
 
 var REMOVE_EVENT = 'remove';
 
-merge(List.prototype, EventEmitter.prototype, {
+merge(List.prototype, emitter, {
   render: function(chosen, options) {
     options = options || {};
     chosen  = chosen  || [];
