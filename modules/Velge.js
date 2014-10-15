@@ -38,6 +38,16 @@ merge(Velge.prototype, {
     this.render();
   },
 
+  remChoice: function(choice) {
+    this.store.delete(choice);
+    this.render();
+  },
+
+  remChosen: function(choice) {
+    this.store.reject(choice);
+    this.render();
+  },
+
   _preloadChoiceStore: function(options) {
     var choices = options.choices || [];
     var chosens = options.chosens || [];

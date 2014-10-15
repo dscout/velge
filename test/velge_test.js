@@ -48,4 +48,28 @@ describe('Velge', function() {
       expect(element.textContent).to.contain('ambrosia');
     });
   });
+
+  describe('#remChoice', function() {
+    it('removes an existing choice', function() {
+      var velge = new Velge(element, {
+        choices: [{ name: 'jazz' }]
+      }).setup();
+
+      velge.remChoice({ name: 'jazz' });
+
+      expect(element.textContent).not.to.contain('jazz');
+    });
+  });
+
+  describe('#remChosen', function() {
+    it('removes a chosen value', function() {
+      var velge = new Velge(element, {
+        chosens: [{ name: 'jazz' }]
+      }).setup();
+
+      velge.remChosen({ name: 'jazz' });
+
+      expect(element.textContent).to.contain('jazz');
+    });
+  });
 });

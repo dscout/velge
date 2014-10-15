@@ -63,9 +63,18 @@ describe('Store', function() {
   describe('#delete', function() {
     it('removes the matching object by name', function() {
       store.addChoice({name: 'apple'}).addChoice({name: 'MANGO'});
-      store.delete('apple').delete(' mango ');
+      store.delete({ name: 'apple' }).delete({ name: ' mango ' });
 
       expect(store.all()).to.be.empty;
+    });
+  });
+
+  describe('#reject', function() {
+    it('marks the choice as not chosen', function() {
+      store.addChosen({ name: 'wolf river' });
+      store.reject({ name: 'wolf river' });
+
+      expect(store.chosenNames()).to.be.empty;
     });
   });
 

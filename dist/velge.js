@@ -305,6 +305,10 @@ merge(Wrapper.prototype, {
     return this.element;
   },
 
+  handleInputNavigate: function(direction) {
+    this.dropdown.open();
+  },
+
   _renderElement: function() {
     if (!this.element) {
       this.element = document.createElement('div');
@@ -325,8 +329,13 @@ merge(Wrapper.prototype, {
   },
 
   _renderInput: function(options) {
-    this.input = new Input();
-    this.element.appendChild(this.input.element);
+    if (!this.input) {
+      this.input = new Input();
+      this.element.appendChild(this.input.element);
+
+      this.input.on('navigate', this.handleInputNavigate.bind(this));
+    }
+
     this.input.render();
   },
 

@@ -49,8 +49,16 @@ merge(ChoiceStore.prototype, {
     return this;
   },
 
-  delete: function(name) {
-    delete this.objects[this._normalize(name)];
+  delete: function(object) {
+    delete this.objects[this._normalize(object.name)];
+
+    return this;
+  },
+
+  reject: function(object) {
+    var original = this.objects[this._normalize(object.name)];
+
+    original.chosen = false
 
     return this;
   },
