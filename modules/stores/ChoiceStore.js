@@ -63,19 +63,21 @@ merge(ChoiceStore.prototype, {
     return this;
   },
 
+  filter: function(criteria) {
+    return this.all().filter(function(object) {
+      return object.chosen === criteria.chosen;
+    });
+  },
+
   fuzzy: function(value) {
     var value   = this._sanitize(value);
     var query   = /^\s*$/.test(value) ? '.*' : value;
     var regex   = RegExp(query, 'i');
     var objects = this.objects;
 
-    return Object.keys(objects).reduce(function(memo, key) {
-      var object = objects[key];
-
-      if (regex.test(object.name)) memo.push(object);
-
-      return memo;
-    }, []);
+    return this.all().filter(function(object) {
+      return regex.test(object.name);
+    });
   },
 
   _add: function(object) {
@@ -84,9 +86,7 @@ merge(ChoiceStore.prototype, {
   },
 
   _filteredNames: function(chosen) {
-    return this.all().filter(function(object) {
-      return object.chosen === chosen;
-    }).map(function(object) {
+    return this.filter({ chosen: chosen }).map(function(object) {
       return object.name;
     });
   },

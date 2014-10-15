@@ -48,15 +48,23 @@ merge(Velge.prototype, {
     this.render();
   },
 
+  getChoices: function() {
+    return this.store.all();
+  },
+
+  getChosen: function() {
+    return this.store.filter({ chosen: true });
+  },
+
   _preloadChoiceStore: function(options) {
     var choices = options.choices || [];
-    var chosens = options.chosens || [];
+    var chosen  = options.chosen || [];
 
     choices.forEach(function(choice) {
       this.store.addChoice(choice);
     }, this);
 
-    chosens.forEach(function(choice) {
+    chosen.forEach(function(choice) {
       this.store.addChosen(choice);
     }, this);
   }

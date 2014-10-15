@@ -64,12 +64,34 @@ describe('Velge', function() {
   describe('#remChosen', function() {
     it('removes a chosen value', function() {
       var velge = new Velge(element, {
-        chosens: [{ name: 'jazz' }]
+        chosen: [{ name: 'jazz' }]
       }).setup();
 
       velge.remChosen({ name: 'jazz' });
 
       expect(element.textContent).to.contain('jazz');
+    });
+  });
+
+  describe('#getChoices', function() {
+    it('returns all choices', function() {
+      var velge = new Velge(element, {
+        choices: [{ name: 'pink lady' }],
+        chosen: [{ name: 'cox orange pippin' }]
+      });
+
+      expect(velge.getChoices()).to.have.length(2);
+    });
+  });
+
+  describe('#getChosen', function() {
+    it('returns all chosen', function() {
+      var velge = new Velge(element, {
+        choices: [{ name: 'pink lady' }],
+        chosen: [{ name: 'cox orange pippin' }]
+      });
+
+      expect(velge.getChosen()).to.have.length(1);
     });
   });
 });
