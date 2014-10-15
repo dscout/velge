@@ -47,6 +47,27 @@ describe('Velge', function() {
 
       expect(element.textContent).to.contain('ambrosia');
     });
+
+    it('emits a "add" event', function() {
+      var velge = new Velge(element).setup();
+      var spy   = sinon.spy();
+
+      velge.on('add', spy);
+
+      velge.addChosen({ name: 'ambrosia' });
+
+      expect(spy.calledOnce).to.be.true;
+    });
+
+    it('does not emit an event when silent is passed', function() {
+      var velge = new Velge(element).setup();
+      var spy   = sinon.spy();
+
+      velge.on('add', spy);
+      velge.addChosen({ name: 'ambrosia' }, { silent: true });
+
+      expect(spy.called).to.be.false;
+    });
   });
 
   describe('#remChoice', function() {
@@ -70,6 +91,30 @@ describe('Velge', function() {
       velge.remChosen({ name: 'jazz' });
 
       expect(element.textContent).to.contain('jazz');
+    });
+
+    it('emits a "remove" event', function() {
+      var spy   = sinon.spy();
+      var velge = new Velge(element, {
+        choices: [{ name: 'jazz' }]
+      });
+
+      velge.on('remove', spy);
+      velge.remChosen({ name: 'jazz' });
+
+      expect(spy.called).to.be.true;
+    });
+
+    it('does not emit an event when silent is true', function() {
+      var spy   = sinon.spy();
+      var velge = new Velge(element, {
+        choices: [{ name: 'jazz' }]
+      });
+
+      velge.on('remove', spy);
+      velge.remChosen({ name: 'jazz' }, { silent: true });
+
+      expect(spy.called).to.be.false;
     });
   });
 
