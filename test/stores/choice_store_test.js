@@ -42,6 +42,16 @@ describe('Store', function() {
       expect(store.all()[0].name).to.eq('apple');
       expect(store.all()[1].name).to.eq('undefined');
     });
+
+    it('emits a change event', function() {
+      var spy = sinon.spy();
+
+      store.on('change', spy);
+
+      store.addChoice({name: 'braeburn'})
+
+      expect(spy.called).to.be.true;
+    });
   });
 
   describe('#addChosen', function() {
@@ -72,30 +82,28 @@ describe('Store', function() {
   describe('#reject', function() {
     it('marks the choice as not chosen', function() {
       store.addChosen({ name: 'wolf river' });
-      store.reject({ name: 'wolf river' });
+      store.reject('wolf river');
 
       expect(store.chosenNames()).to.be.empty;
     });
-  });
 
-  describe('#isEmpty', function() {
-    it('is empty without any stored', function() {
-      expect(store.isEmpty()).to.be.true;
-    });
+    it('emits a "remove" event', function() {
+      var spy = sinon.spy();
 
-    it('is not empty with any stored', function() {
-      store.addChoice({name: 'something'});
+      store.addChosen({ name: 'wolf river' });
+      store.on('remove', spy);
+      store.reject('wolf river');
 
-      expect(store.isEmpty()).to.be.false;
+      expect(spy.called).to.be.true;
     });
   });
 
   describe('#fuzzy', function() {
     beforeEach(function() {
       store
-        .addChoice({name: 'apple'})
-        .addChoice({name: 'apricot'})
-        .addChoice({name: 'opples'});
+        .addChoice({ name: 'apple' })
+        .addChoice({ name: 'apricot' })
+        .addChoice({ name: 'opples' });
     });
 
     it('finds all choices matching the query', function() {

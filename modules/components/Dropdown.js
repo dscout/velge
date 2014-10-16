@@ -22,17 +22,17 @@ merge(Dropdown.prototype, emitter, {
 
   open: function() {
     this.isOpen = true;
-    this.render();
+    this._updateClassNames();
   },
 
   close: function() {
     this.isOpen = false;
-    this.render();
+    this._updateClassNames();
   },
 
   toggle: function() {
     this.isOpen = !this.isOpen;
-    this.render();
+    this._updateClassNames();
   },
 
   handleClickName: function(name) {

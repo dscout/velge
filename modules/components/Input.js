@@ -17,6 +17,12 @@ var keycodes = {
   COMMA:     188
 };
 
+var ADD_EVENT      = 'add';
+var BLUR_EVENT     = 'blur';
+var CHANGE_EVENT   = 'change';
+var FOCUS_EVENT    = 'focus';
+var NAVIGATE_EVENT = 'navigate';
+
 merge(Input.prototype, emitter, {
   render: function(value) {
     this.element.type                    = 'text';
@@ -59,11 +65,11 @@ merge(Input.prototype, emitter, {
   },
 
   handleBlur: function() {
-    this.emit('blur');
+    this.emit(BLUR_EVENT);
   },
 
   handleFocus: function() {
-    this.emit('focus');
+    this.emit(FOCUS_EVENT);
   },
 
   _emitAdd: function() {
@@ -71,16 +77,16 @@ merge(Input.prototype, emitter, {
 
     if (value && value !== '') {
       this.element.value = '';
-      this.emit('add', value);
+      this.emit(ADD_EVENT, value);
     }
   },
 
   _emitChange: function() {
-    this.emit('change', this.element.value);
+    this.emit(CHANGE_EVENT, this.element.value);
   },
 
   _emitNavigate: function(direction) {
-    this.emit('navigate', direction);
+    this.emit(NAVIGATE_EVENT, direction);
   }
 });
 

@@ -1,16 +1,56 @@
-var merge = require ('../utils/merge');
+var emitter = require('../utils/emitter');
+var merge   = require ('../utils/merge');
 
 var ChoiceStore = function() {
   this.objects = {};
 };
 
-merge(ChoiceStore.prototype, {
+var ADD_EVENT    = 'add';
+var CHANGE_EVENT = 'change';
+var REMOVE_EVENT = 'remove';
+
+merge(ChoiceStore.prototype, emitter, {
   isValid: function(value) {
     return !/^\s*$/.test(value)
   },
 
-  isEmpty: function() {
-    return !Object.keys(this.objects).length;
+  addChoice: function(object) {
+    object.chosen = false
+    this._add(object);
+
+    this.emit(CHANGE_EVENT);
+
+    return this;
+  },
+
+  addChosen: function(object) {
+    object.chosen = true;
+    this._add(object);
+
+    this.emit(ADD_EVENT, object);
+    this.emit(CHANGE_EVENT);
+
+    return this;
+  },
+
+  delete: function(object) {
+    delete this.objects[this._normalize(object.name)];
+
+    this.emit(CHANGE_EVENT);
+
+    return this;
+  },
+
+  choose: function(name) {
+    this._update(name, true);
+
+    return this;
+  },
+
+  reject: function(name) {
+    this._update(name, false);
+
+    return this;
   },
 
   all: function() {
@@ -35,34 +75,6 @@ merge(ChoiceStore.prototype, {
     return this._filteredNames(true);
   },
 
-  addChoice: function(object) {
-    object.chosen = false
-    this._add(object);
-
-    return this;
-  },
-
-  addChosen: function(object) {
-    object.chosen = true;
-    this._add(object);
-
-    return this;
-  },
-
-  delete: function(object) {
-    delete this.objects[this._normalize(object.name)];
-
-    return this;
-  },
-
-  reject: function(object) {
-    var original = this.objects[this._normalize(object.name)];
-
-    original.chosen = false
-
-    return this;
-  },
-
   filter: function(criteria) {
     return this.all().filter(function(object) {
       return object.chosen === criteria.chosen;
@@ -83,6 +95,18 @@ merge(ChoiceStore.prototype, {
   _add: function(object) {
     object.name = this._normalize(object.name);
     this.objects[object.name] = object;
+  },
+
+  _update: function(name, chosen) {
+    var original = this.objects[this._normalize(name)];
+    var event = chosen ? ADD_EVENT : REMOVE_EVENT;
+
+    if (original) {
+      original.chosen = chosen;
+
+      this.emit(event, original);
+      this.emit(CHANGE_EVENT);
+    }
   },
 
   _filteredNames: function(chosen) {

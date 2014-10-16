@@ -1,53 +1,79 @@
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Velge=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
+var bubble      = _dereq_('./utils/bubble');
+var emitter     = _dereq_('./utils/emitter');
 var merge       = _dereq_('./utils/merge');
 var ChoiceStore = _dereq_('./stores/ChoiceStore');
 var Wrapper     = _dereq_('./components/Wrapper');
+
+var ADD_EVENT    = 'add';
+var REMOVE_EVENT = 'remove';
 
 var Velge = function(element, options) {
   options = options || {};
 
   this.element = element;
   this.store   = new ChoiceStore();
-  this.wrapper = new Wrapper(element);
+  this.wrapper = new Wrapper(element, this.store);
 
+  this._bubbleEvents();
   this._preloadChoiceStore(options);
 };
 
-merge(Velge.prototype, {
+merge(Velge.prototype, emitter, bubble, {
   setup: function() {
-    this.render();
+    this.wrapper.render();
 
     return this;
   },
 
-  render: function() {
-    var options = {
-      choices: this.store.choiceNames(),
-      chosen:  this.store.chosenNames()
-    };
-
-    this.wrapper.render(options);
-  },
-
   addChoice: function(choice) {
     this.store.addChoice(choice);
-    this.render();
+
+    return this;
   },
 
-  addChosen: function(choice) {
+  addChosen: function(choice, options) {
     this.store.addChosen(choice);
-    this.render();
+
+    return this;
+  },
+
+  remChoice: function(choice) {
+    this.store.delete(choice);
+
+    return this;
+  },
+
+  remChosen: function(choice, options) {
+    this.store.reject(choice);
+
+    return this;
+  },
+
+  getChoices: function() {
+    return this.store.all();
+  },
+
+  getChosen: function() {
+    return this.store.filter({ chosen: true });
+  },
+
+  _bubbleEvents: function() {
+    this.bubble(this.wrapper, 'blur');
+    this.bubble(this.wrapper, 'focus');
+    this.bubble(this.store,   'add');
+    this.bubble(this.store,   'remove');
   },
 
   _preloadChoiceStore: function(options) {
     var choices = options.choices || [];
-    var chosens = options.chosens || [];
+    var chosen  = options.chosen || [];
 
     choices.forEach(function(choice) {
       this.store.addChoice(choice);
     }, this);
 
-    chosens.forEach(function(choice) {
+    chosen.forEach(function(choice) {
       this.store.addChosen(choice);
     }, this);
   }
@@ -55,7 +81,7 @@ merge(Velge.prototype, {
 
 module.exports = Velge;
 
-},{"./components/Wrapper":5,"./stores/ChoiceStore":7,"./utils/merge":10}],2:[function(_dereq_,module,exports){
+},{"./components/Wrapper":5,"./stores/ChoiceStore":7,"./utils/bubble":8,"./utils/emitter":9,"./utils/merge":11}],2:[function(_dereq_,module,exports){
 var emphasize = _dereq_('../utils/emphasize');
 var merge     = _dereq_('../utils/merge');
 var emitter   = _dereq_('../utils/emitter')
@@ -80,17 +106,17 @@ merge(Dropdown.prototype, emitter, {
 
   open: function() {
     this.isOpen = true;
-    this.render();
+    this._updateClassNames();
   },
 
   close: function() {
     this.isOpen = false;
-    this.render();
+    this._updateClassNames();
   },
 
   toggle: function() {
     this.isOpen = !this.isOpen;
-    this.render();
+    this._updateClassNames();
   },
 
   handleClickName: function(name) {
@@ -132,7 +158,7 @@ merge(Dropdown.prototype, emitter, {
 
 module.exports = Dropdown;
 
-},{"../utils/emitter":8,"../utils/emphasize":9,"../utils/merge":10}],3:[function(_dereq_,module,exports){
+},{"../utils/emitter":9,"../utils/emphasize":10,"../utils/merge":11}],3:[function(_dereq_,module,exports){
 var merge   = _dereq_('../utils/merge');
 var emitter = _dereq_('../utils/emitter')
 
@@ -151,6 +177,12 @@ var keycodes = {
   DOWN:      40,
   COMMA:     188
 };
+
+var ADD_EVENT      = 'add';
+var BLUR_EVENT     = 'blur';
+var CHANGE_EVENT   = 'change';
+var FOCUS_EVENT    = 'focus';
+var NAVIGATE_EVENT = 'navigate';
 
 merge(Input.prototype, emitter, {
   render: function(value) {
@@ -194,11 +226,11 @@ merge(Input.prototype, emitter, {
   },
 
   handleBlur: function() {
-    this.emit('blur');
+    this.emit(BLUR_EVENT);
   },
 
   handleFocus: function() {
-    this.emit('focus');
+    this.emit(FOCUS_EVENT);
   },
 
   _emitAdd: function() {
@@ -206,24 +238,24 @@ merge(Input.prototype, emitter, {
 
     if (value && value !== '') {
       this.element.value = '';
-      this.emit('add', value);
+      this.emit(ADD_EVENT, value);
     }
   },
 
   _emitChange: function() {
-    this.emit('change', this.element.value);
+    this.emit(CHANGE_EVENT, this.element.value);
   },
 
   _emitNavigate: function(direction) {
-    this.emit('navigate', direction);
+    this.emit(NAVIGATE_EVENT, direction);
   }
 });
 
 module.exports = Input;
 
-},{"../utils/emitter":8,"../utils/merge":10}],4:[function(_dereq_,module,exports){
-var merge        = _dereq_('../utils/merge');
-var emitter   = _dereq_('../utils/emitter')
+},{"../utils/emitter":9,"../utils/merge":11}],4:[function(_dereq_,module,exports){
+var merge   = _dereq_('../utils/merge');
+var emitter = _dereq_('../utils/emitter')
 
 var List = function() {
   this.element = document.createElement('ul');
@@ -283,93 +315,194 @@ merge(List.prototype, emitter, {
 
 module.exports = List;
 
-},{"../utils/emitter":8,"../utils/merge":10}],5:[function(_dereq_,module,exports){
+},{"../utils/emitter":9,"../utils/merge":11}],5:[function(_dereq_,module,exports){
+var emitter  = _dereq_('../utils/emitter');
 var merge    = _dereq_('../utils/merge');
 var Dropdown = _dereq_('./Dropdown');
 var Input    = _dereq_('./Input');
 var List     = _dereq_('./List');
 
-var Wrapper = function(parent) {
+var Wrapper = function(parent, store) {
   this.parent = parent;
+  this.store  = store;
+
+  this.store.on('change', this.render.bind(this));
 };
 
-merge(Wrapper.prototype, {
-  render: function(options) {
-    options = options || {};
-
+merge(Wrapper.prototype, emitter, {
+  render: function() {
     this._renderElement();
-    this._renderDropdown(options);
-    this._renderInput(options);
-    this._renderList(options);
+    this._renderDropdown();
+    this._renderList();
+    this._renderInput();
 
     return this.element;
   },
 
+  handleDropdownSelect: function(value) {
+    this.store.choose({ name: value });
+  },
+
+  handleInputAdd: function(value) {
+    this.store.addChosen({ name: value });
+  },
+
+  handleInputBlur: function() {
+    this.emit('blur');
+  },
+
+  handleInputChange: function(value) {
+    console.log(value);
+  },
+
+  handleInputFocus: function() {
+    this.emit('focus');
+  },
+
   handleInputNavigate: function(direction) {
-    this.dropdown.open();
+    this.dropdown.toggle();
+  },
+
+  handleListRemove: function(value) {
+    this.store.reject({ name: value });
+  },
+
+  handleTriggerClick: function() {
+    this.dropdown.toggle();
   },
 
   _renderElement: function() {
     if (!this.element) {
-      this.element = document.createElement('div');
+      this.element           = document.createElement('div');
       this.element.className = 'velge';
       this.parent.appendChild(this.element);
+
+      this.inner           = document.createElement('div');
+      this.inner.className = 'velge-inner';
+      this.element.appendChild(this.inner);
+
+      this.trigger           = document.createElement('span');
+      this.trigger.className = 'velge-trigger';
+      this.inner.appendChild(this.trigger);
+      this.trigger.addEventListener('click', this.handleTriggerClick.bind(this));
     }
   },
 
-  _renderDropdown: function(options) {
-    var choices = options.choices;
+  _renderDropdown: function() {
+    var choices = this.store.choiceNames();
 
     if (!this.dropdown) {
       this.dropdown = new Dropdown();
       this.element.appendChild(this.dropdown.element);
+
+      this.dropdown.on('select', this.handleDropdownSelect.bind(this));
     }
 
     this.dropdown.render(choices);
   },
 
-  _renderInput: function(options) {
+  _renderList: function() {
+    var chosen = this.store.chosenNames();
+
+    if (!this.list) {
+      this.list = new List();
+      this.inner.appendChild(this.list.element);
+
+      this.list.on('remove', this.handleListRemove.bind(this));
+    }
+
+    this.list.render(chosen);
+  },
+
+  _renderInput: function() {
     if (!this.input) {
       this.input = new Input();
-      this.element.appendChild(this.input.element);
+      this.inner.appendChild(this.input.element);
 
+      this.input.on('add',      this.handleInputAdd.bind(this));
+      this.input.on('blur',     this.handleInputBlur.bind(this));
+      this.input.on('change',   this.handleInputChange.bind(this));
+      this.input.on('focus',    this.handleInputFocus.bind(this));
       this.input.on('navigate', this.handleInputNavigate.bind(this));
     }
 
     this.input.render();
-  },
-
-  _renderList: function(options) {
-    var chosen = options.chosen;
-
-    if (!this.list) {
-      this.list = new List();
-      this.element.appendChild(this.list.element);
-    }
-
-    this.list.render(chosen);
   }
 });
 
 module.exports = Wrapper;
 
-},{"../utils/merge":10,"./Dropdown":2,"./Input":3,"./List":4}],6:[function(_dereq_,module,exports){
+},{"../utils/emitter":9,"../utils/merge":11,"./Dropdown":2,"./Input":3,"./List":4}],6:[function(_dereq_,module,exports){
 module.exports = _dereq_('./Velge');
 
 },{"./Velge":1}],7:[function(_dereq_,module,exports){
-var merge = _dereq_ ('../utils/merge');
+var emitter = _dereq_('../utils/emitter');
+var merge   = _dereq_ ('../utils/merge');
 
 var ChoiceStore = function() {
   this.objects = {};
 };
 
-merge(ChoiceStore.prototype, {
+var ADD_EVENT    = 'add';
+var CHANGE_EVENT = 'change';
+var REMOVE_EVENT = 'remove';
+
+merge(ChoiceStore.prototype, emitter, {
   isValid: function(value) {
     return !/^\s*$/.test(value)
   },
 
-  isEmpty: function() {
-    return !Object.keys(this.objects).length;
+  addChoice: function(object) {
+    object.chosen = false
+    this._add(object);
+
+    this.emit(CHANGE_EVENT);
+
+    return this;
+  },
+
+  addChosen: function(object) {
+    object.chosen = true;
+    this._add(object);
+
+    this.emit(ADD_EVENT, object);
+    this.emit(CHANGE_EVENT);
+
+    return this;
+  },
+
+  delete: function(object) {
+    delete this.objects[this._normalize(object.name)];
+
+    this.emit(CHANGE_EVENT);
+
+    return this;
+  },
+
+  choose: function(object) {
+    var original = this.objects[this._normalize(object.name)];
+
+    if (original) {
+      original.chosen = true;
+
+      this.emit(ADD_EVENT, original);
+      this.emit(CHANGE_EVENT);
+    }
+
+    return this;
+  },
+
+  reject: function(object) {
+    var original = this.objects[this._normalize(object.name)];
+
+    if (original) {
+      original.chosen = false;
+
+      this.emit(REMOVE_EVENT, original);
+      this.emit(CHANGE_EVENT);
+    }
+
+    return this;
   },
 
   all: function() {
@@ -394,24 +527,10 @@ merge(ChoiceStore.prototype, {
     return this._filteredNames(true);
   },
 
-  addChoice: function(object) {
-    object.chosen = false
-    this._add(object);
-
-    return this;
-  },
-
-  addChosen: function(object) {
-    object.chosen = true;
-    this._add(object);
-
-    return this;
-  },
-
-  delete: function(name) {
-    delete this.objects[this._normalize(name)];
-
-    return this;
+  filter: function(criteria) {
+    return this.all().filter(function(object) {
+      return object.chosen === criteria.chosen;
+    });
   },
 
   fuzzy: function(value) {
@@ -420,13 +539,9 @@ merge(ChoiceStore.prototype, {
     var regex   = RegExp(query, 'i');
     var objects = this.objects;
 
-    return Object.keys(objects).reduce(function(memo, key) {
-      var object = objects[key];
-
-      if (regex.test(object.name)) memo.push(object);
-
-      return memo;
-    }, []);
+    return this.all().filter(function(object) {
+      return regex.test(object.name);
+    });
   },
 
   _add: function(object) {
@@ -435,9 +550,7 @@ merge(ChoiceStore.prototype, {
   },
 
   _filteredNames: function(chosen) {
-    return this.all().filter(function(object) {
-      return object.chosen === chosen;
-    }).map(function(object) {
+    return this.filter({ chosen: chosen }).map(function(object) {
       return object.name;
     });
   },
@@ -453,7 +566,14 @@ merge(ChoiceStore.prototype, {
 
 module.exports = ChoiceStore;
 
-},{"../utils/merge":10}],8:[function(_dereq_,module,exports){
+},{"../utils/emitter":9,"../utils/merge":11}],8:[function(_dereq_,module,exports){
+module.exports = {
+  bubble: function(emitter, event) {
+    emitter.on(event, this.emit.bind(this, event));
+  }
+}
+
+},{}],9:[function(_dereq_,module,exports){
 module.exports = {
   on: function(name, callback, context) {
     this._events = (this._events || {});
@@ -495,14 +615,14 @@ module.exports = {
   }
 };
 
-},{}],9:[function(_dereq_,module,exports){
+},{}],10:[function(_dereq_,module,exports){
 module.exports = function(string, pattern) {
   var regex = new RegExp('(' + pattern + ')', 'i');
 
   return string.replace(regex, "<b>$1</b>");
 };
 
-},{}],10:[function(_dereq_,module,exports){
+},{}],11:[function(_dereq_,module,exports){
 module.exports = function(object) {
   [].slice.call(arguments, 1).forEach(function(source) {
     for (var prop in source) {

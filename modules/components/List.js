@@ -1,5 +1,5 @@
-var merge        = require('../utils/merge');
-var emitter   = require('../utils/emitter')
+var merge   = require('../utils/merge');
+var emitter = require('../utils/emitter')
 
 var List = function() {
   this.element = document.createElement('ul');

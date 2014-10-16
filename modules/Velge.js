@@ -1,5 +1,6 @@
-var merge       = require('./utils/merge');
+var bubble      = require('./utils/bubble');
 var emitter     = require('./utils/emitter');
+var merge       = require('./utils/merge');
 var ChoiceStore = require('./stores/ChoiceStore');
 var Wrapper     = require('./components/Wrapper');
 
@@ -11,57 +12,39 @@ var Velge = function(element, options) {
 
   this.element = element;
   this.store   = new ChoiceStore();
-  this.wrapper = new Wrapper(element);
+  this.wrapper = new Wrapper(element, this.store);
 
+  this._bubbleEvents();
   this._preloadChoiceStore(options);
 };
 
-merge(Velge.prototype, emitter, {
+merge(Velge.prototype, emitter, bubble, {
   setup: function() {
-    this.render();
+    this.wrapper.render();
 
     return this;
   },
 
-  render: function() {
-    var options = {
-      choices: this.store.choiceNames(),
-      chosen:  this.store.chosenNames()
-    };
-
-    this.wrapper.render(options);
-  },
-
   addChoice: function(choice) {
     this.store.addChoice(choice);
-    this.render();
 
     return this;
   },
 
   addChosen: function(choice, options) {
-    options = options || {};
-    if (!options.silent) this.emit(ADD_EVENT, choice);
-
     this.store.addChosen(choice);
-    this.render();
 
     return this;
   },
 
   remChoice: function(choice) {
     this.store.delete(choice);
-    this.render();
 
     return this;
   },
 
   remChosen: function(choice, options) {
-    options = options || {};
-    if (!options.silent) this.emit(REMOVE_EVENT, choice);
-
-    this.store.reject(choice);
-    this.render();
+    this.store.reject(choice.name);
 
     return this;
   },
@@ -72,6 +55,13 @@ merge(Velge.prototype, emitter, {
 
   getChosen: function() {
     return this.store.filter({ chosen: true });
+  },
+
+  _bubbleEvents: function() {
+    this.bubble(this.wrapper, 'blur');
+    this.bubble(this.wrapper, 'focus');
+    this.bubble(this.store,   'add');
+    this.bubble(this.store,   'remove');
   },
 
   _preloadChoiceStore: function(options) {
