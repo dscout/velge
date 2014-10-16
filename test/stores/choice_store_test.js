@@ -20,24 +20,24 @@ describe('Store', function() {
     });
   });
 
-  describe('#addChoice', function() {
+  describe('#add', function() {
     it('normalizes names before storing', function() {
-      store.addChoice({name: 'Apple'});
+      store.add({name: 'Apple'});
       expect(store.all()[0].name).to.eq('apple');
     });
 
     it('does not store duplicate stored objects', function() {
       store
-        .addChoice({name: 'apple'})
-        .addChoice({name: 'apple'});
+        .add({name: 'apple'})
+        .add({name: 'apple'});
 
       expect(store.all().length).to.eq(1);
     });
 
     it('normalizes stored values', function() {
       store
-        .addChoice({name: ' Apple '})
-        .addChoice({name: undefined});
+        .add({name: ' Apple '})
+        .add({name: undefined});
 
       expect(store.all()[0].name).to.eq('apple');
       expect(store.all()[1].name).to.eq('undefined');
@@ -48,23 +48,24 @@ describe('Store', function() {
 
       store.on('change', spy);
 
-      store.addChoice({name: 'braeburn'})
+      store.add({name: 'braeburn'})
 
       expect(spy.called).to.be.true;
     });
   });
 
-  describe('#addChosen', function() {
-    it('flags the choice as being chosen', function() {
-      store.addChosen({ name: 'cameo' });
+  describe('#has', function() {
+    it('returns true when the normalized value exists', function() {
+      var object = { name: 'granny smith' };
+      store.add(object);
 
-      expect(store.all()[0].chosen).to.be.true;
+      expect(store.has(object)).to.be.true;
     });
   });
 
   describe('#allNames', function() {
     it('returns a list of names only', function() {
-      store.addChoice({ name: 'melrose' });
+      store.add({ name: 'melrose' });
 
       expect(store.allNames()).to.eql(['melrose']);
     });
@@ -72,7 +73,7 @@ describe('Store', function() {
 
   describe('#delete', function() {
     it('removes the matching object by name', function() {
-      store.addChoice({name: 'apple'}).addChoice({name: 'MANGO'});
+      store.add({name: 'apple'}).add({name: 'MANGO'});
       store.delete({ name: 'apple' }).delete({ name: ' mango ' });
 
       expect(store.all()).to.be.empty;
@@ -81,18 +82,20 @@ describe('Store', function() {
 
   describe('#reject', function() {
     it('marks the choice as not chosen', function() {
-      store.addChosen({ name: 'wolf river' });
-      store.reject('wolf river');
+      var choice = { name: 'wolf river' };
+      store.choose(choice);
+      store.reject(choice);
 
       expect(store.chosenNames()).to.be.empty;
     });
 
-    it('emits a "remove" event', function() {
-      var spy = sinon.spy();
+    it('emits a "reject" event', function() {
+      var spy    = sinon.spy();
+      var choice = { name: 'wolf river' };
 
-      store.addChosen({ name: 'wolf river' });
-      store.on('remove', spy);
-      store.reject('wolf river');
+      store.choose(choice);
+      store.on('reject', spy);
+      store.reject(choice);
 
       expect(spy.called).to.be.true;
     });
@@ -101,9 +104,9 @@ describe('Store', function() {
   describe('#fuzzy', function() {
     beforeEach(function() {
       store
-        .addChoice({ name: 'apple' })
-        .addChoice({ name: 'apricot' })
-        .addChoice({ name: 'opples' });
+        .add({ name: 'apple' })
+        .add({ name: 'apricot' })
+        .add({ name: 'opples' });
     });
 
     it('finds all choices matching the query', function() {

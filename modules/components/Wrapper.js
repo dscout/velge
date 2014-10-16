@@ -26,7 +26,7 @@ merge(Wrapper.prototype, emitter, {
   },
 
   handleInputAdd: function(value) {
-    this.store.addChosen({ name: value });
+    this.store.choose({ name: value });
   },
 
   handleInputBlur: function() {

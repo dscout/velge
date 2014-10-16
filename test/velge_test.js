@@ -29,68 +29,68 @@ describe('Velge', function() {
     });
   });
 
-  describe('#addChoice', function() {
+  describe('#add', function() {
     it('displays the new choice', function() {
       var velge = new Velge(element).setup();
 
-      velge.addChoice({ name: 'melrose' });
+      velge.add({ name: 'melrose' });
 
       expect(element.textContent).to.contain('melrose');
     });
   });
 
-  describe('#addChosen', function() {
+  describe('#choose', function() {
     it('displays the chosen value', function() {
       var velge = new Velge(element).setup();
 
-      velge.addChosen({ name: 'ambrosia' });
+      velge.choose({ name: 'ambrosia' });
 
       expect(element.textContent).to.contain('ambrosia');
     });
 
-    it('emits an "add" event', function() {
+    it('emits a "choose" event', function() {
       var velge = new Velge(element).setup();
       var spy   = sinon.spy();
 
-      velge.on('add', spy);
+      velge.on('choose', spy);
 
-      velge.addChosen({ name: 'ambrosia' });
+      velge.choose({ name: 'ambrosia' });
 
       expect(spy.calledOnce).to.be.true;
     });
   });
 
-  describe('#remChoice', function() {
+  describe('#delete', function() {
     it('removes an existing choice', function() {
       var velge = new Velge(element, {
         choices: [{ name: 'jazz' }]
       }).setup();
 
-      velge.remChoice({ name: 'jazz' });
+      velge.delete({ name: 'jazz' });
 
       expect(element.textContent).not.to.contain('jazz');
     });
   });
 
-  describe('#remChosen', function() {
+  describe('#reject', function() {
     it('removes a chosen value', function() {
       var velge = new Velge(element, {
         chosen: [{ name: 'jazz' }]
       }).setup();
 
-      velge.remChosen({ name: 'jazz' });
+      velge.reject({ name: 'jazz' });
 
       expect(element.textContent).to.contain('jazz');
     });
 
-    it('emits a "remove" event', function() {
+    it('emits a "reject" event', function() {
       var spy   = sinon.spy();
       var velge = new Velge(element, {
         choices: [{ name: 'jazz' }]
       });
 
-      velge.on('remove', spy);
-      velge.remChosen({ name: 'jazz' });
+      velge.on('reject', spy);
+      velge.reject({ name: 'jazz' });
 
       expect(spy.called).to.be.true;
     });

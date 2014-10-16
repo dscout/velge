@@ -7,24 +7,20 @@ var ChoiceStore = function() {
 
 var ADD_EVENT    = 'add';
 var CHANGE_EVENT = 'change';
-var REMOVE_EVENT = 'remove';
+var CHOOSE_EVENT = 'choose';
+var DELETE_EVENT = 'delete';
+var REJECT_EVENT = 'reject';
 
 merge(ChoiceStore.prototype, emitter, {
   isValid: function(value) {
     return !/^\s*$/.test(value)
   },
 
-  addChoice: function(object) {
-    object.chosen = false
-    this._add(object);
-
-    this.emit(CHANGE_EVENT);
-
-    return this;
+  has: function(object) {
+    return !!this.objects[this._normalize(object.name)]
   },
 
-  addChosen: function(object) {
-    object.chosen = true;
+  add: function(object) {
     this._add(object);
 
     this.emit(ADD_EVENT, object);
@@ -33,22 +29,24 @@ merge(ChoiceStore.prototype, emitter, {
     return this;
   },
 
+  choose: function(object) {
+    if (!this.has(object)) this._add(object)
+    this._update(object, true);
+
+    return this;
+  },
+
+  reject: function(object) {
+    this._update(object, false);
+
+    return this;
+  },
+
   delete: function(object) {
     delete this.objects[this._normalize(object.name)];
 
+    this.emit(DELETE_EVENT, object);
     this.emit(CHANGE_EVENT);
-
-    return this;
-  },
-
-  choose: function(name) {
-    this._update(name, true);
-
-    return this;
-  },
-
-  reject: function(name) {
-    this._update(name, false);
 
     return this;
   },
@@ -93,13 +91,15 @@ merge(ChoiceStore.prototype, emitter, {
   },
 
   _add: function(object) {
-    object.name = this._normalize(object.name);
+    object.chosen = false;
+    object.name   = this._normalize(object.name);
+
     this.objects[object.name] = object;
   },
 
-  _update: function(name, chosen) {
-    var original = this.objects[this._normalize(name)];
-    var event = chosen ? ADD_EVENT : REMOVE_EVENT;
+  _update: function(object, chosen) {
+    var original = this.objects[this._normalize(object.name)];
+    var event = chosen ? CHOOSE_EVENT : REJECT_EVENT;
 
     if (original) {
       original.chosen = chosen;

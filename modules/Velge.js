@@ -25,26 +25,26 @@ merge(Velge.prototype, emitter, bubble, {
     return this;
   },
 
-  addChoice: function(choice) {
-    this.store.addChoice(choice);
+  add: function(choice) {
+    this.store.add(choice);
 
     return this;
   },
 
-  addChosen: function(choice, options) {
-    this.store.addChosen(choice);
+  choose: function(choice, options) {
+    this.store.choose(choice);
 
     return this;
   },
 
-  remChoice: function(choice) {
+  delete: function(choice) {
     this.store.delete(choice);
 
     return this;
   },
 
-  remChosen: function(choice, options) {
-    this.store.reject(choice.name);
+  reject: function(choice, options) {
+    this.store.reject(choice);
 
     return this;
   },
@@ -61,7 +61,9 @@ merge(Velge.prototype, emitter, bubble, {
     this.bubble(this.wrapper, 'blur');
     this.bubble(this.wrapper, 'focus');
     this.bubble(this.store,   'add');
-    this.bubble(this.store,   'remove');
+    this.bubble(this.store,   'choose');
+    this.bubble(this.store,   'delete');
+    this.bubble(this.store,   'reject');
   },
 
   _preloadChoiceStore: function(options) {
@@ -69,11 +71,11 @@ merge(Velge.prototype, emitter, bubble, {
     var chosen  = options.chosen || [];
 
     choices.forEach(function(choice) {
-      this.store.addChoice(choice);
+      this.store.add(choice);
     }, this);
 
     chosen.forEach(function(choice) {
-      this.store.addChosen(choice);
+      this.store.choose(choice);
     }, this);
   }
 });
