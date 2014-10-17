@@ -2,7 +2,8 @@ var merge   = require('../utils/merge');
 var emitter = require('../utils/emitter')
 
 var Input = function() {
-  this.element = document.createElement('input');
+  this.element  = document.createElement('input');
+  this.rendered = false;
 };
 
 var keycodes = {
@@ -22,25 +23,24 @@ var BLUR_EVENT     = 'blur';
 var CHANGE_EVENT   = 'change';
 var FOCUS_EVENT    = 'focus';
 var NAVIGATE_EVENT = 'navigate';
+var INPUT_DELAY    = 5;
 
 merge(Input.prototype, emitter, {
   render: function(value) {
-    this.element.type                    = 'text';
-    this.element.attributes.autocomplete = 'off';
-    this.element.placeholder             = 'Placeholder';
-    this.element.className               = 'velge-input';
+    this._renderElement();
 
     if (value) this.element.value = value;
-
-    this.element.addEventListener('blur',    this.handleBlur.bind(this));
-    this.element.addEventListener('focus',   this.handleFocus.bind(this));
-    this.element.addEventListener('keydown', this.handleKeydown.bind(this));
 
     return this.element;
   },
 
   handleKeydown: function(event) {
     switch(event.keyCode) {
+      case keycodes.ESCAPE:
+        event.stopPropagation();
+        this._clear();
+        this._emitBlur();
+        break;
       case keycodes.ENTER:
         event.preventDefault()
         this._emitAdd();
@@ -68,7 +68,7 @@ merge(Input.prototype, emitter, {
         this._emitNavigate('down');
         break;
       default:
-        this._emitChange();
+        setTimeout(this._emitChange.bind(this), INPUT_DELAY);
     }
   },
 
@@ -80,13 +80,36 @@ merge(Input.prototype, emitter, {
     this.emit(FOCUS_EVENT);
   },
 
+  _renderElement: function() {
+    if (!this.rendered) {
+      this.element.type                    = 'text';
+      this.element.attributes.autocomplete = 'off';
+      this.element.placeholder             = 'Placeholder';
+      this.element.className               = 'velge-input';
+
+      this.element.addEventListener('blur',    this.handleBlur.bind(this));
+      this.element.addEventListener('focus',   this.handleFocus.bind(this));
+      this.element.addEventListener('keydown', this.handleKeydown.bind(this));
+
+      this.rendered = true;
+    }
+  },
+
+  _clear: function() {
+    this.element.value = '';
+  },
+
   _emitAdd: function() {
     var value = this.element.value;
 
     if (value && value !== '') {
-      this.element.value = '';
+      this._clear();
       this.emit(ADD_EVENT, value);
     }
+  },
+
+  _emitBlur: function() {
+    this.emit(BLUR_EVENT);
   },
 
   _emitChange: function() {

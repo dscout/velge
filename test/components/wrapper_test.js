@@ -33,7 +33,7 @@ describe('Wrapper', function() {
         .add({ name: 'merton' });
     });
 
-    it('filters choices on input', function() {
+    it('filters choices on input', function(done) {
       var wrapper  = new Wrapper(element, store).render();
       var input    = wrapper.querySelector('.velge-input');
       var dropdown = wrapper.querySelector('.velge-dropdown');
@@ -43,20 +43,25 @@ describe('Wrapper', function() {
       }
 
       Helper.simulateKeydown(input, 'm');
-      expect(itemsCount()).to.have.length(3);
-
       Helper.simulateKeydown(input, 'e');
-      expect(itemsCount()).to.have.length(2);
+
+      setTimeout(function() {
+        expect(itemsCount()).to.have.length(2);
+        done();
+      }, 10);
     });
 
-    it('emphasizes matching terms', function() {
+    it('emphasizes matching terms', function(done) {
       var wrapper  = new Wrapper(element, store).render();
       var input    = wrapper.querySelector('.velge-input');
       var dropdown = wrapper.querySelector('.velge-dropdown');
 
       Helper.simulateKeydown(input, 'm');
 
-      expect(dropdown.innerHTML).to.contain('<b>m</b>');
+      setTimeout(function() {
+        expect(dropdown.innerHTML).to.contain('<b>m</b>');
+        done();
+      }, 10);
     });
   });
 });

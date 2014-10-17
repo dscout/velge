@@ -32,16 +32,19 @@ merge(Wrapper.prototype, emitter, {
   },
 
   handleInputAdd: function(value) {
+    console.log('input')
     this.store.choose({ name: value });
     this.setState({ query: null });
   },
 
   handleInputBlur: function() {
     this.emit('blur');
+    this.dropdown.close(); // TODO: Use state for this
   },
 
   handleInputChange: function(value) {
     this.setState({ query: value });
+    this.dropdown.open();
   },
 
   handleInputFocus: function() {

@@ -49,7 +49,7 @@ describe('Input', function() {
       expect(spy.called).to.be.false;
     });
 
-    it('emits a "change" event when the value changes', function() {
+    it('emits a "change" event when the value changes', function(done) {
       var input   = new Input();
       var element = input.render();
       var spy     = sinon.spy();
@@ -58,7 +58,10 @@ describe('Input', function() {
 
       Helper.simulateKeydown(element, 'a');
 
-      expect(spy.calledOnce).to.be.true;
+      setTimeout(function() {
+        expect(spy.calledOnce).to.be.true;
+        done();
+      }, 10);
     });
 
     it('emits navigation events', function() {
