@@ -80,13 +80,12 @@ merge(ChoiceStore.prototype, emitter, {
   },
 
   fuzzy: function(value) {
-    var value   = this._sanitize(value);
-    var query   = /^\s*$/.test(value) ? '.*' : value;
-    var regex   = RegExp(query, 'i');
-    var objects = this.objects;
+    var value = this._sanitize(value);
+    var query = /^\s*$/.test(value) ? '.*' : value;
+    var regex = RegExp(query, 'i');
 
-    return this.all().filter(function(object) {
-      return regex.test(object.name);
+    return this.allNames().filter(function(name) {
+      return regex.test(name);
     });
   },
 

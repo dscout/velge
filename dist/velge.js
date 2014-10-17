@@ -26,25 +26,25 @@ merge(Velge.prototype, emitter, bubble, {
     return this;
   },
 
-  addChoice: function(choice) {
-    this.store.addChoice(choice);
+  add: function(choice) {
+    this.store.add(choice);
 
     return this;
   },
 
-  addChosen: function(choice, options) {
-    this.store.addChosen(choice);
+  choose: function(choice, options) {
+    this.store.choose(choice);
 
     return this;
   },
 
-  remChoice: function(choice) {
+  delete: function(choice) {
     this.store.delete(choice);
 
     return this;
   },
 
-  remChosen: function(choice, options) {
+  reject: function(choice, options) {
     this.store.reject(choice);
 
     return this;
@@ -62,7 +62,9 @@ merge(Velge.prototype, emitter, bubble, {
     this.bubble(this.wrapper, 'blur');
     this.bubble(this.wrapper, 'focus');
     this.bubble(this.store,   'add');
-    this.bubble(this.store,   'remove');
+    this.bubble(this.store,   'choose');
+    this.bubble(this.store,   'delete');
+    this.bubble(this.store,   'reject');
   },
 
   _preloadChoiceStore: function(options) {
@@ -70,11 +72,11 @@ merge(Velge.prototype, emitter, bubble, {
     var chosen  = options.chosen || [];
 
     choices.forEach(function(choice) {
-      this.store.addChoice(choice);
+      this.store.add(choice);
     }, this);
 
     chosen.forEach(function(choice) {
-      this.store.addChosen(choice);
+      this.store.choose(choice);
     }, this);
   }
 });
@@ -203,21 +205,29 @@ merge(Input.prototype, emitter, {
   handleKeydown: function(event) {
     switch(event.keyCode) {
       case keycodes.ENTER:
+        event.preventDefault()
         this._emitAdd();
         break;
       case keycodes.COMMA:
+        event.preventDefault()
         this._emitAdd();
         break;
       case keycodes.LEFT:
         this._emitNavigate('left');
         break;
       case keycodes.UP:
+        event.preventDefault()
         this._emitNavigate('up');
         break;
       case keycodes.RIGHT:
         this._emitNavigate('right');
         break;
       case keycodes.DOWN:
+        event.preventDefault()
+        this._emitNavigate('down');
+        break;
+      case keycodes.TAB:
+        event.preventDefault()
         this._emitNavigate('down');
         break;
       default:
@@ -325,6 +335,7 @@ var List     = _dereq_('./List');
 var Wrapper = function(parent, store) {
   this.parent = parent;
   this.store  = store;
+  this.state  = {};
 
   this.store.on('change', this.render.bind(this));
 };
@@ -339,12 +350,18 @@ merge(Wrapper.prototype, emitter, {
     return this.element;
   },
 
+  setState: function(props) {
+    merge(this.state, props);
+    this.render();
+  },
+
   handleDropdownSelect: function(value) {
     this.store.choose({ name: value });
   },
 
   handleInputAdd: function(value) {
-    this.store.addChosen({ name: value });
+    this.store.choose({ name: value });
+    this.setState({ query: null });
   },
 
   handleInputBlur: function() {
@@ -352,7 +369,7 @@ merge(Wrapper.prototype, emitter, {
   },
 
   handleInputChange: function(value) {
-    console.log(value);
+    this.setState({ query: value });
   },
 
   handleInputFocus: function() {
@@ -389,7 +406,8 @@ merge(Wrapper.prototype, emitter, {
   },
 
   _renderDropdown: function() {
-    var choices = this.store.choiceNames();
+    var query   = this.state.query;
+    var choices = !!query ? this.store.fuzzy(query) : this.store.choiceNames();
 
     if (!this.dropdown) {
       this.dropdown = new Dropdown();
@@ -398,7 +416,7 @@ merge(Wrapper.prototype, emitter, {
       this.dropdown.on('select', this.handleDropdownSelect.bind(this));
     }
 
-    this.dropdown.render(choices);
+    this.dropdown.render(choices, { emphasis: query });
   },
 
   _renderList: function() {
@@ -445,24 +463,20 @@ var ChoiceStore = function() {
 
 var ADD_EVENT    = 'add';
 var CHANGE_EVENT = 'change';
-var REMOVE_EVENT = 'remove';
+var CHOOSE_EVENT = 'choose';
+var DELETE_EVENT = 'delete';
+var REJECT_EVENT = 'reject';
 
 merge(ChoiceStore.prototype, emitter, {
   isValid: function(value) {
     return !/^\s*$/.test(value)
   },
 
-  addChoice: function(object) {
-    object.chosen = false
-    this._add(object);
-
-    this.emit(CHANGE_EVENT);
-
-    return this;
+  has: function(object) {
+    return !!this.objects[this._normalize(object.name)]
   },
 
-  addChosen: function(object) {
-    object.chosen = true;
+  add: function(object) {
     this._add(object);
 
     this.emit(ADD_EVENT, object);
@@ -471,36 +485,24 @@ merge(ChoiceStore.prototype, emitter, {
     return this;
   },
 
-  delete: function(object) {
-    delete this.objects[this._normalize(object.name)];
-
-    this.emit(CHANGE_EVENT);
-
-    return this;
-  },
-
   choose: function(object) {
-    var original = this.objects[this._normalize(object.name)];
-
-    if (original) {
-      original.chosen = true;
-
-      this.emit(ADD_EVENT, original);
-      this.emit(CHANGE_EVENT);
-    }
+    if (!this.has(object)) this._add(object)
+    this._update(object, true);
 
     return this;
   },
 
   reject: function(object) {
-    var original = this.objects[this._normalize(object.name)];
+    this._update(object, false);
 
-    if (original) {
-      original.chosen = false;
+    return this;
+  },
 
-      this.emit(REMOVE_EVENT, original);
-      this.emit(CHANGE_EVENT);
-    }
+  delete: function(object) {
+    delete this.objects[this._normalize(object.name)];
+
+    this.emit(DELETE_EVENT, object);
+    this.emit(CHANGE_EVENT);
 
     return this;
   },
@@ -534,19 +536,32 @@ merge(ChoiceStore.prototype, emitter, {
   },
 
   fuzzy: function(value) {
-    var value   = this._sanitize(value);
-    var query   = /^\s*$/.test(value) ? '.*' : value;
-    var regex   = RegExp(query, 'i');
-    var objects = this.objects;
+    var value = this._sanitize(value);
+    var query = /^\s*$/.test(value) ? '.*' : value;
+    var regex = RegExp(query, 'i');
 
-    return this.all().filter(function(object) {
-      return regex.test(object.name);
+    return this.allNames().filter(function(name) {
+      return regex.test(name);
     });
   },
 
   _add: function(object) {
-    object.name = this._normalize(object.name);
+    object.chosen = false;
+    object.name   = this._normalize(object.name);
+
     this.objects[object.name] = object;
+  },
+
+  _update: function(object, chosen) {
+    var original = this.objects[this._normalize(object.name)];
+    var event = chosen ? CHOOSE_EVENT : REJECT_EVENT;
+
+    if (original) {
+      original.chosen = chosen;
+
+      this.emit(event, original);
+      this.emit(CHANGE_EVENT);
+    }
   },
 
   _filteredNames: function(chosen) {

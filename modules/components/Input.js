@@ -42,21 +42,29 @@ merge(Input.prototype, emitter, {
   handleKeydown: function(event) {
     switch(event.keyCode) {
       case keycodes.ENTER:
+        event.preventDefault()
         this._emitAdd();
         break;
       case keycodes.COMMA:
+        event.preventDefault()
         this._emitAdd();
         break;
       case keycodes.LEFT:
         this._emitNavigate('left');
         break;
       case keycodes.UP:
+        event.preventDefault()
         this._emitNavigate('up');
         break;
       case keycodes.RIGHT:
         this._emitNavigate('right');
         break;
       case keycodes.DOWN:
+        event.preventDefault()
+        this._emitNavigate('down');
+        break;
+      case keycodes.TAB:
+        event.preventDefault()
         this._emitNavigate('down');
         break;
       default:

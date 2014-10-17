@@ -11,19 +11,4 @@ Velge.Util = {
       $container.scrollTop(baseTop)
     else if offset + (eHeight > cHeight)
       $container.scrollTop(baseTop - cHeight + eHeight)
-
-  cycle: (index, length, direction = 'down') ->
-    if length > 0
-      if direction is 'down'
-        (index + 1) % length
-      else
-        (index + (length - 1)) % length
-    else
-      -1
-
-  defaults: (options, defaults) ->
-    for key, value of defaults
-      options[key] = defaults[key] unless options[key]?
-
-    options
 }

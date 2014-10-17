@@ -7,6 +7,7 @@ var List     = require('./List');
 var Wrapper = function(parent, store) {
   this.parent = parent;
   this.store  = store;
+  this.state  = {};
 
   this.store.on('change', this.render.bind(this));
 };
@@ -21,12 +22,18 @@ merge(Wrapper.prototype, emitter, {
     return this.element;
   },
 
+  setState: function(props) {
+    merge(this.state, props);
+    this.render();
+  },
+
   handleDropdownSelect: function(value) {
     this.store.choose({ name: value });
   },
 
   handleInputAdd: function(value) {
     this.store.choose({ name: value });
+    this.setState({ query: null });
   },
 
   handleInputBlur: function() {
@@ -34,7 +41,7 @@ merge(Wrapper.prototype, emitter, {
   },
 
   handleInputChange: function(value) {
-    console.log(value);
+    this.setState({ query: value });
   },
 
   handleInputFocus: function() {
@@ -71,7 +78,8 @@ merge(Wrapper.prototype, emitter, {
   },
 
   _renderDropdown: function() {
-    var choices = this.store.choiceNames();
+    var query   = this.state.query;
+    var choices = !!query ? this.store.fuzzy(query) : this.store.choiceNames();
 
     if (!this.dropdown) {
       this.dropdown = new Dropdown();
@@ -80,7 +88,7 @@ merge(Wrapper.prototype, emitter, {
       this.dropdown.on('select', this.handleDropdownSelect.bind(this));
     }
 
-    this.dropdown.render(choices);
+    this.dropdown.render(choices, { emphasis: query });
   },
 
   _renderList: function() {
