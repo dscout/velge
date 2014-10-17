@@ -32,7 +32,7 @@ merge(Wrapper.prototype, emitter, {
   },
 
   handleInputAdd: function(value) {
-    console.log('input')
+    console.log('input');
     this.store.choose({ name: value });
     this.setState({ query: null });
   },

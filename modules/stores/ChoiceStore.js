@@ -13,11 +13,11 @@ var REJECT_EVENT = 'reject';
 
 merge(ChoiceStore.prototype, emitter, {
   isValid: function(value) {
-    return !/^\s*$/.test(value)
+    return !/^\s*$/.test(value);
   },
 
   has: function(object) {
-    return !!this.objects[this._normalize(object.name)]
+    return !!this.objects[this._normalize(object.name)];
   },
 
   add: function(object) {
@@ -30,7 +30,7 @@ merge(ChoiceStore.prototype, emitter, {
   },
 
   choose: function(object) {
-    if (!this.has(object)) this._add(object)
+    if (!this.has(object)) this._add(object);
     this._update(object, true);
 
     return this;
@@ -80,9 +80,9 @@ merge(ChoiceStore.prototype, emitter, {
   },
 
   fuzzy: function(value) {
-    var value = this._sanitize(value);
-    var query = /^\s*$/.test(value) ? '.*' : value;
-    var regex = RegExp(query, 'i');
+    var sanitized = this._sanitize(value);
+    var query     = /^\s*$/.test(sanitized) ? '.*' : sanitized;
+    var regex     = RegExp(query, 'i');
 
     return this.allNames().filter(function(name) {
       return regex.test(name);
@@ -119,7 +119,7 @@ merge(ChoiceStore.prototype, emitter, {
   },
 
   _sanitize: function(value) {
-    return value.replace(/[-[\]{}()*+?.,\\^$|#]/g, "\\$&")
+    return value.replace(/[-[\]{}()*+?.,\\^$|#]/g, "\\$&");
   }
 });
 

@@ -1,6 +1,7 @@
 var emphasize = require('../utils/emphasize');
 var merge     = require('../utils/merge');
-var emitter   = require('../utils/emitter')
+var emitter   = require('../utils/emitter');
+var remove    = require('../utils/remove_children');
 
 var Dropdown = function() {
   this.element = document.createElement('ol');
@@ -48,11 +49,7 @@ merge(Dropdown.prototype, emitter, {
   },
 
   _clearItems: function() {
-    var child;
-
-    while (child = this.element.firstChild) {
-      this.element.removeChild(child);
-    }
+    remove(this.element);
   },
 
   _renderItems: function(choices, options) {

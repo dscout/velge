@@ -1,5 +1,6 @@
 var merge   = require('../utils/merge');
-var emitter = require('../utils/emitter')
+var emitter = require('../utils/emitter');
+var remove  = require('../utils/remove_children');
 
 var List = function() {
   this.element = document.createElement('ul');
@@ -25,11 +26,7 @@ merge(List.prototype, emitter, {
   },
 
   _clearItems: function() {
-    var child;
-
-    while (child = this.element.firstChild) {
-      this.element.removeChild(child);
-    }
+    remove(this.element);
   },
 
   _renderItems: function(chosen, options) {

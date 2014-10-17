@@ -1,5 +1,5 @@
 var merge   = require('../utils/merge');
-var emitter = require('../utils/emitter')
+var emitter = require('../utils/emitter');
 
 var Input = function() {
   this.element  = document.createElement('input');
@@ -42,29 +42,29 @@ merge(Input.prototype, emitter, {
         this._emitBlur();
         break;
       case keycodes.ENTER:
-        event.preventDefault()
+        event.preventDefault();
         this._emitAdd();
         break;
       case keycodes.COMMA:
-        event.preventDefault()
+        event.preventDefault();
         this._emitAdd();
         break;
       case keycodes.LEFT:
         this._emitNavigate('left');
         break;
       case keycodes.UP:
-        event.preventDefault()
+        event.preventDefault();
         this._emitNavigate('up');
         break;
       case keycodes.RIGHT:
         this._emitNavigate('right');
         break;
       case keycodes.DOWN:
-        event.preventDefault()
+        event.preventDefault();
         this._emitNavigate('down');
         break;
       case keycodes.TAB:
-        event.preventDefault()
+        event.preventDefault();
         this._emitNavigate('down');
         break;
       default:
