@@ -64,6 +64,7 @@ describe('Wrapper', function() {
       Helper.simulateKeydown(input, 'enter');
 
       expect(list.textContent).to.contain('melrose');
+      expect(input.value).to.be.empty;
     });
   });
 

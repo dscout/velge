@@ -100,36 +100,21 @@ merge(Dropdown.prototype, emitter, {
     choices = choices || [];
     options = options || {};
 
-    this._updateClassNames();
+    this._updateClassNames(options.open);
     this._clearItems();
     this._renderItems(choices, options);
 
     return this.element;
   },
 
-  open: function() {
-    this.isOpen = true;
-    this._updateClassNames();
-  },
-
-  close: function() {
-    this.isOpen = false;
-    this._updateClassNames();
-  },
-
-  toggle: function() {
-    this.isOpen = !this.isOpen;
-    this._updateClassNames();
-  },
-
   handleClickName: function(name) {
     this.emit(SELECT_EVENT, name);
   },
 
-  _updateClassNames: function() {
+  _updateClassNames: function(isOpen) {
     var names = ['velge-dropdown'];
 
-    if (this.isOpen) names.push('open');
+    if (isOpen) names.push('open');
 
     this.element.className = names.join(' ');
   },
@@ -184,8 +169,8 @@ var CHANGE_EVENT   = 'change';
 var FOCUS_EVENT    = 'focus';
 var NAVIGATE_EVENT = 'navigate';
 
-var INPUT_DELAY    = 5;
-var BLUR_DELAY     = 100;
+var INPUT_DELAY = 5;
+var BLUR_DELAY  = 100;
 
 merge(Input.prototype, emitter, {
   render: function(value) {
@@ -358,15 +343,18 @@ var List     = _dereq_('./List');
 var Wrapper = function(parent, store) {
   this.parent = parent;
   this.store  = store;
-  this.state  = {
-    index: -1,
-    query: null
-  };
+  this.state  = merge({}, this.defaultState);
 
   this.store.on('change', this.render.bind(this));
 };
 
 merge(Wrapper.prototype, emitter, {
+  defaultState: {
+    index: -1,
+    query: null,
+    open:  false
+  },
+
   render: function() {
     this._renderElement();
     this._renderDropdown();
@@ -388,18 +376,16 @@ merge(Wrapper.prototype, emitter, {
 
   handleInputAdd: function(value) {
     this.store.choose({ name: value });
-    this.setState({ query: null });
+    this.setState({ index: -1, query: null });
   },
 
   handleInputBlur: function() {
     this.emit('blur');
-    this.setState({ index: -1, query: null });
-    this.dropdown.close(); // TODO: Use state for this
+    this.setState({ index: -1, query: null, open: false });
   },
 
   handleInputChange: function(value) {
-    this.setState({ query: value });
-    this.dropdown.open();
+    this.setState({ query: value, open: true });
   },
 
   handleInputFocus: function() {
@@ -409,12 +395,10 @@ merge(Wrapper.prototype, emitter, {
   handleInputNavigate: function(direction) {
     switch(direction) {
       case 'down':
-        this.setState({ index: this.state.index + 1 });
-        this.dropdown.open();
+        this.setState({ index: this.state.index + 1, open: true });
         break;
       case 'up':
-        this.setState({ index: this.state.index - 1 });
-        this.dropdown.open();
+        this.setState({ index: this.state.index - 1, open: true });
         break;
     }
   },
@@ -424,7 +408,7 @@ merge(Wrapper.prototype, emitter, {
   },
 
   handleTriggerClick: function() {
-    this.dropdown.toggle();
+    this.setState({ open: !this.state.open });
   },
 
   _renderElement: function() {
@@ -445,13 +429,6 @@ merge(Wrapper.prototype, emitter, {
   },
 
   _renderDropdown: function() {
-    var index     = this.state.index;
-    var query     = this.state.query;
-    var choices   = !!query ? this.store.fuzzy(query) : this.store.choiceNames();
-    var highlight;
-
-    if (index > -1) highlight = choices[index];
-
     if (!this.dropdown) {
       this.dropdown = new Dropdown();
       this.element.appendChild(this.dropdown.element);
@@ -459,7 +436,11 @@ merge(Wrapper.prototype, emitter, {
       this.dropdown.on('select', this.handleDropdownSelect.bind(this));
     }
 
-    this.dropdown.render(choices, { emphasis: query, highlight: highlight });
+    this.dropdown.render(this._currentChoices(), {
+      emphasis:  this.state.query,
+      highlight: this._currentSelection(),
+      open:      this.state.open
+    });
   },
 
   _renderList: function() {
@@ -487,7 +468,20 @@ merge(Wrapper.prototype, emitter, {
       this.input.on('navigate', this.handleInputNavigate.bind(this));
     }
 
-    this.input.render();
+    this.input.render(this._currentSelection());
+  },
+
+  _currentChoices: function() {
+    var query = this.state.query;
+
+    return !!query ? this.store.fuzzy(query) : this.store.choiceNames();
+  },
+
+  _currentSelection: function(choices) {
+    var index   = this.state.index;
+    var choices = this._currentChoices();
+
+    return choices[index];
   }
 });
 

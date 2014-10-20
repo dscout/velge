@@ -14,36 +14,21 @@ merge(Dropdown.prototype, emitter, {
     choices = choices || [];
     options = options || {};
 
-    this._updateClassNames();
+    this._updateClassNames(options.open);
     this._clearItems();
     this._renderItems(choices, options);
 
     return this.element;
   },
 
-  open: function() {
-    this.isOpen = true;
-    this._updateClassNames();
-  },
-
-  close: function() {
-    this.isOpen = false;
-    this._updateClassNames();
-  },
-
-  toggle: function() {
-    this.isOpen = !this.isOpen;
-    this._updateClassNames();
-  },
-
   handleClickName: function(name) {
     this.emit(SELECT_EVENT, name);
   },
 
-  _updateClassNames: function() {
+  _updateClassNames: function(isOpen) {
     var names = ['velge-dropdown'];
 
-    if (this.isOpen) names.push('open');
+    if (isOpen) names.push('open');
 
     this.element.className = names.join(' ');
   },

@@ -40,12 +40,13 @@ merge(Input.prototype, emitter, {
     switch(event.keyCode) {
       case keycodes.ESCAPE:
         event.stopPropagation();
-        this._clear();
         this._emitBlur();
+        this._clear();
         break;
       case keycodes.ENTER:
         event.preventDefault();
         this._emitAdd();
+        this._clear();
         break;
       case keycodes.COMMA:
         event.preventDefault();

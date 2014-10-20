@@ -7,15 +7,18 @@ var List     = require('./List');
 var Wrapper = function(parent, store) {
   this.parent = parent;
   this.store  = store;
-  this.state  = {
-    index: -1,
-    query: null
-  };
+  this.state  = merge({}, this.defaultState);
 
   this.store.on('change', this.render.bind(this));
 };
 
 merge(Wrapper.prototype, emitter, {
+  defaultState: {
+    index: -1,
+    query: null,
+    open:  false
+  },
+
   render: function() {
     this._renderElement();
     this._renderDropdown();
@@ -37,18 +40,16 @@ merge(Wrapper.prototype, emitter, {
 
   handleInputAdd: function(value) {
     this.store.choose({ name: value });
-    this.setState({ query: null });
+    this.setState({ index: -1, query: null, open: false });
   },
 
   handleInputBlur: function() {
     this.emit('blur');
-    this.setState({ index: -1, query: null });
-    this.dropdown.close(); // TODO: Use state for this
+    this.setState({ index: -1, query: null, open: false });
   },
 
   handleInputChange: function(value) {
-    this.setState({ query: value });
-    this.dropdown.open();
+    this.setState({ query: value, open: true });
   },
 
   handleInputFocus: function() {
@@ -58,12 +59,10 @@ merge(Wrapper.prototype, emitter, {
   handleInputNavigate: function(direction) {
     switch(direction) {
       case 'down':
-        this.setState({ index: this.state.index + 1 });
-        this.dropdown.open();
+        this.setState({ index: this.state.index + 1, open: true });
         break;
       case 'up':
-        this.setState({ index: this.state.index - 1 });
-        this.dropdown.open();
+        this.setState({ index: this.state.index - 1, open: true });
         break;
     }
   },
@@ -73,7 +72,7 @@ merge(Wrapper.prototype, emitter, {
   },
 
   handleTriggerClick: function() {
-    this.dropdown.toggle();
+    this.setState({ open: !this.state.open });
   },
 
   _renderElement: function() {
@@ -94,10 +93,6 @@ merge(Wrapper.prototype, emitter, {
   },
 
   _renderDropdown: function() {
-    var query     = this.state.query;
-    var choices   = this._currentChoices();
-    var highlight = this._currentSelection();
-
     if (!this.dropdown) {
       this.dropdown = new Dropdown();
       this.element.appendChild(this.dropdown.element);
@@ -105,7 +100,11 @@ merge(Wrapper.prototype, emitter, {
       this.dropdown.on('select', this.handleDropdownSelect.bind(this));
     }
 
-    this.dropdown.render(choices, { emphasis: query, highlight: highlight });
+    this.dropdown.render(this._currentChoices(), {
+      emphasis:  this.state.query,
+      highlight: this._currentSelection(),
+      open:      this.state.open
+    });
   },
 
   _renderList: function() {

@@ -56,38 +56,14 @@ describe('Dropdown', function() {
       expect(element.innerHTML).to.contain('ida <b>red</b>');
       expect(element.innerHTML).to.contain('<b>red</b> delicious');
     });
-  });
 
-  describe('#open', function() {
     it('applies an open class to the element', function() {
       var dropdown = new Dropdown();
-
-      dropdown.open();
+      var element = dropdown.render(['wolf river'], {
+        open: true
+      });
 
       expect(dropdown.element.className).to.contain('open');
-    });
-  });
-
-  describe('#close', function() {
-    it('removes an open class from the element', function() {
-      var dropdown = new Dropdown();
-
-      dropdown.open();
-      dropdown.close();
-
-      expect(dropdown.element.className).not.to.contain('open');
-    });
-  });
-
-  describe('#toggle', function() {
-    it('flips the open status of the element', function() {
-      var dropdown = new Dropdown();
-
-      dropdown.toggle();
-      expect(dropdown.element.className).to.contain('open');
-
-      dropdown.toggle();
-      expect(dropdown.element.className).not.to.contain('open');
     });
   });
 
