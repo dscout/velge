@@ -7,7 +7,10 @@ var List     = require('./List');
 var Wrapper = function(parent, store) {
   this.parent = parent;
   this.store  = store;
-  this.state  = {};
+  this.state  = {
+    index: -1,
+    query: null
+  };
 
   this.store.on('change', this.render.bind(this));
 };
@@ -28,17 +31,18 @@ merge(Wrapper.prototype, emitter, {
   },
 
   handleDropdownSelect: function(value) {
+    console.log('select', value);
     this.store.choose({ name: value });
   },
 
   handleInputAdd: function(value) {
-    console.log('input');
     this.store.choose({ name: value });
     this.setState({ query: null });
   },
 
   handleInputBlur: function() {
     this.emit('blur');
+    this.setState({ index: -1, query: null });
     this.dropdown.close(); // TODO: Use state for this
   },
 
@@ -52,7 +56,16 @@ merge(Wrapper.prototype, emitter, {
   },
 
   handleInputNavigate: function(direction) {
-    this.dropdown.toggle();
+    switch(direction) {
+      case 'down':
+        this.setState({ index: this.state.index + 1 });
+        this.dropdown.open();
+        break;
+      case 'up':
+        this.setState({ index: this.state.index - 1 });
+        this.dropdown.open();
+        break;
+    }
   },
 
   handleListRemove: function(value) {
@@ -81,8 +94,9 @@ merge(Wrapper.prototype, emitter, {
   },
 
   _renderDropdown: function() {
-    var query   = this.state.query;
-    var choices = !!query ? this.store.fuzzy(query) : this.store.choiceNames();
+    var query     = this.state.query;
+    var choices   = this._currentChoices();
+    var highlight = this._currentSelection();
 
     if (!this.dropdown) {
       this.dropdown = new Dropdown();
@@ -91,7 +105,7 @@ merge(Wrapper.prototype, emitter, {
       this.dropdown.on('select', this.handleDropdownSelect.bind(this));
     }
 
-    this.dropdown.render(choices, { emphasis: query });
+    this.dropdown.render(choices, { emphasis: query, highlight: highlight });
   },
 
   _renderList: function() {
@@ -119,7 +133,20 @@ merge(Wrapper.prototype, emitter, {
       this.input.on('navigate', this.handleInputNavigate.bind(this));
     }
 
-    this.input.render();
+    this.input.render(this._currentSelection());
+  },
+
+  _currentChoices: function() {
+    var query = this.state.query;
+
+    return !!query ? this.store.fuzzy(query) : this.store.choiceNames();
+  },
+
+  _currentSelection: function(choices) {
+    var index   = this.state.index;
+    var choices = this._currentChoices();
+
+    return choices[index];
   }
 });
 

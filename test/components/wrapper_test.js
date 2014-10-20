@@ -25,6 +25,48 @@ describe('Wrapper', function() {
     });
   });
 
+  describe('browsing', function() {
+    beforeEach(function() {
+      store
+        .add({ name: 'mcintosh' })
+        .add({ name: 'melrose' })
+        .add({ name: 'merton' });
+    });
+
+    it('does not highlight anything when the dropdown is opened', function() {
+      var wrapper  = new Wrapper(element, store).render();
+      var trigger  = wrapper.querySelector('.velge-trigger');
+      var dropdown = wrapper.querySelector('.velge-dropdown');
+
+      Helper.simulateClick(trigger);
+
+      expect(dropdown.querySelector('.highlighted')).not.to.exist;
+    });
+
+    it('keys cycle the highlight through choices', function() {
+      var wrapper  = new Wrapper(element, store).render();
+      var input    = wrapper.querySelector('.velge-input');
+      var dropdown = wrapper.querySelector('.velge-dropdown');
+
+      Helper.simulateKeydown(input, 'down');
+
+      expect(dropdown.querySelector('.highlighted')).to.exist;
+    });
+
+    it('chooses the highlighted choice', function() {
+      var wrapper  = new Wrapper(element, store).render();
+      var input    = wrapper.querySelector('.velge-input');
+      var dropdown = wrapper.querySelector('.velge-dropdown');
+      var list     = wrapper.querySelector('.velge-list');
+
+      Helper.simulateKeydown(input, 'down');
+      Helper.simulateKeydown(input, 'down');
+      Helper.simulateKeydown(input, 'enter');
+
+      expect(list.textContent).to.contain('melrose');
+    });
+  });
+
   describe('fuzzy finding', function() {
     beforeEach(function() {
       store

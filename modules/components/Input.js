@@ -23,7 +23,9 @@ var BLUR_EVENT     = 'blur';
 var CHANGE_EVENT   = 'change';
 var FOCUS_EVENT    = 'focus';
 var NAVIGATE_EVENT = 'navigate';
-var INPUT_DELAY    = 5;
+
+var INPUT_DELAY = 5;
+var BLUR_DELAY  = 100;
 
 merge(Input.prototype, emitter, {
   render: function(value) {
@@ -73,7 +75,11 @@ merge(Input.prototype, emitter, {
   },
 
   handleBlur: function() {
-    this.emit(BLUR_EVENT);
+    var self = this;
+
+    setTimeout(function() {
+      self.emit(BLUR_EVENT);
+    }, BLUR_DELAY);
   },
 
   handleFocus: function() {

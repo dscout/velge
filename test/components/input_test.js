@@ -77,7 +77,7 @@ describe('Input', function() {
       expect(spy.calledWith('up')).to.be.true;
     });
 
-    it('emits focus events', function() {
+    it('emits focus events', function(done) {
       var input    = new Input();
       var element  = input.render();
       var focusSpy = sinon.spy();
@@ -89,8 +89,11 @@ describe('Input', function() {
       Helper.simulateFocus(element, 'focus');
       Helper.simulateFocus(element, 'blur');
 
-      expect(focusSpy.called).to.be.true;
-      expect(blurSpy.called).to.be.true;
+      setTimeout(function() {
+        expect(focusSpy.called).to.be.true;
+        expect(blurSpy.called).to.be.true;
+        done();
+      }, 105);
     });
   });
 });

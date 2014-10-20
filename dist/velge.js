@@ -86,7 +86,8 @@ module.exports = Velge;
 },{"./components/Wrapper":5,"./stores/ChoiceStore":7,"./utils/bubble":8,"./utils/emitter":9,"./utils/merge":11}],2:[function(_dereq_,module,exports){
 var emphasize = _dereq_('../utils/emphasize');
 var merge     = _dereq_('../utils/merge');
-var emitter   = _dereq_('../utils/emitter')
+var emitter   = _dereq_('../utils/emitter');
+var remove    = _dereq_('../utils/remove_children');
 
 var Dropdown = function() {
   this.element = document.createElement('ol');
@@ -134,11 +135,7 @@ merge(Dropdown.prototype, emitter, {
   },
 
   _clearItems: function() {
-    var child;
-
-    while (child = this.element.firstChild) {
-      this.element.removeChild(child);
-    }
+    remove(this.element);
   },
 
   _renderItems: function(choices, options) {
@@ -160,9 +157,9 @@ merge(Dropdown.prototype, emitter, {
 
 module.exports = Dropdown;
 
-},{"../utils/emitter":9,"../utils/emphasize":10,"../utils/merge":11}],3:[function(_dereq_,module,exports){
+},{"../utils/emitter":9,"../utils/emphasize":10,"../utils/merge":11,"../utils/remove_children":12}],3:[function(_dereq_,module,exports){
 var merge   = _dereq_('../utils/merge');
-var emitter = _dereq_('../utils/emitter')
+var emitter = _dereq_('../utils/emitter');
 
 var Input = function() {
   this.element  = document.createElement('input');
@@ -186,7 +183,9 @@ var BLUR_EVENT     = 'blur';
 var CHANGE_EVENT   = 'change';
 var FOCUS_EVENT    = 'focus';
 var NAVIGATE_EVENT = 'navigate';
+
 var INPUT_DELAY    = 5;
+var BLUR_DELAY     = 100;
 
 merge(Input.prototype, emitter, {
   render: function(value) {
@@ -205,29 +204,29 @@ merge(Input.prototype, emitter, {
         this._emitBlur();
         break;
       case keycodes.ENTER:
-        event.preventDefault()
+        event.preventDefault();
         this._emitAdd();
         break;
       case keycodes.COMMA:
-        event.preventDefault()
+        event.preventDefault();
         this._emitAdd();
         break;
       case keycodes.LEFT:
         this._emitNavigate('left');
         break;
       case keycodes.UP:
-        event.preventDefault()
+        event.preventDefault();
         this._emitNavigate('up');
         break;
       case keycodes.RIGHT:
         this._emitNavigate('right');
         break;
       case keycodes.DOWN:
-        event.preventDefault()
+        event.preventDefault();
         this._emitNavigate('down');
         break;
       case keycodes.TAB:
-        event.preventDefault()
+        event.preventDefault();
         this._emitNavigate('down');
         break;
       default:
@@ -236,7 +235,11 @@ merge(Input.prototype, emitter, {
   },
 
   handleBlur: function() {
-    this.emit(BLUR_EVENT);
+    var self = this;
+
+    setTimeout(function() {
+      self.emit(BLUR_EVENT);
+    }, BLUR_DELAY);
   },
 
   handleFocus: function() {
@@ -288,7 +291,8 @@ module.exports = Input;
 
 },{"../utils/emitter":9,"../utils/merge":11}],4:[function(_dereq_,module,exports){
 var merge   = _dereq_('../utils/merge');
-var emitter = _dereq_('../utils/emitter')
+var emitter = _dereq_('../utils/emitter');
+var remove  = _dereq_('../utils/remove_children');
 
 var List = function() {
   this.element = document.createElement('ul');
@@ -314,11 +318,7 @@ merge(List.prototype, emitter, {
   },
 
   _clearItems: function() {
-    var child;
-
-    while (child = this.element.firstChild) {
-      this.element.removeChild(child);
-    }
+    remove(this.element);
   },
 
   _renderItems: function(chosen, options) {
@@ -348,7 +348,7 @@ merge(List.prototype, emitter, {
 
 module.exports = List;
 
-},{"../utils/emitter":9,"../utils/merge":11}],5:[function(_dereq_,module,exports){
+},{"../utils/emitter":9,"../utils/merge":11,"../utils/remove_children":12}],5:[function(_dereq_,module,exports){
 var emitter  = _dereq_('../utils/emitter');
 var merge    = _dereq_('../utils/merge');
 var Dropdown = _dereq_('./Dropdown');
@@ -358,9 +358,12 @@ var List     = _dereq_('./List');
 var Wrapper = function(parent, store) {
   this.parent = parent;
   this.store  = store;
-  this.state  = {};
+  this.state  = {
+    index: -1,
+    query: null
+  };
 
-  // this.store.on('change', this.render.bind(this));
+  this.store.on('change', this.render.bind(this));
 };
 
 merge(Wrapper.prototype, emitter, {
@@ -379,17 +382,18 @@ merge(Wrapper.prototype, emitter, {
   },
 
   handleDropdownSelect: function(value) {
+    console.log('select', value);
     this.store.choose({ name: value });
   },
 
   handleInputAdd: function(value) {
-    console.log('input')
     this.store.choose({ name: value });
     this.setState({ query: null });
   },
 
   handleInputBlur: function() {
     this.emit('blur');
+    this.setState({ index: -1, query: null });
     this.dropdown.close(); // TODO: Use state for this
   },
 
@@ -403,7 +407,16 @@ merge(Wrapper.prototype, emitter, {
   },
 
   handleInputNavigate: function(direction) {
-    this.dropdown.toggle();
+    switch(direction) {
+      case 'down':
+        this.setState({ index: this.state.index + 1 });
+        this.dropdown.open();
+        break;
+      case 'up':
+        this.setState({ index: this.state.index - 1 });
+        this.dropdown.open();
+        break;
+    }
   },
 
   handleListRemove: function(value) {
@@ -432,8 +445,12 @@ merge(Wrapper.prototype, emitter, {
   },
 
   _renderDropdown: function() {
-    var query   = this.state.query;
-    var choices = !!query ? this.store.fuzzy(query) : this.store.choiceNames();
+    var index     = this.state.index;
+    var query     = this.state.query;
+    var choices   = !!query ? this.store.fuzzy(query) : this.store.choiceNames();
+    var highlight;
+
+    if (index > -1) highlight = choices[index];
 
     if (!this.dropdown) {
       this.dropdown = new Dropdown();
@@ -442,7 +459,7 @@ merge(Wrapper.prototype, emitter, {
       this.dropdown.on('select', this.handleDropdownSelect.bind(this));
     }
 
-    this.dropdown.render(choices, { emphasis: query });
+    this.dropdown.render(choices, { emphasis: query, highlight: highlight });
   },
 
   _renderList: function() {
@@ -495,11 +512,11 @@ var REJECT_EVENT = 'reject';
 
 merge(ChoiceStore.prototype, emitter, {
   isValid: function(value) {
-    return !/^\s*$/.test(value)
+    return !/^\s*$/.test(value);
   },
 
   has: function(object) {
-    return !!this.objects[this._normalize(object.name)]
+    return !!this.objects[this._normalize(object.name)];
   },
 
   add: function(object) {
@@ -512,7 +529,7 @@ merge(ChoiceStore.prototype, emitter, {
   },
 
   choose: function(object) {
-    if (!this.has(object)) this._add(object)
+    if (!this.has(object)) this._add(object);
     this._update(object, true);
 
     return this;
@@ -562,9 +579,9 @@ merge(ChoiceStore.prototype, emitter, {
   },
 
   fuzzy: function(value) {
-    var value = this._sanitize(value);
-    var query = /^\s*$/.test(value) ? '.*' : value;
-    var regex = RegExp(query, 'i');
+    var sanitized = this._sanitize(value);
+    var query     = /^\s*$/.test(sanitized) ? '.*' : sanitized;
+    var regex     = RegExp(query, 'i');
 
     return this.allNames().filter(function(name) {
       return regex.test(name);
@@ -601,7 +618,7 @@ merge(ChoiceStore.prototype, emitter, {
   },
 
   _sanitize: function(value) {
-    return value.replace(/[-[\]{}()*+?.,\\^$|#]/g, "\\$&")
+    return value.replace(/[-[\]{}()*+?.,\\^$|#]/g, "\\$&");
   }
 });
 
@@ -612,7 +629,7 @@ module.exports = {
   bubble: function(emitter, event) {
     emitter.on(event, this.emit.bind(this, event));
   }
-}
+};
 
 },{}],9:[function(_dereq_,module,exports){
 module.exports = {
@@ -672,6 +689,16 @@ module.exports = function(object) {
   });
 
   return object;
+};
+
+},{}],12:[function(_dereq_,module,exports){
+module.exports = function(element) {
+  var child = element.firstChild;
+
+  while (child) {
+    element.removeChild(child);
+    child = element.firstChild;
+  }
 };
 
 },{}]},{},[6])
