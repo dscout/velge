@@ -51,6 +51,19 @@ describe('Wrapper', function() {
       Helper.simulateKeydown(input, 'down');
 
       expect(dropdown.querySelector('.highlighted')).to.exist;
+      expect(dropdown.querySelector('.highlighted').textContent).to.contain('mcintosh');
+
+      Helper.simulateKeydown(input, 'down');
+      expect(dropdown.querySelector('.highlighted')).to.exist;
+      expect(dropdown.querySelector('.highlighted').textContent).to.contain('melrose');
+
+      Helper.simulateKeydown(input, 'down');
+      expect(dropdown.querySelector('.highlighted')).to.exist;
+      expect(dropdown.querySelector('.highlighted').textContent).to.contain('merton');
+
+      Helper.simulateKeydown(input, 'down');
+      expect(dropdown.querySelector('.highlighted')).to.exist;
+      expect(dropdown.querySelector('.highlighted').textContent).to.contain('mcintosh');
     });
 
     it('chooses the highlighted choice', function() {

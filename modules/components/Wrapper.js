@@ -1,3 +1,4 @@
+var cycle    = require('../utils/cycle');
 var emitter  = require('../utils/emitter');
 var merge    = require('../utils/merge');
 var Dropdown = require('./Dropdown');
@@ -57,12 +58,15 @@ merge(Wrapper.prototype, emitter, {
   },
 
   handleInputNavigate: function(direction) {
+    var length = this._currentChoices().length;
+    var index  = cycle(this.state.index, length, direction);
+
     switch(direction) {
       case 'down':
-        this.setState({ index: this.state.index + 1, open: true });
+        this.setState({ index: index, open: true });
         break;
       case 'up':
-        this.setState({ index: this.state.index - 1, open: true });
+        this.setState({ index: index, open: true });
         break;
     }
   },

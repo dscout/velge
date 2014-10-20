@@ -83,7 +83,7 @@ merge(Velge.prototype, emitter, bubble, {
 
 module.exports = Velge;
 
-},{"./components/Wrapper":5,"./stores/ChoiceStore":7,"./utils/bubble":8,"./utils/emitter":9,"./utils/merge":11}],2:[function(_dereq_,module,exports){
+},{"./components/Wrapper":5,"./stores/ChoiceStore":7,"./utils/bubble":8,"./utils/emitter":10,"./utils/merge":12}],2:[function(_dereq_,module,exports){
 var emphasize = _dereq_('../utils/emphasize');
 var merge     = _dereq_('../utils/merge');
 var emitter   = _dereq_('../utils/emitter');
@@ -142,7 +142,7 @@ merge(Dropdown.prototype, emitter, {
 
 module.exports = Dropdown;
 
-},{"../utils/emitter":9,"../utils/emphasize":10,"../utils/merge":11,"../utils/remove_children":12}],3:[function(_dereq_,module,exports){
+},{"../utils/emitter":10,"../utils/emphasize":11,"../utils/merge":12,"../utils/remove_children":13}],3:[function(_dereq_,module,exports){
 var merge   = _dereq_('../utils/merge');
 var emitter = _dereq_('../utils/emitter');
 
@@ -185,12 +185,13 @@ merge(Input.prototype, emitter, {
     switch(event.keyCode) {
       case keycodes.ESCAPE:
         event.stopPropagation();
-        this._clear();
         this._emitBlur();
+        this._clear();
         break;
       case keycodes.ENTER:
         event.preventDefault();
         this._emitAdd();
+        this._clear();
         break;
       case keycodes.COMMA:
         event.preventDefault();
@@ -274,7 +275,7 @@ merge(Input.prototype, emitter, {
 
 module.exports = Input;
 
-},{"../utils/emitter":9,"../utils/merge":11}],4:[function(_dereq_,module,exports){
+},{"../utils/emitter":10,"../utils/merge":12}],4:[function(_dereq_,module,exports){
 var merge   = _dereq_('../utils/merge');
 var emitter = _dereq_('../utils/emitter');
 var remove  = _dereq_('../utils/remove_children');
@@ -333,7 +334,8 @@ merge(List.prototype, emitter, {
 
 module.exports = List;
 
-},{"../utils/emitter":9,"../utils/merge":11,"../utils/remove_children":12}],5:[function(_dereq_,module,exports){
+},{"../utils/emitter":10,"../utils/merge":12,"../utils/remove_children":13}],5:[function(_dereq_,module,exports){
+var cycle    = _dereq_('../utils/cycle');
 var emitter  = _dereq_('../utils/emitter');
 var merge    = _dereq_('../utils/merge');
 var Dropdown = _dereq_('./Dropdown');
@@ -376,7 +378,7 @@ merge(Wrapper.prototype, emitter, {
 
   handleInputAdd: function(value) {
     this.store.choose({ name: value });
-    this.setState({ index: -1, query: null });
+    this.setState({ index: -1, query: null, open: false });
   },
 
   handleInputBlur: function() {
@@ -393,12 +395,15 @@ merge(Wrapper.prototype, emitter, {
   },
 
   handleInputNavigate: function(direction) {
+    var length = this._currentChoices().length;
+    var index  = cycle(this.state.index, length, direction);
+
     switch(direction) {
       case 'down':
-        this.setState({ index: this.state.index + 1, open: true });
+        this.setState({ index: index, open: true });
         break;
       case 'up':
-        this.setState({ index: this.state.index - 1, open: true });
+        this.setState({ index: index, open: true });
         break;
     }
   },
@@ -487,7 +492,7 @@ merge(Wrapper.prototype, emitter, {
 
 module.exports = Wrapper;
 
-},{"../utils/emitter":9,"../utils/merge":11,"./Dropdown":2,"./Input":3,"./List":4}],6:[function(_dereq_,module,exports){
+},{"../utils/cycle":9,"../utils/emitter":10,"../utils/merge":12,"./Dropdown":2,"./Input":3,"./List":4}],6:[function(_dereq_,module,exports){
 module.exports = _dereq_('./Velge');
 
 },{"./Velge":1}],7:[function(_dereq_,module,exports){
@@ -618,7 +623,7 @@ merge(ChoiceStore.prototype, emitter, {
 
 module.exports = ChoiceStore;
 
-},{"../utils/emitter":9,"../utils/merge":11}],8:[function(_dereq_,module,exports){
+},{"../utils/emitter":10,"../utils/merge":12}],8:[function(_dereq_,module,exports){
 module.exports = {
   bubble: function(emitter, event) {
     emitter.on(event, this.emit.bind(this, event));
@@ -626,6 +631,17 @@ module.exports = {
 };
 
 },{}],9:[function(_dereq_,module,exports){
+module.exports = function(index, length, direction) {
+  if (length < 1) return -1;
+
+  if (direction === 'down') {
+    return (index + 1) % length;
+  } else {
+    return (index + (length - 1)) % length;
+  }
+}
+
+},{}],10:[function(_dereq_,module,exports){
 module.exports = {
   on: function(name, callback, context) {
     this._events = (this._events || {});
@@ -667,14 +683,14 @@ module.exports = {
   }
 };
 
-},{}],10:[function(_dereq_,module,exports){
+},{}],11:[function(_dereq_,module,exports){
 module.exports = function(string, pattern) {
   var regex = new RegExp('(' + pattern + ')', 'i');
 
   return string.replace(regex, "<b>$1</b>");
 };
 
-},{}],11:[function(_dereq_,module,exports){
+},{}],12:[function(_dereq_,module,exports){
 module.exports = function(object) {
   [].slice.call(arguments, 1).forEach(function(source) {
     for (var prop in source) {
@@ -685,7 +701,7 @@ module.exports = function(object) {
   return object;
 };
 
-},{}],12:[function(_dereq_,module,exports){
+},{}],13:[function(_dereq_,module,exports){
 module.exports = function(element) {
   var child = element.firstChild;
 
