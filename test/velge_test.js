@@ -8,20 +8,12 @@ describe('Velge', function() {
     element = document.createElement('div');
   });
 
-  describe('#init', function() {
-    it('returns the instance for chaining', function() {
-      var velge = new Velge(element);
-
-      expect(velge.setup()).to.eql(velge);
-    });
-
+  describe('#new', function() {
     it('renders initial choices', function() {
       var velge = new Velge(element, {
         chosen:  [{ name: 'apple' }, { name: 'melon' }],
         choices: [{ name: 'apple' }, { name: 'melon' }, { name: 'banana' }]
       });
-
-      velge.setup();
 
       expect(velge.element).to.exist;
       expect(element.textContent).to.contain('apple');
@@ -31,7 +23,7 @@ describe('Velge', function() {
 
   describe('#add', function() {
     it('displays the new choice', function() {
-      var velge = new Velge(element).setup();
+      var velge = new Velge(element);
 
       velge.add({ name: 'melrose' });
 
@@ -41,7 +33,7 @@ describe('Velge', function() {
 
   describe('#choose', function() {
     it('displays the chosen value', function() {
-      var velge = new Velge(element).setup();
+      var velge = new Velge(element);
 
       velge.choose({ name: 'ambrosia' });
 
@@ -49,7 +41,7 @@ describe('Velge', function() {
     });
 
     it('emits a "choose" event', function() {
-      var velge = new Velge(element).setup();
+      var velge = new Velge(element);
       var spy   = sinon.spy();
 
       velge.on('choose', spy);
@@ -64,7 +56,7 @@ describe('Velge', function() {
     it('removes an existing choice', function() {
       var velge = new Velge(element, {
         choices: [{ name: 'jazz' }]
-      }).setup();
+      });
 
       velge.delete({ name: 'jazz' });
 
@@ -76,7 +68,7 @@ describe('Velge', function() {
     it('removes a chosen value', function() {
       var velge = new Velge(element, {
         chosen: [{ name: 'jazz' }]
-      }).setup();
+      });
 
       velge.reject({ name: 'jazz' });
 
@@ -115,6 +107,27 @@ describe('Velge', function() {
       });
 
       expect(velge.getChosen()).to.have.length(1);
+    });
+  });
+
+  describe('#setOptions', function() {
+    it('applies a comparator to the store', function() {
+      var velge = new Velge(element, {
+        chosen: [{ name: 'amere' }, { name: 'akane' }, { name: 'antonovka' }]
+      });
+
+      velge.setOptions({ comparator: function(a, b) {
+        if      (a.name < b.name) { return -1; }
+        else if (a.name > b.name) { return 1;  }
+        else                      { return 0;  }
+      }});
+
+      var items = element.querySelectorAll('.velge-list .name');
+      var texts = [].slice.call(items).map(function(elem) {
+        return elem.textContent;
+      });
+
+      expect(texts).to.eql(['akane', 'amere', 'antonovka']);
     });
   });
 });

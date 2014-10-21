@@ -6,4 +6,4 @@ module.exports = function(index, length, direction) {
   } else {
     return (index + (length - 1)) % length;
   }
-}
+};

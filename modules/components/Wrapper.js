@@ -145,7 +145,7 @@ merge(Wrapper.prototype, emitter, {
     return !!query ? this.store.fuzzy(query) : this.store.choiceNames();
   },
 
-  _currentSelection: function(choices) {
+  _currentSelection: function() {
     var index   = this.state.index;
     var choices = this._currentChoices();
 

@@ -2,7 +2,8 @@ var emitter = require('../utils/emitter');
 var merge   = require ('../utils/merge');
 
 var ChoiceStore = function() {
-  this.objects = {};
+  this.comparator = null;
+  this.objects    = {};
 };
 
 var ADD_EVENT    = 'add';
@@ -53,10 +54,15 @@ merge(ChoiceStore.prototype, emitter, {
 
   all: function() {
     var objects = this.objects;
-
-    return Object.keys(objects).map(function(key) {
+    var mapped  = Object.keys(objects).map(function(key) {
       return objects[key];
     });
+
+    if (this.comparator) {
+      mapped = mapped.sort(this.comparator);
+    }
+
+    return mapped;
   },
 
   allNames: function() {

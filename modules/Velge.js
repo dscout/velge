@@ -11,18 +11,19 @@ var Velge = function(element, options) {
   options = options || {};
 
   this.element = element;
-  this.store   = new ChoiceStore();
+  this.store   = new ChoiceStore({ comparator: options.comparator });
   this.wrapper = new Wrapper(element, this.store);
 
   this._bubbleEvents();
   this._preloadChoiceStore(options);
+  this._render();
 };
 
 merge(Velge.prototype, emitter, bubble, {
-  setup: function() {
-    this.wrapper.render();
+  setOptions: function(options) {
+    if (options.comparator) this.store.comparator = options.comparator;
 
-    return this;
+    this._render();
   },
 
   add: function(choice) {
@@ -77,6 +78,10 @@ merge(Velge.prototype, emitter, bubble, {
     chosen.forEach(function(choice) {
       this.store.choose(choice);
     }, this);
+  },
+
+  _render: function() {
+    this.wrapper.render();
   }
 });
 

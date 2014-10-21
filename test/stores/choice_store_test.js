@@ -54,6 +54,38 @@ describe('Store', function() {
     });
   });
 
+  describe('#all', function() {
+    it('returns each stored object', function() {
+      var objectA = { name: 'cameo' }
+      var objectB = { name: 'jazz' };
+
+      store.add(objectA).add(objectB);
+
+      expect(store.all()).to.have.length(2);
+    });
+
+    it('returns items in sort order when a comparator is provided', function() {
+      var objectA = { name: 'cameo' };
+      var objectB = { name: 'jazz' };
+      var objectC = { name: 'ambrosia' };
+
+      store
+        .add(objectA)
+        .add(objectB)
+        .add(objectC);
+
+      store.comparator = function(a, b) {
+        if      (a.name < b.name) { return -1; }
+        else if (a.name > b.name) { return 1;  }
+        else                      { return 0;  }
+      };
+
+      expect(store.all().map(function(obj) {
+        return obj.name;
+      })).to.eql(['ambrosia', 'cameo', 'jazz']);
+    });
+  });
+
   describe('#has', function() {
     it('returns true when the normalized value exists', function() {
       var object = { name: 'granny smith' };
