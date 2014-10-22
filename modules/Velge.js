@@ -11,7 +11,7 @@ var Velge = function(element, options) {
   options = options || {};
 
   this.element = element;
-  this.store   = new ChoiceStore({ comparator: options.comparator });
+  this.store   = new ChoiceStore(options);
   this.wrapper = new Wrapper(element, this.store);
 
   this._bubbleEvents();
@@ -22,6 +22,7 @@ var Velge = function(element, options) {
 merge(Velge.prototype, emitter, bubble, {
   setOptions: function(options) {
     if (options.comparator) this.store.comparator = options.comparator;
+    if (options.limitation) this.store.limitation = options.limitation;
 
     this._render();
   },

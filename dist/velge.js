@@ -12,18 +12,20 @@ var Velge = function(element, options) {
   options = options || {};
 
   this.element = element;
-  this.store   = new ChoiceStore();
+  this.store   = new ChoiceStore(options);
   this.wrapper = new Wrapper(element, this.store);
 
   this._bubbleEvents();
   this._preloadChoiceStore(options);
+  this._render();
 };
 
 merge(Velge.prototype, emitter, bubble, {
-  setup: function() {
-    this.wrapper.render();
+  setOptions: function(options) {
+    if (options.comparator) this.store.comparator = options.comparator;
+    if (options.limitation) this.store.limitation = options.limitation;
 
-    return this;
+    this._render();
   },
 
   add: function(choice) {
@@ -78,6 +80,10 @@ merge(Velge.prototype, emitter, bubble, {
     chosen.forEach(function(choice) {
       this.store.choose(choice);
     }, this);
+  },
+
+  _render: function() {
+    this.wrapper.render();
   }
 });
 
@@ -482,7 +488,7 @@ merge(Wrapper.prototype, emitter, {
     return !!query ? this.store.fuzzy(query) : this.store.choiceNames();
   },
 
-  _currentSelection: function(choices) {
+  _currentSelection: function() {
     var index   = this.state.index;
     var choices = this._currentChoices();
 
@@ -499,8 +505,12 @@ module.exports = _dereq_('./Velge');
 var emitter = _dereq_('../utils/emitter');
 var merge   = _dereq_ ('../utils/merge');
 
-var ChoiceStore = function() {
-  this.objects = {};
+var ChoiceStore = function(options) {
+  options = options || {};
+
+  this.comparator = options.comparator;
+  this.limitation = options.limitation;
+  this.objects    = {};
 };
 
 var ADD_EVENT    = 'add';
@@ -529,6 +539,8 @@ merge(ChoiceStore.prototype, emitter, {
 
   choose: function(object) {
     if (!this.has(object)) this._add(object);
+    if (this.limitation)   this.rejectAll();
+
     this._update(object, true);
 
     return this;
@@ -538,6 +550,12 @@ merge(ChoiceStore.prototype, emitter, {
     this._update(object, false);
 
     return this;
+  },
+
+  rejectAll: function() {
+    this.all().forEach(function(object) {
+      this._update(object, false);
+    }, this);
   },
 
   delete: function(object) {
@@ -551,10 +569,15 @@ merge(ChoiceStore.prototype, emitter, {
 
   all: function() {
     var objects = this.objects;
-
-    return Object.keys(objects).map(function(key) {
+    var mapped  = Object.keys(objects).map(function(key) {
       return objects[key];
     });
+
+    if (this.comparator) {
+      mapped = mapped.sort(this.comparator);
+    }
+
+    return mapped;
   },
 
   allNames: function() {
@@ -639,7 +662,7 @@ module.exports = function(index, length, direction) {
   } else {
     return (index + (length - 1)) % length;
   }
-}
+};
 
 },{}],10:[function(_dereq_,module,exports){
 module.exports = {

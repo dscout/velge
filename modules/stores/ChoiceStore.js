@@ -1,8 +1,11 @@
 var emitter = require('../utils/emitter');
 var merge   = require ('../utils/merge');
 
-var ChoiceStore = function() {
-  this.comparator = null;
+var ChoiceStore = function(options) {
+  options = options || {};
+
+  this.comparator = options.comparator;
+  this.limitation = options.limitation;
   this.objects    = {};
 };
 
@@ -32,6 +35,8 @@ merge(ChoiceStore.prototype, emitter, {
 
   choose: function(object) {
     if (!this.has(object)) this._add(object);
+    if (this.limitation)   this.rejectAll();
+
     this._update(object, true);
 
     return this;
@@ -41,6 +46,12 @@ merge(ChoiceStore.prototype, emitter, {
     this._update(object, false);
 
     return this;
+  },
+
+  rejectAll: function() {
+    this.all().forEach(function(object) {
+      this._update(object, false);
+    }, this);
   },
 
   delete: function(object) {

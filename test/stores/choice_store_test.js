@@ -112,6 +112,25 @@ describe('Store', function() {
     });
   });
 
+  describe('#choose', function() {
+    it('adds objects that do not exist', function() {
+      store.choose({ name: 'braeburn' });
+
+      expect(store.all()).to.have.length(1);
+    });
+
+    it('respects the chosen limitation', function() {
+      store.limitation = true;
+
+      store.choose({ name: 'akane' });
+      store.choose({ name: 'amere' });
+
+      expect(store.all()).to.have.length(2);
+      expect(store.chosenNames()).to.contain('amere');
+      expect(store.choiceNames()).to.contain('akane');
+    });
+  });
+
   describe('#reject', function() {
     it('marks the choice as not chosen', function() {
       var choice = { name: 'wolf river' };
