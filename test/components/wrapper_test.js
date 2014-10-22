@@ -1,6 +1,6 @@
 var expect  = require('chai').expect;
-var Wrapper = require('../../modules/components/Wrapper');
-var Store   = require('../../modules/stores/ChoiceStore');
+var Wrapper = require('modules/components/Wrapper');
+var Store   = require('modules/stores/ChoiceStore');
 var Helper  = require('../test_helper');
 
 describe('Wrapper', function() {

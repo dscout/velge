@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var Input  = require('../../modules/components/Input');
+var Input  = require('modules/components/Input');
 var Helper = require('../test_helper');
 
 describe('Input', function() {

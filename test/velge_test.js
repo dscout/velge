@@ -1,5 +1,5 @@
 var expect = require('chai').expect;
-var Velge  = require('../modules/Velge');
+var Velge  = require('modules/Velge');
 
 describe('Velge', function() {
   var element;
