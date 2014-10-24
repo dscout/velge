@@ -26,10 +26,10 @@ merge(Dropdown.prototype, emitter, {
     this.emit(SELECT_EVENT, name);
   },
 
-  _updateClassNames: function(choices, isOpen) {
+  _updateClassNames: function(choices, shouldOpen) {
     var names = ['velge-dropdown'];
 
-    if (isOpen) names.push('open');
+    if (shouldOpen && choices.length) names.push('open');
 
     this.element.className = names.join(' ');
   },

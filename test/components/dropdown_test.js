@@ -65,6 +65,13 @@ describe('Dropdown', function() {
 
       expect(dropdown.element.className).to.contain('open');
     });
+
+    it('does not open without any choices', function() {
+      var dropdown = new Dropdown();
+      var element = dropdown.render([], { open: true });
+
+      expect(dropdown.element.className).not.to.contain('open');
+    });
   });
 
   describe('events', function() {
