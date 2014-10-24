@@ -35,8 +35,8 @@ merge(Wrapper.prototype, emitter, {
   },
 
   handleDropdownSelect: function(value) {
-    console.log('select', value);
     this.store.choose({ name: value });
+    this.setState({ index: -1, query: null, open: false });
   },
 
   handleInputAdd: function(value) {
