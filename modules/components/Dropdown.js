@@ -14,9 +14,10 @@ merge(Dropdown.prototype, emitter, {
     choices = choices || [];
     options = options || {};
 
-    this._updateClassNames(options.open);
+    this._updateClassNames(choices, options.open);
     this._clearItems();
     this._renderItems(choices, options);
+    this._autoScroll();
 
     return this.element;
   },
@@ -25,7 +26,7 @@ merge(Dropdown.prototype, emitter, {
     this.emit(SELECT_EVENT, name);
   },
 
-  _updateClassNames: function(isOpen) {
+  _updateClassNames: function(choices, isOpen) {
     var names = ['velge-dropdown'];
 
     if (isOpen) names.push('open');
@@ -51,6 +52,28 @@ merge(Dropdown.prototype, emitter, {
 
       this.element.appendChild(li);
     }, this);
+  },
+
+  _autoScroll: function() {
+    var listElement = this._highlightedElement();
+
+    if (!listElement) return;
+
+    var eHeight = listElement.offsetHeight;
+    var cHeight = this.element.offsetHeight;
+    var offset  = listElement.offsetTop - this.element.offsetTop;
+    var scroll  = this.element.scrollTop;
+    var baseTop = scroll + offset;
+
+    if (offset < 0) {
+      this.element.scrollTop = baseTop;
+    } else if (offset + (eHeight > cHeight)) {
+      this.element.scrollTop = baseTop - cHeight + eHeight;
+    }
+  },
+
+  _highlightedElement: function() {
+    return this.element.querySelector('li.highlighted');
   }
 });
 
