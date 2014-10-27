@@ -7,17 +7,16 @@
 
 ![Velge Example](http://assets-dscoutapp-com.s3.amazonaws.com/velge_sample.png)
 
-Velge is a nimble tag management widget. It is written in CoffeeScript, fully
-tested with Mocha, depends only on jQuery, and can be installed via Bower. If
-you have ever wanted a tag widget similar to label management in Pivotal
-Tracker, velge is it.
+Velge is a nimble tag management widget. It is written in pure javascript, has
+no dependencies, is fully tested with Mocha, and can be installed via NPM or
+Bower.
 
 Some of the features:
 
-* Automatic sorting, validation, normalization
-* Fuzzy pattern matching
-* Keyboard shortcuts for submission, removal, and navigation
-* Very simple callback hooks for addition and removal
+* Event emission for all state and ui events.
+* Fuzzy pattern matching for searching.
+* Customizable sorting, validation, normalization.
+* Keyboard shortcuts for navigation, quick submission, and removal.
 
 The library is very lightweight and constructed in a way that allows for easy
 feature additions. We'd love more people to use it, request features, and
@@ -25,17 +24,24 @@ contribute!
 
 ## Installation
 
-The simplest way is via bower:
+The simplest way is through NPM:
 
 ```bash
-bower install velge
+npm install velge --save
 ```
 
 You'll then want to import the compiled `.js` and `.css`:
 
 ```html
-<link href="/bower_components/velge/velge.css" rel="stylesheet" type="text/css">
-<script src="/bower_components/velge/velge.min.js"></script>
+<link href="/node_modules/velge/dist/velge.css" rel="stylesheet" type="text/css">
+<script src="/node_modules/velge/dist/velge.min.js"></script>
+```
+
+If you prefer to import velge directly you can import it directly through
+CommonJS:
+
+```javascript
+var velge = require('velge');
 ```
 
 ## Usage
@@ -49,109 +55,106 @@ Velge can be attached to any container. The structure isn't of any importance:
 Initialize velge with a selector for the container and customization options:
 
 ```javascript
-var velge = new Velge($('.container'), {
-  dropdownOffset: 42,
-  onBlur:         blurCallback
-  onFocus:        focusCallback
-  placeholder:    'Choose'
-}).setup()
+var container = document.getElementById('container');
+
+var velge = new Velge(container, {
+  placeholder: 'Choose'
+});
 ```
 
 Any choices that are provided at initialization will be used to pre-populate
 the dropdown and chosen lists.
 
-## Example
-
-There is an example page that sets up a few instances of velge to play with.
-jQuery must be installed via bower for the examples to operate:
-
-```bash
-bower install jquery
-```
-
-Alernativly you can swap in jquery from a CDN if you don't have bower installed:
-
-```html
-<!-- replace this -->
-<script src="../bower_components/jquery/jquery.js"></script>
-
-<!-- with this -->
-<script src="//code.jquery.com/jquery-2.0.3.min.js"></script>
-```
-
 ### Loading Tags
 
 All tag matching is performed locally. As such you must load in all possible
-choices and an optional set of applied choices:
+choices and an optional set of chosen values:
 
 ```javascript
 velge
-  .addChosen({ name: "Apple" })
-  .addChosen({ name: "Juicy" })
+  .add({ name: 'orange' })
+  .add({ name: 'berry' })
+  .add({ name: 'tangy' });
 
 velge
-  .addChoice({ name: "Orange" })
-  .addChoice({ name: "Berry" })
-  .addChoice({ name: "Tangy" })
+  .choose({ name: 'apple' })
+  .choose({ name: 'juicy' });
+
+// Choices: 'orange', 'berry', 'tangy', 'apple', 'juicy'
 ```
 
-Tag objects can be anything that have a "name" property or method. Whatever
-object is loaded is what will be passed to any callbacks.
+Tag objects can be anything that have a "name" property. Whatever object is
+loaded is what will be passed to any callbacks.
 
 It isn't always tidy to add choices and chosen separately. For convenience they can
 also be loaded during construction:
 
 ```javascript
-new Velge($selector,
+new Velge(element, {
   choices: [
-    { name: "apple"  },
-    { name: "pear"   },
-    { name: "quince" }
+    { name: 'macintosh' },
+    { name: 'cortland' }
   ],
   chosen: [
-    { name: "kiwi" }
+    { name: 'jonagold' },
+    { name: 'snow sweet' }
   ]
-).setup()
+});
 ```
 
 ### Persisting
 
-The velge instance exposes hooks for persisting changes after tags have been
-added or removed:
+The velge instance emits events for persisting changes after tags have been
+added, chosen, rejected, or deleted.
 
 ```javascript
-var addCallback = function(choice, velge) { /* Persist Me */ }
-  , remCallback = function(choice, velge) { /* Destroy Me */ }
-  , context     = this;
-
 velge
-  .onAdd(addCallback, context)
-  .onRem(remCallback, context);
-```
-
-Callbacks can be bypassed by passing `silent: true` to chosen manipulation
-methods:
-
-```javascript
-velge.addChosen({ name: 'apple' }, { silent: true });
+  .on('add',    function(object) { console.log('added', object) })
+  .on('choose', function(object) { console.log('chose', object) })
+  .on('reject', function(object) { console.log('reject', object) })
+  .on('delete', function(object) { console.log('deleted', object) });
 ```
 
 You may prefer to save all changes at the same time, maybe via a more form-like
 submit action. That can be achieved by using `getChosen`:
 
 ```javascript
-var chosen = velge.getChosen(),
-  , names  = chosen.map(function(choice) { return choice.name });
+var chosen = velge.getChosen();
+var names  = chosen.map(function(choice) { return choice.name });
 ```
 
-### Single Mode
+### Sorting
 
-While velge is designed as an interface for applying multiple "tags" to a
-resource it can also operate in single mode. Under single mode only the most
-recent tag will be kept, all others will be unchosen.
+By default choices will be displayed in the order they were added. It is
+possible to specify a sorting behavior during construction, or afterwards:
 
 ```javascript
-var velge = new Velge($('.container'), { single: true })
+var comparitor = function(a, b) {
+  if (a.name > b.name)      { return 1;  }
+  else if (a.name < b.name) { return -1; }
+  else                      { return 0;  }
+};
+
+var velge = new Velge(element, {
+  comparitor: comparitor
+})
+
+// Setting options will trigger an immediate re-sort
+velge.setOptions({ comparitor: function(a, b) {
+  if (a.createdAt > b.createdAt)      { return 1;  }
+  else if (a.createdAt < b.createdAt) { return -1; }
+  else                                { return 0;  }
+});
+```
+
+### Limitation Mode
+
+While velge is designed as an interface for applying multiple "tags" to a
+resource it can also operate in single, limitation, mode. Under single mode only
+the most recent tag will be kept, all others will be unchosen.
+
+```javascript
+var velge = new Velge(element, { limitation: true })
 ```
 
 ### Error Handling
@@ -161,37 +164,31 @@ sync with the underlying collection. If, for example, an ajax request fails you
 can rollback the addition:
 
 ```javascript
-var addCallback = function(choice, velge) {
+var addCallback = function(choice) {
   $.ajax({
     data: choice,
     type: "POST",
     url:  "/api/resource/1/tags"
   }).fail(function(error) {
-    velge.remChosen(choice);
+    velge.reject(choice);
   })
-}
+};
 ```
 
 ## Development
 
-The project is built via [Grunt](http://gruntjs.com) and depdends on packages
-installed with [Bower](http://bower.io). To contribute you'll need both
-packages installed along with all required bower components.
+The project is built with modules from NPM. Simply run:
 
 ```bash
-npm install -g grunt-cli
-npm install -g bower
 npm install
-bower install --dev
 ```
 
-Once grunt, grunt-contrib, and bower components are installed you're all set to
-compile, test, or release (compile minified).
+Once all modules are installed you're all set to test, lint, or build.
 
 ```bash
-grunt         # compile, test
-grunt release # compile, test, minify
-grunt watch   # compile lib and test on any change
+npm run test  # scripts/test
+npm run lint  # scripts/lint
+npm run build # scripts/build
 ```
 
 ## License

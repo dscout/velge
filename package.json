@@ -5,6 +5,7 @@
   "description": "Nimble autocompleting tag management",
   "main": "modules/index.js",
   "scripts": {
+    "build": "scripts/build",
     "test": "scripts/test --single-run",
     "lint": "scripts/lint"
   },

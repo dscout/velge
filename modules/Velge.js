@@ -4,9 +4,6 @@ var merge       = require('./utils/merge');
 var ChoiceStore = require('./stores/ChoiceStore');
 var Wrapper     = require('./components/Wrapper');
 
-var ADD_EVENT    = 'add';
-var REMOVE_EVENT = 'remove';
-
 var Velge = function(element, options) {
   options = options || {};
 
