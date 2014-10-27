@@ -1,4 +1,4 @@
 #!/bin/sh
 mkdir -p dist
-NODE_ENV=production node_modules/.bin/browserify modules/index.js -t envify --detect-globals false -s Velge > dist/velge.js
+NODE_ENV=production node_modules/.bin/browserify modules/index.js --detect-globals false -s Velge > dist/velge.js
 node_modules/.bin/uglifyjs dist/velge.js --compress warnings=false > dist/velge.min.js
