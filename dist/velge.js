@@ -262,7 +262,7 @@ merge(Input.prototype, emitter, {
     if (!this.rendered) {
       this.element.type                    = 'text';
       this.element.attributes.autocomplete = 'off';
-      this.element.placeholder             = 'Placeholder';
+      this.element.placeholder             = '';
       this.element.className               = 'velge-input';
 
       this.element.addEventListener('blur',    this.handleBlur.bind(this));
