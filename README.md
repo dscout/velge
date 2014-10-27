@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/dscout/velge.png?branch=master)](https://travis-ci.org/dscout/velge)
+[![Build Status](https://travis-ci.org/dscout/velge.svg?branch=master)](https://travis-ci.org/dscout/velge)
+[![NPM version](https://badge.fury.io/js/velge.svg)](http://badge.fury.io/js/velge)
 
 # Velge (ch•oose)
 
