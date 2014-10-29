@@ -30,7 +30,9 @@ describe('Wrapper', function() {
       store
         .add({ name: 'mcintosh' })
         .add({ name: 'melrose' })
-        .add({ name: 'merton' });
+        .add({ name: 'merton' })
+        .choose({ name: 'jonathan' })
+        .choose({ name: 'jonagold' })
     });
 
     it('does not highlight anything when the dropdown is opened', function() {
@@ -43,7 +45,7 @@ describe('Wrapper', function() {
       expect(dropdown.querySelector('.highlighted')).not.to.exist;
     });
 
-    it('keys cycle the highlight through choices', function() {
+    it('cycles the highlight through choices', function() {
       var wrapper  = new Wrapper(element, store).render();
       var input    = wrapper.querySelector('.velge-input');
       var dropdown = wrapper.querySelector('.velge-dropdown');
@@ -78,6 +80,24 @@ describe('Wrapper', function() {
 
       expect(list.textContent).to.contain('melrose');
       expect(input.value).to.be.empty;
+    });
+
+    it('cycles the highlight through chosen values', function() {
+      var wrapper  = new Wrapper(element, store).render();
+      var input    = wrapper.querySelector('.velge-input');
+      var list     = wrapper.querySelector('.velge-list');
+
+      Helper.simulateKeydown(input, 'left');
+      expect(list.querySelector('.highlighted')).to.exist;
+      expect(list.querySelector('.highlighted').textContent).to.contain('jonagold');
+
+      Helper.simulateKeydown(input, 'left');
+      expect(list.querySelector('.highlighted')).to.exist;
+      expect(list.querySelector('.highlighted').textContent).to.contain('jonathan');
+
+      Helper.simulateKeydown(input, 'right');
+      expect(list.querySelector('.highlighted')).to.exist;
+      expect(list.querySelector('.highlighted').textContent).to.contain('jonagold');
     });
   });
 

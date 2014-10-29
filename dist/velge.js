@@ -207,31 +207,35 @@ merge(Input.prototype, emitter, {
     return this.element;
   },
 
+  clear: function() {
+    this.element.value = '';
+  },
+
   handleKeydown: function(event) {
     switch(event.keyCode) {
       case keycodes.ESCAPE:
         event.stopPropagation();
         this._emitBlur();
-        this._clear();
+        this.clear();
         break;
       case keycodes.ENTER:
         event.preventDefault();
         this._emitAdd();
-        this._clear();
+        this.clear();
         break;
       case keycodes.COMMA:
         event.preventDefault();
         this._emitAdd();
         break;
       case keycodes.LEFT:
-        this._emitNavigate('left');
+        if (this._isBlank()) this._emitNavigate('left');
         break;
       case keycodes.UP:
         event.preventDefault();
         this._emitNavigate('up');
         break;
       case keycodes.RIGHT:
-        this._emitNavigate('right');
+        if (this._isBlank()) this._emitNavigate('right');
         break;
       case keycodes.DOWN:
         event.preventDefault();
@@ -262,7 +266,7 @@ merge(Input.prototype, emitter, {
     if (!this.rendered) {
       this.element.type                    = 'text';
       this.element.attributes.autocomplete = 'off';
-      this.element.placeholder             = '';
+      this.element.placeholder             = 'Add';
       this.element.className               = 'velge-input';
 
       this.element.addEventListener('blur',    this.handleBlur.bind(this));
@@ -273,15 +277,15 @@ merge(Input.prototype, emitter, {
     }
   },
 
-  _clear: function() {
-    this.element.value = '';
+  _isBlank: function() {
+    return this.element.value === '';
   },
 
   _emitAdd: function() {
     var value = this.element.value;
 
     if (value && value !== '') {
-      this._clear();
+      this.clear();
       this.emit(ADD_EVENT, value);
     }
   },
@@ -378,9 +382,10 @@ var Wrapper = function(parent, store) {
 
 merge(Wrapper.prototype, emitter, {
   defaultState: {
-    index: -1,
-    query: null,
-    open:  false
+    hIndex: -1,
+    vIndex: -1,
+    query:  null,
+    open:   false
   },
 
   render: function() {
@@ -399,17 +404,17 @@ merge(Wrapper.prototype, emitter, {
 
   handleDropdownSelect: function(value) {
     this.store.choose({ name: value });
-    this.setState({ index: -1, query: null, open: false });
+    this.setState({ vIndex: -1, query: null, open: false });
   },
 
   handleInputAdd: function(value) {
     this.store.choose({ name: value });
-    this.setState({ index: -1, query: null, open: false });
+    this.setState({ vIndex: -1, query: null, open: false });
   },
 
   handleInputBlur: function() {
     this.emit('blur');
-    this.setState({ index: -1, query: null, open: false });
+    this.setState({ hIndex: -1, vIndex: -1, query: null, open: false });
   },
 
   handleInputChange: function(value) {
@@ -421,15 +426,18 @@ merge(Wrapper.prototype, emitter, {
   },
 
   handleInputNavigate: function(direction) {
-    var length = this._currentChoices().length;
-    var index  = cycle(this.state.index, length, direction);
-
     switch(direction) {
       case 'down':
-        this.setState({ index: index, open: true });
+        this.setState({ vIndex: this._cycleChoice('down'), open: true });
         break;
       case 'up':
-        this.setState({ index: index, open: true });
+        this.setState({ vIndex: this._cycleChoice('up'), open: true });
+        break;
+      case 'left':
+        this.setState({ hIndex: this._cycleChosen('up') });
+        break;
+      case 'right':
+        this.setState({ hIndex: this._cycleChosen('down') });
         break;
     }
   },
@@ -484,7 +492,9 @@ merge(Wrapper.prototype, emitter, {
       this.list.on('remove', this.handleListRemove.bind(this));
     }
 
-    this.list.render(chosen);
+    this.list.render(chosen, {
+      highlight: chosen[this.state.hIndex]
+    });
   },
 
   _renderInput: function() {
@@ -509,10 +519,22 @@ merge(Wrapper.prototype, emitter, {
   },
 
   _currentSelection: function() {
-    var index   = this.state.index;
+    var index   = this.state.vIndex;
     var choices = this._currentChoices();
 
     return choices[index];
+  },
+
+  _cycleChoice: function(direction) {
+    var length = this._currentChoices().length;
+
+    return cycle(this.state.vIndex, length, direction);
+  },
+
+  _cycleChosen: function(direction) {
+    var length = this.store.chosenNames().length;
+
+    return cycle(this.state.hIndex, length, direction);
   }
 });
 
@@ -676,6 +698,8 @@ module.exports = {
 },{}],9:[function(_dereq_,module,exports){
 module.exports = function(index, length, direction) {
   if (length < 1) return -1;
+
+  if (direction === 'up' && index === -1) index = 0;
 
   if (direction === 'down') {
     return (index + 1) % length;

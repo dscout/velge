@@ -36,31 +36,35 @@ merge(Input.prototype, emitter, {
     return this.element;
   },
 
+  clear: function() {
+    this.element.value = '';
+  },
+
   handleKeydown: function(event) {
     switch(event.keyCode) {
       case keycodes.ESCAPE:
         event.stopPropagation();
         this._emitBlur();
-        this._clear();
+        this.clear();
         break;
       case keycodes.ENTER:
         event.preventDefault();
         this._emitAdd();
-        this._clear();
+        this.clear();
         break;
       case keycodes.COMMA:
         event.preventDefault();
         this._emitAdd();
         break;
       case keycodes.LEFT:
-        this._emitNavigate('left');
+        if (this._isBlank()) this._emitNavigate('left');
         break;
       case keycodes.UP:
         event.preventDefault();
         this._emitNavigate('up');
         break;
       case keycodes.RIGHT:
-        this._emitNavigate('right');
+        if (this._isBlank()) this._emitNavigate('right');
         break;
       case keycodes.DOWN:
         event.preventDefault();
@@ -102,15 +106,15 @@ merge(Input.prototype, emitter, {
     }
   },
 
-  _clear: function() {
-    this.element.value = '';
+  _isBlank: function() {
+    return this.element.value === '';
   },
 
   _emitAdd: function() {
     var value = this.element.value;
 
     if (value && value !== '') {
-      this._clear();
+      this.clear();
       this.emit(ADD_EVENT, value);
     }
   },

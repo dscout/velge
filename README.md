@@ -124,6 +124,17 @@ var chosen = velge.getChosen();
 var names  = chosen.map(function(choice) { return choice.name });
 ```
 
+### Other Events
+
+Sometimes it is helpful to be notified of DOM level events within velge.
+Currently velge provides focus events which are bubbled up from the input area.
+
+```javascript
+velge
+  .on('focus', function(event) { console.log('has focus'); })
+  .on('blur',  function(event) { console.log('lost focus'); })
+```
+
 ### Sorting
 
 By default choices will be displayed in the order they were added. It is

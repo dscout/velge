@@ -77,6 +77,21 @@ describe('Input', function() {
       expect(spy.calledWith('up')).to.be.true;
     });
 
+    it('does not emit left/right navigation with actual input', function() {
+      var input   = new Input();
+      var element = input.render('something');
+      var spy     = sinon.spy();
+
+      input.on('navigate', spy);
+
+      Helper.simulateKeydown(element, 'left');
+      expect(spy.called).to.be.false;
+
+      input.clear();
+      Helper.simulateKeydown(element, 'left');
+      expect(spy.called).to.be.true;
+    });
+
     it('emits focus events', function(done) {
       var input    = new Input();
       var element  = input.render();

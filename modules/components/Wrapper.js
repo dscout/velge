@@ -15,9 +15,10 @@ var Wrapper = function(parent, store) {
 
 merge(Wrapper.prototype, emitter, {
   defaultState: {
-    index: -1,
-    query: null,
-    open:  false
+    hIndex: -1,
+    vIndex: -1,
+    query:  null,
+    open:   false
   },
 
   render: function() {
@@ -36,17 +37,17 @@ merge(Wrapper.prototype, emitter, {
 
   handleDropdownSelect: function(value) {
     this.store.choose({ name: value });
-    this.setState({ index: -1, query: null, open: false });
+    this.setState({ vIndex: -1, query: null, open: false });
   },
 
   handleInputAdd: function(value) {
     this.store.choose({ name: value });
-    this.setState({ index: -1, query: null, open: false });
+    this.setState({ vIndex: -1, query: null, open: false });
   },
 
   handleInputBlur: function() {
     this.emit('blur');
-    this.setState({ index: -1, query: null, open: false });
+    this.setState({ hIndex: -1, vIndex: -1, query: null, open: false });
   },
 
   handleInputChange: function(value) {
@@ -58,15 +59,18 @@ merge(Wrapper.prototype, emitter, {
   },
 
   handleInputNavigate: function(direction) {
-    var length = this._currentChoices().length;
-    var index  = cycle(this.state.index, length, direction);
-
     switch(direction) {
       case 'down':
-        this.setState({ index: index, open: true });
+        this.setState({ vIndex: this._cycleChoice('down'), open: true });
         break;
       case 'up':
-        this.setState({ index: index, open: true });
+        this.setState({ vIndex: this._cycleChoice('up'), open: true });
+        break;
+      case 'left':
+        this.setState({ hIndex: this._cycleChosen('up') });
+        break;
+      case 'right':
+        this.setState({ hIndex: this._cycleChosen('down') });
         break;
     }
   },
@@ -121,7 +125,9 @@ merge(Wrapper.prototype, emitter, {
       this.list.on('remove', this.handleListRemove.bind(this));
     }
 
-    this.list.render(chosen);
+    this.list.render(chosen, {
+      highlight: chosen[this.state.hIndex]
+    });
   },
 
   _renderInput: function() {
@@ -146,10 +152,22 @@ merge(Wrapper.prototype, emitter, {
   },
 
   _currentSelection: function() {
-    var index   = this.state.index;
+    var index   = this.state.vIndex;
     var choices = this._currentChoices();
 
     return choices[index];
+  },
+
+  _cycleChoice: function(direction) {
+    var length = this._currentChoices().length;
+
+    return cycle(this.state.vIndex, length, direction);
+  },
+
+  _cycleChosen: function(direction) {
+    var length = this.store.chosenNames().length;
+
+    return cycle(this.state.hIndex, length, direction);
   }
 });
 
