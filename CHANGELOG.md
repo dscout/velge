@@ -1,3 +1,18 @@
+# Unreleased
+
+* Entire library is vanilla javascript, no more coffeescript.
+* Modular build process using browserify, emits a UMD compatible top level
+  module.
+* No more jquery dependency.
+* Testing is now run headlessly with karma.
+* There aren't any more callbacks, everything is event based now. This is how
+  the events break down:
+
+  * onAdd -> 'choose'
+  * onRem -> 'reject'
+  * onBlur -> 'blur'
+  * onFocus -> 'focus'
+
 # v0.10.0
 
 * Passing `{ silent: true }` to `addChosen` or `remChosen` avoids triggering

@@ -1,5 +1,12 @@
 {
   "name": "velge",
-  "version": "0.10.0",
-  "main": "velge.js"
+  "version": "1.0.0-alpha",
+  "main": "dist/velge.js",
+  "ignore": [
+    ".jshintrc",
+    "karma.conf.js",
+    "modules/**/*.js",
+    "scripts/*",
+    "test/**/*.js"
+  ]
 }
