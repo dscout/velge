@@ -1,0 +1,16 @@
+{
+  "browser": true,
+  "node": true,
+  "camelcase": true,
+  "eqeqeq": true,
+  "immed": true,
+  "latedef": true,
+  "newcap": false,
+  "noarg": true,
+  "trailing": true,
+  "undef": true,
+  "unused": false,
+  "globals": {
+    "define": true
+  }
+}

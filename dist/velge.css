@@ -151,19 +151,14 @@
 
 .velge-dropdown {
   background: #fff;
-  border: 1px solid #ecf0f1;
-  box-shadow: 0 0 5px #ecf0f1;
   display: none;
-  left: 0;
   list-style-type: none;
   margin: 0;
-  max-height: 310px;
+  max-height: 306px;
   overflow-y: scroll;
   padding: 0;
-  position: absolute;
-  top: 40px;
+  position: relative;
   width: 100%;
-  z-index: 9999;
 }
 
 .velge-dropdown.open {
