@@ -99,6 +99,18 @@ describe('Wrapper', function() {
       expect(list.querySelector('.highlighted')).to.exist;
       expect(list.querySelector('.highlighted').textContent).to.contain('jonagold');
     });
+
+    it('rejects the highlighted choice', function() {
+      var wrapper  = new Wrapper(element, store).render();
+      var input    = wrapper.querySelector('.velge-input');
+      var list     = wrapper.querySelector('.velge-list');
+
+      Helper.simulateKeydown(input, 'left');
+      Helper.simulateKeydown(input, 'backspace');
+
+      expect(list.querySelector('.highlighted')).not.to.exist;
+      expect(list.textContent).not.to.contain('jonagold');
+    });
   });
 
   describe('fuzzy finding', function() {

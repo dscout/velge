@@ -23,12 +23,12 @@ describe('Input', function() {
   });
 
   describe('events', function() {
-    it('triggers an "add" event on "enter"', function() {
+    it('triggers an "enter" event on "enter"', function() {
       var input   = new Input();
       var element = input.render('roma');
       var spy     = sinon.spy();
 
-      input.on('add', spy);
+      input.on('enter', spy);
 
       Helper.simulateKeydown(element, 'enter');
 
@@ -37,12 +37,12 @@ describe('Input', function() {
       expect(element.value).to.eq('');
     });
 
-    it('does not trigger "add" events with blank input', function() {
+    it('does not trigger "enter" events with blank input', function() {
       var input   = new Input();
       var element = input.render();
       var spy     = sinon.spy();
 
-      input.on('add', spy);
+      input.on('enter', spy);
 
       Helper.simulateKeydown(element, 'comma');
 

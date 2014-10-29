@@ -40,9 +40,15 @@ merge(Wrapper.prototype, emitter, {
     this.setState({ vIndex: -1, query: null, open: false });
   },
 
-  handleInputAdd: function(value) {
+  handleInputEnter: function(value) {
     this.store.choose({ name: value });
-    this.setState({ vIndex: -1, query: null, open: false });
+    this.setState({ hIndex: -1, vIndex: -1, query: null, open: false });
+  },
+
+  handleInputDelete: function() {
+    var name = this.store.chosenNames()[this.state.hIndex];
+    this.store.reject({ name: name });
+    this.setState({ hIndex: -1 });
   },
 
   handleInputBlur: function() {
@@ -135,9 +141,10 @@ merge(Wrapper.prototype, emitter, {
       this.input = new Input();
       this.inner.appendChild(this.input.element);
 
-      this.input.on('add',      this.handleInputAdd.bind(this));
       this.input.on('blur',     this.handleInputBlur.bind(this));
       this.input.on('change',   this.handleInputChange.bind(this));
+      this.input.on('delete',   this.handleInputDelete.bind(this));
+      this.input.on('enter',    this.handleInputEnter.bind(this));
       this.input.on('focus',    this.handleInputFocus.bind(this));
       this.input.on('navigate', this.handleInputNavigate.bind(this));
     }

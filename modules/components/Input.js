@@ -18,9 +18,10 @@ var keycodes = {
   COMMA:     188
 };
 
-var ADD_EVENT      = 'add';
 var BLUR_EVENT     = 'blur';
 var CHANGE_EVENT   = 'change';
+var DELETE_EVENT   = 'delete';
+var ENTER_EVENT    = 'enter';
 var FOCUS_EVENT    = 'focus';
 var NAVIGATE_EVENT = 'navigate';
 
@@ -44,17 +45,17 @@ merge(Input.prototype, emitter, {
     switch(event.keyCode) {
       case keycodes.ESCAPE:
         event.stopPropagation();
-        this._emitBlur();
+        this.emit(BLUR_EVENT);
         this.clear();
         break;
       case keycodes.ENTER:
         event.preventDefault();
-        this._emitAdd();
+        this._emitEnter();
         this.clear();
         break;
       case keycodes.COMMA:
         event.preventDefault();
-        this._emitAdd();
+        this._emitEnter();
         break;
       case keycodes.LEFT:
         if (this._isBlank()) this._emitNavigate('left');
@@ -73,6 +74,9 @@ merge(Input.prototype, emitter, {
       case keycodes.TAB:
         event.preventDefault();
         this._emitNavigate('down');
+        break;
+      case keycodes.BACKSPACE:
+        if (this._isBlank()) this.emit(DELETE_EVENT);
         break;
       default:
         setTimeout(this._emitChange.bind(this), INPUT_DELAY);
@@ -110,17 +114,13 @@ merge(Input.prototype, emitter, {
     return this.element.value === '';
   },
 
-  _emitAdd: function() {
+  _emitEnter: function() {
     var value = this.element.value;
 
     if (value && value !== '') {
       this.clear();
-      this.emit(ADD_EVENT, value);
+      this.emit(ENTER_EVENT, value);
     }
-  },
-
-  _emitBlur: function() {
-    this.emit(BLUR_EVENT);
   },
 
   _emitChange: function() {
