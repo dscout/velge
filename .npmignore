@@ -1,0 +1,9 @@
+.jshintrc
+.travis.yml
+bower.json
+karma.conf.js
+
+example/
+scripts/
+test/
+TODO
