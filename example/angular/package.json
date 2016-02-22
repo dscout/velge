@@ -1,0 +1,23 @@
+{
+  "name": "angular-velge",
+  "version": "1.0.0",
+  "description": "An example of using Velge with Angular",
+  "main": "src/index.js",
+  "scripts": {
+  },
+  "author": "dscout",
+  "license": "MIT",
+  "devDependencies": {
+    "angular": "^1.5.0",
+    "babel-core": "^6.0.0",
+    "babel-loader": "^6.2.3",
+    "babel-preset-es2015": "^6.5.0",
+    "velge": "^1.0.0-alpha",
+    "webpack": "^1.12.13",
+    "webpack-dev-server": "^1.14.1"
+  },
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack-dev-server"
+  }
+}
